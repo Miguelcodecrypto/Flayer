@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a0a2e">
+<meta name="description" content="Vales de Amor para Florecilla y Chiquitín">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vales de Amor">
+<title>Vales de Amor 🌙</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --deep: #0d0520;
+    --night: #1a0a2e;
+    --twilight: #2d1654;
+    --rose: #c4607a;
+    --blush: #e8a0b4;
+    --gold: #d4a853;
+    --cream: #fdf3e7;
+    --moonlight: #e8dff5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep);
+    min-height: 100vh;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--cream);
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Starfield */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--d) ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.1; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* Floating elements */
+  .floaters {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .floater {
+    position: absolute;
+    font-size: clamp(1rem, 3vw, 2rem);
+    animation: float var(--d) ease-in-out infinite alternate;
+    opacity: 0.15;
+  }
+  @keyframes float {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-20px) rotate(10deg); }
+  }
+
+  /* Main layout */
+  .app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .moon-icon {
+    font-size: 4rem;
+    display: block;
+    animation: moonGlow 3s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 20px #d4a853aa);
+  }
+  @keyframes moonGlow {
+    from { filter: drop-shadow(0 0 10px #d4a85366); }
+    to { filter: drop-shadow(0 0 30px #d4a853cc); }
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 400;
+    font-style: italic;
+    background: linear-gradient(135deg, var(--gold), var(--blush), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-top: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: var(--moonlight);
+    opacity: 0.7;
+    margin-top: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* Who is sending */
+  .sender-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,168,83,0.2);
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .sender-label {
+    font-size: 0.85rem;
+    color: var(--blush);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .sender-btn {
+    padding: 0.6rem 1.5rem;
+    border: 1px solid rgba(212,168,83,0.4);
+    border-radius: 2rem;
+    background: transparent;
+    color: var(--cream);
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .sender-btn.active {
+    background: linear-gradient(135deg, var(--rose), var(--twilight));
+    border-color: var(--rose);
+    box-shadow: 0 0 20px rgba(196,96,122,0.4);
+  }
+  .sender-btn:hover { transform: scale(1.05); }
+
+  /* Form area */
+  .form-card {
+    width: 100%;
+    max-width: 480px;
+    background: linear-gradient(160deg, rgba(45,22,84,0.8), rgba(13,5,32,0.9));
+    border: 1px solid rgba(212,168,83,0.25);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+    margin-bottom: 2rem;
+  }
+
+  .form-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blush);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .concept-input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,168,83,0.3);
+    border-radius: 0.75rem;
+    color: var(--cream);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    padding: 0.8rem 1rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    resize: none;
+    min-height: 80px;
+    margin-bottom: 1.5rem;
+  }
+  .concept-input::placeholder { color: rgba(253,243,231,0.3); }
+  .concept-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 15px rgba(212,168,83,0.2);
+  }
+
+  .generate-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--rose) 0%, #8b3a8b 50%, var(--twilight) 100%);
+    border: none;
+    border-radius: 0.75rem;
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(196,96,122,0.4);
+    position: relative;
+    overflow: hidden;
+  }
+  .generate-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  .generate-btn:hover::before { transform: translateX(100%); }
+  .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(196,96,122,0.5); }
+  .generate-btn:active { transform: translateY(0); }
+
+  /* Flyer preview */
+  .flyer-container {
+    width: 100%;
+    max-width: 480px;
+    display: none;
+  }
+  .flyer-container.visible { display: block; animation: fadeUp 0.6s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .flyer {
+    position: relative;
+    background: linear-gradient(145deg, #1e0a3c 0%, #2d0f4a 40%, #1a0020 100%);
+    border-radius: 1.5rem;
+    padding: 2.5rem 2rem;
+    border: 1px solid rgba(212,168,83,0.4);
+    box-shadow: 0 0 60px rgba(196,96,122,0.15), 0 30px 80px rgba(0,0,0,0.6);
+    overflow: hidden;
+    text-align: center;
+    min-height: 550px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Decorative corners */
+  .flyer::before, .flyer::after {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: 2px solid rgba(212,168,83,0.3);
+  }
+  .flyer::before { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 12px 0 0 0; }
+  .flyer::after { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 12px 0; }
+
+  .flyer-moon {
+    font-size: 3rem;
+    filter: drop-shadow(0 0 20px #d4a853);
+    animation: moonGlow 3s ease-in-out infinite alternate;
+  }
+
+  .flyer-deco-top {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+  }
+  .flyer-deco-top span { animation: float 2s ease-in-out infinite alternate; }
+  .flyer-deco-top span:nth-child(2) { animation-delay: 0.3s; }
+  .flyer-deco-top span:nth-child(3) { animation-delay: 0.6s; }
+
+  .flyer-from {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blush);
+    margin-bottom: 0.5rem;
+  }
+
+  .flyer-from-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(212,168,83,0.5);
+    margin-bottom: 0.25rem;
+  }
+
+  .flyer-divider {
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0.8rem auto;
+    position: relative;
+  }
+  .flyer-divider::after {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--gold);
+    background: #2d0f4a;
+    padding: 0 0.3rem;
+    font-size: 0.7rem;
+  }
+
+  .vale-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--moonlight);
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+  }
+
+  .vale-badge {
+    background: linear-gradient(135deg, rgba(196,96,122,0.15), rgba(139,58,139,0.15));
+    border: 1px solid rgba(196,96,122,0.4);
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    margin: 0.5rem 0;
+    width: 90%;
+  }
+
+  .vale-por {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--blush);
+    margin-bottom: 0.5rem;
+  }
+
+  .vale-concept {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--cream);
+    text-shadow: 0 0 20px rgba(253,243,231,0.3);
+    line-height: 1.3;
+  }
+
+  .flyer-to {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blush);
+    margin-top: 0.3rem;
+  }
+
+  .flyer-to-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--moonlight);
+  }
+
+  .flyer-deco-bottom {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+    opacity: 0.6;
+    margin-top: 0.5rem;
+  }
+
+  .flyer-signature {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(212,168,83,0.4);
+    margin-top: 0.5rem;
+  }
+
+  /* Action buttons */
+  .action-btns {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .action-btn {
+    flex: 1;
+    padding: 0.8rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(212,168,83,0.3);
+    background: rgba(255,255,255,0.04);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  .action-btn:hover {
+    background: rgba(212,168,83,0.1);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  .new-btn {
+    border-color: rgba(196,96,122,0.3);
+  }
+  .new-btn:hover { background: rgba(196,96,122,0.1); border-color: var(--rose); }
+
+  /* Quick suggestions */
+  .suggestions {
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 2rem;
+  }
+  .suggestions-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blush);
+    opacity: 0.6;
+    margin-bottom: 0.8rem;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tag {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid rgba(212,168,83,0.2);
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    color: var(--moonlight);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.03);
+  }
+  .tag:hover {
+    background: rgba(212,168,83,0.1);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Install banner */
+  .install-banner {
+    display: none;
+    width: 100%;
+    max-width: 480px;
+    background: linear-gradient(135deg, rgba(45,22,84,0.9), rgba(196,96,122,0.2));
+    border: 1px solid rgba(196,96,122,0.3);
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .install-banner:hover { transform: scale(1.01); }
+  .install-banner.show { display: flex; animation: fadeUp 0.5s ease; }
+  .install-text { flex: 1; }
+  .install-text strong { display: block; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); }
+  .install-text span { font-size: 0.8rem; opacity: 0.7; }
+  .install-icon { font-size: 2rem; }
+
+  footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.75rem;
+    opacity: 0.3;
+    letter-spacing: 0.15em;
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+<div class="floaters" id="floaters"></div>
+
+<div class="app">
+  <header>
+    <span class="moon-icon">🌙</span>
+    <h1>Vales de Amor</h1>
+    <p class="subtitle">para Florecilla &amp; Chiquitín</p>
+  </header>
+
+  <!-- Install banner -->
+  <div class="install-banner" id="installBanner" onclick="installApp()">
+    <div class="install-icon">📲</div>
+    <div class="install-text">
+      <strong>Instalar en tu móvil</strong>
+      <span>Añadir a pantalla de inicio para usarla siempre</span>
+    </div>
+    <div>➕</div>
+  </div>
+
+  <!-- Sender selection -->
+  <div class="sender-section">
+    <div>
+      <div class="sender-label">¿Quién envía el vale?</div>
+      <div style="display:flex;gap:0.7rem;">
+        <button class="sender-btn active" onclick="setSender('Florecilla', this)">🌸 Florecilla</button>
+        <button class="sender-btn" onclick="setSender('Chiquitín', this)">🐾 Chiquitín</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+    <label class="form-label">✦ El vale dice...</label>
+    <textarea 
+      class="concept-input" 
+      id="conceptInput"
+      placeholder="un abrazo eterno, un beso sorpresa, una tarde de pelis juntos..."
+      rows="3"
+    ></textarea>
+    <button class="generate-btn" onclick="generateFlyer()">
+      🌙 Crear mi Vale de Amor
+    </button>
+  </div>
+
+  <!-- Suggestions -->
+  <div class="suggestions">
+    <div class="suggestions-title">✦ ideas para tu vale</div>
+    <div class="tags" id="tags"></div>
+  </div>
+
+  <!-- Flyer preview -->
+  <div class="flyer-container" id="flyerContainer">
+    <div class="flyer" id="flyer">
+      <div>
+        <div class="flyer-deco-top">
+          <span>🌸</span><span>🌙</span><span>🌹</span><span>💫</span><span>🐾</span>
+        </div>
+        <div class="flyer-moon">🌙</div>
+      </div>
+
+      <div>
+        <div class="flyer-from">Un vale de amor de</div>
+        <div class="flyer-from-name" id="flyerFrom">Florecilla</div>
+        <div class="flyer-divider"></div>
+        <div class="vale-label">vale por</div>
+        <div class="vale-badge">
+          <div class="vale-por">Vale por</div>
+          <div class="vale-concept" id="flyerConcept">...</div>
+        </div>
+        <div class="flyer-divider"></div>
+        <div class="flyer-to">para su amor</div>
+        <div class="flyer-to-name" id="flyerTo">Chiquitín</div>
+      </div>
+
+      <div>
+        <div class="flyer-deco-bottom">
+          <span>💜</span><span>🌸</span><span>❤️</span><span>🌙</span><span>🐶</span>
+        </div>
+        <div class="flyer-signature">con todo mi amor · canjeable cuando quieras</div>
+      </div>
+    </div>
+
+    <div class="action-btns">
+      <button class="action-btn new-btn" onclick="resetForm()">
+        🌸 Nuevo Vale
+      </button>
+      <button class="action-btn" onclick="shareFlyer()">
+        💌 Compartir
+      </button>
+    </div>
+  </div>
+
+  <footer>🌙 hecho con amor · para siempre vuestro 🌹</footer>
+</div>
+
+<script>
+  // Suggestions per sender
+  const ideas = {
+    Florecilla: [
+      "un abrazo de oso muy largo",
+      "elegir la peli esta noche",
+      "un beso sorpresa",
+      "un masaje en los pies",
+      "una tarde de mimos",
+      "preparo yo la cena",
+      "un día sin quejas 😇",
+      "te dejo el mando",
+    ],
+    Chiquitín: [
+      "un paseo romántico",
+      "flores inesperadas",
+      "desayuno en la cama",
+      "un beso cuando llegues",
+      "una sorpresa secreta",
+      "bailar contigo esta noche",
+      "te escribo una carta",
+      "un día tuyo entero",
+    ]
+  };
+
+  let sender = 'Florecilla';
+  let deferredPrompt = null;
+
+  // PWA install
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('installBanner').classList.add('show');
+  });
+
+  function installApp() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        document.getElementById('installBanner').classList.remove('show');
+      });
+    } else {
+      alert('Para instalar:\n• iPhone: Compartir → Añadir a pantalla de inicio\n• Android: Menú ⋮ → Añadir a pantalla de inicio');
+    }
+  }
+
+  function setSender(name, btn) {
+    sender = name;
+    document.querySelectorAll('.sender-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTags();
+  }
+
+  function renderTags() {
+    const list = ideas[sender];
+    const container = document.getElementById('tags');
+    container.innerHTML = list.map(idea => 
+      `<span class="tag" onclick="useSuggestion('${idea}')">${idea}</span>`
+    ).join('');
+  }
+
+  function useSuggestion(text) {
+    document.getElementById('conceptInput').value = text;
+    document.getElementById('conceptInput').focus();
+  }
+
+  function generateFlyer() {
+    const concept = document.getElementById('conceptInput').value.trim();
+    if (!concept) {
+      document.getElementById('conceptInput').style.borderColor = 'var(--rose)';
+      setTimeout(() => document.getElementById('conceptInput').style.borderColor = '', 1500);
+      return;
+    }
+    const receiver = sender === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
+    document.getElementById('flyerFrom').textContent = sender;
+    document.getElementById('flyerTo').textContent = receiver;
+    document.getElementById('flyerConcept').textContent = concept;
+
+    const container = document.getElementById('flyerContainer');
+    container.classList.remove('visible');
+    void container.offsetWidth;
+    container.classList.add('visible');
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function resetForm() {
+    document.getElementById('conceptInput').value = '';
+    document.getElementById('flyerContainer').classList.remove('visible');
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  async function shareFlyer() {
+    const concept = document.getElementById('flyerConcept').textContent;
+    const receiver = sender === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
+    const text = `🌙 Vale de Amor 🌸\n\nDe ${sender} para ${receiver}\n\n💜 Vale por: ${concept}\n\n(Canjeable cuando quieras, amor mío 🌹)`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Vale de Amor 🌙', text });
+      } catch(e) {}
+    } else {
+      await navigator.clipboard.writeText(text);
+      const btn = document.querySelector('.action-btn:last-child');
+      btn.textContent = '✅ ¡Copiado!';
+      setTimeout(() => btn.innerHTML = '💌 Compartir', 2000);
+    }
+  }
+
+  // Generate stars
+  function createStars() {
+    const container = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+      const star = document.createElement('div');
+      const size = Math.random() * 2.5 + 0.5;
+      star.className = 'star';
+      star.style.cssText = `
+        width:${size}px; height:${size}px;
+        top:${Math.random()*100}%;
+        left:${Math.random()*100}%;
+        --d:${2+Math.random()*4}s;
+        animation-delay:${Math.random()*4}s;
+      `;
+      container.appendChild(star);
+    }
+  }
+
+  // Floating decorative emojis
+  function createFloaters() {
+    const emojis = ['🌸','🌙','💜','🌹','🐾','💫','❤️','🌺','⭐','🐶'];
+    const container = document.getElementById('floaters');
+    for (let i = 0; i < 12; i++) {
+      const el = document.createElement('div');
+      el.className = 'floater';
+      el.textContent = emojis[i % emojis.length];
+      el.style.cssText = `
+        top:${Math.random()*100}%;
+        left:${Math.random()*100}%;
+        --d:${3+Math.random()*5}s;
+        animation-delay:${Math.random()*3}s;
+        font-size:${1+Math.random()*2}rem;
+      `;
+      container.appendChild(el);
+    }
+  }
+
+  createStars();
+  createFloaters();
+  renderTags();
+
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>

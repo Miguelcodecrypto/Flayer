@@ -1,0 +1,17 @@
+{
+  "name": "Vales de Amor 🌙",
+  "short_name": "Vales Amor",
+  "description": "Genera vales de amor para Florecilla y Chiquitín",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0520",
+  "theme_color": "#1a0a2e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

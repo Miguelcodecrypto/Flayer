@@ -10,489 +10,373 @@
 <meta name="apple-mobile-web-app-title" content="Vales de Amor">
 <title>Vales de Amor 🌙</title>
 <link rel="manifest" href="manifest.json">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Special+Elite&display=swap" rel="stylesheet">
 
 <style>
-  :root {
-    --deep: #0d0520;
-    --night: #1a0a2e;
-    --twilight: #2d1654;
-    --rose: #c4607a;
-    --blush: #e8a0b4;
-    --gold: #d4a853;
-    --cream: #fdf3e7;
-    --moonlight: #e8dff5;
-  }
+:root {
+  --deep: #0d0520;
+  --night: #1a0a2e;
+  --twilight: #2d1654;
+  --rose: #c4607a;
+  --blush: #e8a0b4;
+  --gold: #d4a853;
+  --cream: #fdf3e7;
+  --moonlight: #e8dff5;
+  --parchment: #f5ead0;
+  --parchment-dark: #e8d5a3;
+  --ink: #2c1810;
+  --ink-light: #4a2e1a;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    background: var(--deep);
-    min-height: 100vh;
-    font-family: 'Cormorant Garamond', serif;
-    color: var(--cream);
-    overflow-x: hidden;
-    position: relative;
-  }
+body {
+  background: var(--deep);
+  min-height: 100vh;
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--cream);
+  overflow-x: hidden;
+}
 
-  /* Starfield */
-  .stars {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .star {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    animation: twinkle var(--d) ease-in-out infinite alternate;
-  }
-  @keyframes twinkle {
-    from { opacity: 0.1; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1.2); }
-  }
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.star {
+  position: absolute; background: white; border-radius: 50%;
+  animation: twinkle var(--d) ease-in-out infinite alternate;
+}
+@keyframes twinkle { from { opacity: 0.1; } to { opacity: 0.9; } }
 
-  /* Floating elements */
-  .floaters {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
-  .floater {
-    position: absolute;
-    font-size: clamp(1rem, 3vw, 2rem);
-    animation: float var(--d) ease-in-out infinite alternate;
-    opacity: 0.15;
-  }
-  @keyframes float {
-    0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(-20px) rotate(10deg); }
-  }
+.floaters { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.floater {
+  position: absolute;
+  animation: float var(--d) ease-in-out infinite alternate;
+  opacity: 0.12;
+}
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-18px) rotate(8deg); }
+}
 
-  /* Main layout */
-  .app {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem;
-  }
+.app {
+  position: relative; z-index: 1; min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 2rem 1rem 3rem;
+}
 
-  header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
+header { text-align: center; margin-bottom: 2rem; }
+.moon-icon {
+  font-size: 3.5rem; display: block;
+  filter: drop-shadow(0 0 20px #d4a853bb);
+  animation: moonGlow 3s ease-in-out infinite alternate;
+}
+@keyframes moonGlow {
+  from { filter: drop-shadow(0 0 10px #d4a85355); }
+  to   { filter: drop-shadow(0 0 30px #d4a853cc); }
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  font-style: italic;
+  background: linear-gradient(135deg, var(--gold), var(--blush), var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  line-height: 1.2; margin-top: 0.3rem;
+}
+.subtitle {
+  font-size: 0.85rem; color: var(--moonlight); opacity: 0.6;
+  letter-spacing: 0.25em; text-transform: uppercase; margin-top: 0.4rem;
+}
 
-  .moon-icon {
-    font-size: 4rem;
-    display: block;
-    animation: moonGlow 3s ease-in-out infinite alternate;
-    filter: drop-shadow(0 0 20px #d4a853aa);
-  }
-  @keyframes moonGlow {
-    from { filter: drop-shadow(0 0 10px #d4a85366); }
-    to { filter: drop-shadow(0 0 30px #d4a853cc); }
-  }
+.install-banner {
+  display: none; width: 100%; max-width: 480px;
+  background: linear-gradient(135deg, rgba(45,22,84,0.9), rgba(196,96,122,0.2));
+  border: 1px solid rgba(196,96,122,0.3); border-radius: 1rem;
+  padding: 1rem 1.5rem; margin-bottom: 1.5rem;
+  align-items: center; gap: 1rem; cursor: pointer; transition: all 0.3s;
+}
+.install-banner:hover { transform: scale(1.01); }
+.install-banner.show { display: flex; animation: fadeUp 0.5s ease; }
+.install-text strong { display: block; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); }
+.install-text span { font-size: 0.8rem; opacity: 0.7; }
 
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    font-weight: 400;
-    font-style: italic;
-    background: linear-gradient(135deg, var(--gold), var(--blush), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.2;
-    margin-top: 0.5rem;
-  }
+.sender-section {
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  margin-bottom: 1.8rem;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(212,168,83,0.2);
+  border-radius: 1rem; padding: 1rem 1.5rem; backdrop-filter: blur(10px);
+  width: 100%; max-width: 480px;
+}
+.sender-label { font-size: 0.8rem; color: var(--blush); letter-spacing: 0.18em; text-transform: uppercase; }
+.sender-btns { display: flex; gap: 0.7rem; }
+.sender-btn {
+  padding: 0.55rem 1.3rem; border: 1px solid rgba(212,168,83,0.4);
+  border-radius: 2rem; background: transparent; color: var(--cream);
+  font-family: 'Playfair Display', serif; font-size: 0.95rem; cursor: pointer; transition: all 0.3s;
+}
+.sender-btn.active {
+  background: linear-gradient(135deg, var(--rose), var(--twilight));
+  border-color: var(--rose); box-shadow: 0 0 18px rgba(196,96,122,0.4);
+}
 
-  .subtitle {
-    font-size: 1rem;
-    color: var(--moonlight);
-    opacity: 0.7;
-    margin-top: 0.5rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-  }
+.form-card {
+  width: 100%; max-width: 480px;
+  background: linear-gradient(160deg, rgba(45,22,84,0.8), rgba(13,5,32,0.9));
+  border: 1px solid rgba(212,168,83,0.25); border-radius: 1.5rem;
+  padding: 1.8rem; backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5); margin-bottom: 1.8rem;
+}
+.form-label {
+  font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--blush); margin-bottom: 0.5rem; display: block;
+}
+.concept-input {
+  width: 100%; background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(212,168,83,0.3); border-radius: 0.75rem;
+  color: var(--cream); font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; font-style: italic; padding: 0.8rem 1rem;
+  outline: none; transition: border-color 0.3s, box-shadow 0.3s;
+  resize: none; min-height: 75px; margin-bottom: 1.3rem;
+}
+.concept-input::placeholder { color: rgba(253,243,231,0.3); }
+.concept-input:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212,168,83,0.2); }
+.generate-btn {
+  width: 100%; padding: 0.95rem;
+  background: linear-gradient(135deg, var(--rose) 0%, #8b3a8b 50%, var(--twilight) 100%);
+  border: none; border-radius: 0.75rem; color: white;
+  font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic;
+  cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 20px rgba(196,96,122,0.4);
+  overflow: hidden; position: relative;
+}
+.generate-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.12), transparent);
+  transform: translateX(-100%); transition: transform 0.5s;
+}
+.generate-btn:hover::before { transform: translateX(100%); }
+.generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(196,96,122,0.5); }
 
-  /* Who is sending */
-  .sender-section {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(212,168,83,0.2);
-    border-radius: 1rem;
-    padding: 1rem 1.5rem;
-    backdrop-filter: blur(10px);
-  }
+.suggestions { width: 100%; max-width: 480px; margin-bottom: 2rem; }
+.suggestions-title {
+  font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--blush); opacity: 0.6; margin-bottom: 0.7rem;
+}
+.tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.tag {
+  padding: 0.35rem 0.85rem; border: 1px solid rgba(212,168,83,0.2);
+  border-radius: 2rem; font-size: 0.82rem; color: var(--moonlight);
+  cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.03);
+}
+.tag:hover { background: rgba(212,168,83,0.1); border-color: var(--gold); color: var(--gold); }
 
-  .sender-label {
-    font-size: 0.85rem;
-    color: var(--blush);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
+/* ===== TICKET ===== */
+.flyer-container { width: 100%; max-width: 460px; display: none; }
+.flyer-container.visible { display: block; animation: fadeUp 0.7s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-  .sender-btn {
-    padding: 0.6rem 1.5rem;
-    border: 1px solid rgba(212,168,83,0.4);
-    border-radius: 2rem;
-    background: transparent;
-    color: var(--cream);
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  .sender-btn.active {
-    background: linear-gradient(135deg, var(--rose), var(--twilight));
-    border-color: var(--rose);
-    box-shadow: 0 0 20px rgba(196,96,122,0.4);
-  }
-  .sender-btn:hover { transform: scale(1.05); }
+.ticket-shadow {
+  filter: drop-shadow(0 25px 50px rgba(0,0,0,0.75)) drop-shadow(0 0 25px rgba(196,96,122,0.15));
+}
 
-  /* Form area */
-  .form-card {
-    width: 100%;
-    max-width: 480px;
-    background: linear-gradient(160deg, rgba(45,22,84,0.8), rgba(13,5,32,0.9));
-    border: 1px solid rgba(212,168,83,0.25);
-    border-radius: 1.5rem;
-    padding: 2rem;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-    margin-bottom: 2rem;
-  }
+.ticket {
+  background: var(--parchment);
+  position: relative;
+  border-radius: 4px;
+}
 
-  .form-label {
-    font-size: 0.8rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--blush);
-    margin-bottom: 0.5rem;
-    display: block;
-  }
+/* Zigzag edges via SVG-like clip */
+.zz-top {
+  width: 100%; height: 14px; overflow: hidden; line-height: 0;
+}
+.zz-top svg, .zz-bot svg { display: block; width: 100%; }
 
-  .concept-input {
-    width: 100%;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(212,168,83,0.3);
-    border-radius: 0.75rem;
-    color: var(--cream);
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-style: italic;
-    padding: 0.8rem 1rem;
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    resize: none;
-    min-height: 80px;
-    margin-bottom: 1.5rem;
-  }
-  .concept-input::placeholder { color: rgba(253,243,231,0.3); }
-  .concept-input:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 15px rgba(212,168,83,0.2);
-  }
+.ticket-body {
+  background: var(--parchment);
+  padding: 1.2rem 1.6rem 1rem;
+  position: relative;
+  overflow: hidden;
+}
 
-  .generate-btn {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, var(--rose) 0%, #8b3a8b 50%, var(--twilight) 100%);
-    border: none;
-    border-radius: 0.75rem;
-    color: white;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-style: italic;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 20px rgba(196,96,122,0.4);
-    position: relative;
-    overflow: hidden;
-  }
-  .generate-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
-    transform: translateX(-100%);
-    transition: transform 0.5s;
-  }
-  .generate-btn:hover::before { transform: translateX(100%); }
-  .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(196,96,122,0.5); }
-  .generate-btn:active { transform: translateY(0); }
+/* Ruled lines texture */
+.ticket-body::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg, transparent, transparent 27px,
+    rgba(139,90,43,0.07) 27px, rgba(139,90,43,0.07) 28px
+  );
+  pointer-events: none;
+}
 
-  /* Flyer preview */
-  .flyer-container {
-    width: 100%;
-    max-width: 480px;
-    display: none;
-  }
-  .flyer-container.visible { display: block; animation: fadeUp 0.6s ease; }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+.ticket-watermark {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  font-family: 'Playfair Display', serif;
+  font-size: 4.5rem; font-style: italic;
+  color: rgba(196,96,122,0.06);
+  white-space: nowrap; pointer-events: none; user-select: none;
+}
 
-  .flyer {
-    position: relative;
-    background: linear-gradient(145deg, #1e0a3c 0%, #2d0f4a 40%, #1a0020 100%);
-    border-radius: 1.5rem;
-    padding: 2.5rem 2rem;
-    border: 1px solid rgba(212,168,83,0.4);
-    box-shadow: 0 0 60px rgba(196,96,122,0.15), 0 30px 80px rgba(0,0,0,0.6);
-    overflow: hidden;
-    text-align: center;
-    min-height: 550px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-  }
+/* Header */
+.ticket-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 0.75rem; position: relative; z-index: 1;
+}
+.t-logo-icon { font-size: 1.7rem; line-height: 1; }
+.t-logo-text {
+  font-family: 'Special Elite', monospace; font-size: 0.55rem;
+  letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink-light); margin-top: 3px;
+}
+.t-serial-label {
+  font-family: 'Special Elite', monospace; font-size: 0.5rem;
+  letter-spacing: 0.15em; color: var(--ink-light); opacity: 0.55;
+  text-transform: uppercase; text-align: right;
+}
+.t-serial-num {
+  font-family: 'Special Elite', monospace; font-size: 0.85rem;
+  color: var(--ink); letter-spacing: 0.1em;
+}
 
-  /* Decorative corners */
-  .flyer::before, .flyer::after {
-    content: '';
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    border: 2px solid rgba(212,168,83,0.3);
-  }
-  .flyer::before { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 12px 0 0 0; }
-  .flyer::after { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 12px 0; }
+.t-hr { border: none; border-top: 1px dashed rgba(139,90,43,0.3); margin: 0.65rem 0; position: relative; z-index:1; }
 
-  .flyer-moon {
-    font-size: 3rem;
-    filter: drop-shadow(0 0 20px #d4a853);
-    animation: moonGlow 3s ease-in-out infinite alternate;
-  }
+/* Parties */
+.ticket-parties {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.8rem; position: relative; z-index: 1;
+}
+.t-party { text-align: center; flex: 1; }
+.t-party-label {
+  font-family: 'Special Elite', monospace; font-size: 0.52rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ink-light); opacity: 0.55; display: block; margin-bottom: 2px;
+}
+.t-party-name {
+  font-family: 'Playfair Display', serif; font-size: 1.15rem;
+  font-style: italic; color: var(--ink);
+}
+.t-arrow { font-size: 1.2rem; opacity: 0.4; padding: 0 0.4rem; }
 
-  .flyer-deco-top {
-    display: flex;
-    gap: 0.5rem;
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    opacity: 0.7;
-  }
-  .flyer-deco-top span { animation: float 2s ease-in-out infinite alternate; }
-  .flyer-deco-top span:nth-child(2) { animation-delay: 0.3s; }
-  .flyer-deco-top span:nth-child(3) { animation-delay: 0.6s; }
+/* Vale box */
+.ticket-vale {
+  background: rgba(139,90,43,0.07);
+  border: 1px dashed rgba(139,90,43,0.28);
+  border-radius: 5px;
+  padding: 0.9rem 4.5rem 0.9rem 1.1rem; /* right padding for stamp */
+  margin: 0.6rem 0;
+  position: relative; z-index: 1;
+  text-align: center;
+  min-height: 90px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
+.t-vale-label {
+  font-family: 'Special Elite', monospace; font-size: 0.58rem;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--ink-light); opacity: 0.5; margin-bottom: 0.35rem;
+}
+.t-vale-por {
+  font-family: 'Playfair Display', serif; font-size: 0.82rem;
+  font-style: italic; color: var(--ink-light); margin-bottom: 0.2rem;
+}
+.t-vale-concept {
+  font-family: 'Playfair Display', serif; font-size: 1.4rem;
+  font-weight: 700; color: var(--ink); line-height: 1.3;
+}
 
-  .flyer-from {
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--blush);
-    margin-bottom: 0.5rem;
-  }
+/* Stamp */
+.ticket-stamp {
+  position: absolute; right: 0.8rem; top: 50%;
+  transform: translateY(-50%) rotate(12deg);
+  width: 68px; height: 68px;
+  border: 2.5px solid rgba(196,96,122,0.5);
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+}
+.ticket-stamp::before {
+  content: '';
+  position: absolute; inset: 3px;
+  border: 1px solid rgba(196,96,122,0.3);
+  border-radius: 50%;
+}
+.t-stamp-icon { font-size: 1.3rem; position: relative; z-index: 1; line-height: 1; }
+.t-stamp-text {
+  font-family: 'Special Elite', monospace; font-size: 0.42rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(196,96,122,0.65); position: relative; z-index: 1; line-height: 1.3;
+}
 
-  .flyer-from-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    font-style: italic;
-    color: var(--gold);
-    text-shadow: 0 0 20px rgba(212,168,83,0.5);
-    margin-bottom: 0.25rem;
-  }
+/* Deco row */
+.ticket-deco {
+  display: flex; justify-content: center; gap: 0.35rem;
+  font-size: 1rem; margin: 0.55rem 0; opacity: 0.45;
+  position: relative; z-index: 1;
+}
 
-  .flyer-divider {
-    width: 80%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 0.8rem auto;
-    position: relative;
-  }
-  .flyer-divider::after {
-    content: '✦';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: var(--gold);
-    background: #2d0f4a;
-    padding: 0 0.3rem;
-    font-size: 0.7rem;
-  }
+/* Footer row */
+.ticket-footer {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  position: relative; z-index: 1;
+}
+.t-footer-l, .t-footer-r {
+  font-family: 'Special Elite', monospace; font-size: 0.52rem;
+  letter-spacing: 0.08em; color: var(--ink-light); opacity: 0.5; line-height: 1.6;
+}
+.t-footer-r { text-align: right; }
 
-  .vale-label {
-    font-size: 0.75rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--moonlight);
-    opacity: 0.6;
-    margin-bottom: 0.5rem;
-  }
+/* Tear-off stub */
+.zz-mid-wrap {
+  background: var(--parchment);
+  position: relative;
+}
+.stub-scissors {
+  position: absolute; left: 1rem; top: -0.6rem;
+  font-size: 0.9rem; opacity: 0.35; z-index: 2;
+  background: var(--parchment-dark); padding: 0 3px;
+}
 
-  .vale-badge {
-    background: linear-gradient(135deg, rgba(196,96,122,0.15), rgba(139,58,139,0.15));
-    border: 1px solid rgba(196,96,122,0.4);
-    border-radius: 1rem;
-    padding: 1rem 1.5rem;
-    margin: 0.5rem 0;
-    width: 90%;
-  }
+.ticket-stub {
+  background: linear-gradient(135deg, #f0e0cc, var(--parchment-dark));
+  border-top: 1px dashed rgba(139,90,43,0.3);
+  padding: 0.75rem 1.4rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.8rem;
+}
+.stub-info { flex: 1; }
+.stub-title {
+  font-family: 'Playfair Display', serif; font-size: 0.78rem;
+  font-style: italic; font-weight: 700; color: var(--ink);
+}
+.stub-sub {
+  font-family: 'Special Elite', monospace; font-size: 0.52rem;
+  letter-spacing: 0.1em; color: var(--ink-light); opacity: 0.55;
+  text-transform: uppercase; margin-top: 2px;
+}
+.stub-right {
+  font-family: 'Special Elite', monospace; font-size: 0.5rem;
+  color: var(--ink-light); opacity: 0.45; text-align: right; line-height: 1.6;
+}
 
-  .vale-por {
-    font-family: 'Playfair Display', serif;
-    font-size: 0.9rem;
-    font-style: italic;
-    color: var(--blush);
-    margin-bottom: 0.5rem;
-  }
+/* Barcode */
+.barcode { display: flex; gap: 1.5px; align-items: stretch; height: 32px; opacity: 0.35; flex-shrink: 0; }
+.bc-bar { background: var(--ink); border-radius: 1px; }
 
-  .vale-concept {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--cream);
-    text-shadow: 0 0 20px rgba(253,243,231,0.3);
-    line-height: 1.3;
-  }
+/* Action buttons */
+.action-btns { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.action-btn {
+  flex: 1; padding: 0.8rem; border-radius: 0.75rem;
+  border: 1px solid rgba(212,168,83,0.3); background: rgba(255,255,255,0.04);
+  color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 0.95rem;
+  cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+}
+.action-btn:hover { background: rgba(212,168,83,0.1); border-color: var(--gold); transform: translateY(-2px); }
+.new-btn { border-color: rgba(196,96,122,0.3); }
+.new-btn:hover { background: rgba(196,96,122,0.1); border-color: var(--rose); }
 
-  .flyer-to {
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--blush);
-    margin-top: 0.3rem;
-  }
-
-  .flyer-to-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-style: italic;
-    color: var(--moonlight);
-  }
-
-  .flyer-deco-bottom {
-    display: flex;
-    gap: 0.5rem;
-    font-size: 1.2rem;
-    opacity: 0.6;
-    margin-top: 0.5rem;
-  }
-
-  .flyer-signature {
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(212,168,83,0.4);
-    margin-top: 0.5rem;
-  }
-
-  /* Action buttons */
-  .action-btns {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  .action-btn {
-    flex: 1;
-    padding: 0.8rem;
-    border-radius: 0.75rem;
-    border: 1px solid rgba(212,168,83,0.3);
-    background: rgba(255,255,255,0.04);
-    color: var(--cream);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-  }
-  .action-btn:hover {
-    background: rgba(212,168,83,0.1);
-    border-color: var(--gold);
-    transform: translateY(-2px);
-  }
-
-  .new-btn {
-    border-color: rgba(196,96,122,0.3);
-  }
-  .new-btn:hover { background: rgba(196,96,122,0.1); border-color: var(--rose); }
-
-  /* Quick suggestions */
-  .suggestions {
-    width: 100%;
-    max-width: 480px;
-    margin-bottom: 2rem;
-  }
-  .suggestions-title {
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--blush);
-    opacity: 0.6;
-    margin-bottom: 0.8rem;
-  }
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .tag {
-    padding: 0.4rem 0.9rem;
-    border: 1px solid rgba(212,168,83,0.2);
-    border-radius: 2rem;
-    font-size: 0.85rem;
-    color: var(--moonlight);
-    cursor: pointer;
-    transition: all 0.2s;
-    background: rgba(255,255,255,0.03);
-  }
-  .tag:hover {
-    background: rgba(212,168,83,0.1);
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-
-  /* Install banner */
-  .install-banner {
-    display: none;
-    width: 100%;
-    max-width: 480px;
-    background: linear-gradient(135deg, rgba(45,22,84,0.9), rgba(196,96,122,0.2));
-    border: 1px solid rgba(196,96,122,0.3);
-    border-radius: 1rem;
-    padding: 1rem 1.5rem;
-    margin-bottom: 1.5rem;
-    align-items: center;
-    gap: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  .install-banner:hover { transform: scale(1.01); }
-  .install-banner.show { display: flex; animation: fadeUp 0.5s ease; }
-  .install-text { flex: 1; }
-  .install-text strong { display: block; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); }
-  .install-text span { font-size: 0.8rem; opacity: 0.7; }
-  .install-icon { font-size: 2rem; }
-
-  footer {
-    margin-top: 2rem;
-    text-align: center;
-    font-size: 0.75rem;
-    opacity: 0.3;
-    letter-spacing: 0.15em;
-  }
+footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.15em; }
 </style>
 </head>
 <body>
 
-<!-- Stars -->
 <div class="stars" id="stars"></div>
 <div class="floaters" id="floaters"></div>
 
@@ -503,86 +387,132 @@
     <p class="subtitle">para Florecilla &amp; Chiquitín</p>
   </header>
 
-  <!-- Install banner -->
   <div class="install-banner" id="installBanner" onclick="installApp()">
-    <div class="install-icon">📲</div>
+    <div style="font-size:2rem">📲</div>
     <div class="install-text">
       <strong>Instalar en tu móvil</strong>
-      <span>Añadir a pantalla de inicio para usarla siempre</span>
+      <span>Añadir a pantalla de inicio</span>
     </div>
     <div>➕</div>
   </div>
 
-  <!-- Sender selection -->
   <div class="sender-section">
-    <div>
-      <div class="sender-label">¿Quién envía el vale?</div>
-      <div style="display:flex;gap:0.7rem;">
-        <button class="sender-btn active" onclick="setSender('Florecilla', this)">🌸 Florecilla</button>
-        <button class="sender-btn" onclick="setSender('Chiquitín', this)">🐾 Chiquitín</button>
-      </div>
+    <div class="sender-label">¿Quién envía el vale?</div>
+    <div class="sender-btns">
+      <button class="sender-btn active" onclick="setSender('Florecilla', this)">🌸 Florecilla</button>
+      <button class="sender-btn" onclick="setSender('Chiquitín', this)">🐾 Chiquitín</button>
     </div>
   </div>
 
-  <!-- Form -->
   <div class="form-card">
     <label class="form-label">✦ El vale dice...</label>
-    <textarea 
-      class="concept-input" 
-      id="conceptInput"
+    <textarea class="concept-input" id="conceptInput"
       placeholder="un abrazo eterno, un beso sorpresa, una tarde de pelis juntos..."
-      rows="3"
-    ></textarea>
-    <button class="generate-btn" onclick="generateFlyer()">
-      🌙 Crear mi Vale de Amor
-    </button>
+      rows="3"></textarea>
+    <button class="generate-btn" onclick="generateFlyer()">🌙 Crear mi Vale de Amor</button>
   </div>
 
-  <!-- Suggestions -->
   <div class="suggestions">
     <div class="suggestions-title">✦ ideas para tu vale</div>
     <div class="tags" id="tags"></div>
   </div>
 
-  <!-- Flyer preview -->
+  <!-- TICKET -->
   <div class="flyer-container" id="flyerContainer">
-    <div class="flyer" id="flyer">
-      <div>
-        <div class="flyer-deco-top">
-          <span>🌸</span><span>🌙</span><span>🌹</span><span>💫</span><span>🐾</span>
-        </div>
-        <div class="flyer-moon">🌙</div>
-      </div>
+    <div class="ticket-shadow">
+      <div class="ticket">
 
-      <div>
-        <div class="flyer-from">Un vale de amor de</div>
-        <div class="flyer-from-name" id="flyerFrom">Florecilla</div>
-        <div class="flyer-divider"></div>
-        <div class="vale-label">vale por</div>
-        <div class="vale-badge">
-          <div class="vale-por">Vale por</div>
-          <div class="vale-concept" id="flyerConcept">...</div>
+        <!-- Zigzag top -->
+        <div style="line-height:0;overflow:hidden;height:14px;">
+          <svg viewBox="0 0 400 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 400,0 400,14 390,0 380,14 370,0 360,14 350,0 340,14 330,0 320,14 310,0 300,14 290,0 280,14 270,0 260,14 250,0 240,14 230,0 220,14 210,0 200,14 190,0 180,14 170,0 160,14 150,0 140,14 130,0 120,14 110,0 100,14 90,0 80,14 70,0 60,14 50,0 40,14 30,0 20,14 10,0 0,14"
+              fill="#f5ead0"/>
+          </svg>
         </div>
-        <div class="flyer-divider"></div>
-        <div class="flyer-to">para su amor</div>
-        <div class="flyer-to-name" id="flyerTo">Chiquitín</div>
-      </div>
 
-      <div>
-        <div class="flyer-deco-bottom">
-          <span>💜</span><span>🌸</span><span>❤️</span><span>🌙</span><span>🐶</span>
+        <!-- Main body -->
+        <div class="ticket-body">
+          <div class="ticket-watermark">Vale de Amor</div>
+
+          <div class="ticket-header">
+            <div>
+              <div class="t-logo-icon">🌙</div>
+              <div class="t-logo-text">Vale de amor</div>
+            </div>
+            <div>
+              <div class="t-serial-label">Nº de serie</div>
+              <div class="t-serial-num" id="serialNum">──────</div>
+            </div>
+          </div>
+
+          <hr class="t-hr">
+
+          <div class="ticket-parties">
+            <div class="t-party">
+              <span class="t-party-label">de</span>
+              <div class="t-party-name" id="ticketFrom">Florecilla</div>
+            </div>
+            <div class="t-arrow">💌</div>
+            <div class="t-party">
+              <span class="t-party-label">para</span>
+              <div class="t-party-name" id="ticketTo">Chiquitín</div>
+            </div>
+          </div>
+
+          <div class="ticket-vale">
+            <div class="t-vale-label">✦ · · · vale por · · · ✦</div>
+            <div class="t-vale-por">Este vale te da derecho a</div>
+            <div class="t-vale-concept" id="ticketConcept">...</div>
+            <div class="ticket-stamp">
+              <div class="t-stamp-icon">💜</div>
+              <div class="t-stamp-text">con todo<br>mi amor</div>
+            </div>
+          </div>
+
+          <div class="ticket-deco">🌸 🌙 🌹 🐾 💫 ❤️ 🌺 🐶</div>
+
+          <hr class="t-hr">
+
+          <div class="ticket-footer">
+            <div class="t-footer-l">Emitido con amor ♥<br>Válido para siempre</div>
+            <div class="t-footer-r" id="ticketDate">--/--/----<br>Canjeable cuando quieras</div>
+          </div>
         </div>
-        <div class="flyer-signature">con todo mi amor · canjeable cuando quieras</div>
+
+        <!-- Stub divider (zigzag bottom of main + top of stub) -->
+        <div class="zz-mid-wrap">
+          <div class="stub-scissors">✂</div>
+          <div style="line-height:0;overflow:hidden;height:14px;">
+            <svg viewBox="0 0 400 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="0,14 400,14 400,0 390,14 380,0 370,14 360,0 350,14 340,0 330,14 320,0 310,14 300,0 290,14 280,0 270,14 260,0 250,14 240,0 230,14 220,0 210,14 200,0 190,14 180,0 170,14 160,0 150,14 140,0 130,14 120,0 110,14 100,0 90,14 80,0 70,14 60,0 50,14 40,0 30,14 20,0 10,14 0,0"
+                fill="#e8d5a3"/>
+            </svg>
+          </div>
+          <div class="ticket-stub">
+            <div class="stub-info">
+              <div class="stub-title" id="stubFrom">De Florecilla</div>
+              <div class="stub-sub" id="stubConcept">vale por...</div>
+            </div>
+            <div class="barcode" id="barcode"></div>
+            <div class="stub-right">
+              <div id="stubSerial">──────</div>
+              <div>No caduca 🌙</div>
+            </div>
+          </div>
+          <div style="line-height:0;overflow:hidden;height:14px;">
+            <svg viewBox="0 0 400 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="0,0 400,0 400,14 390,0 380,14 370,0 360,14 350,0 340,14 330,0 320,14 310,0 300,14 290,0 280,14 270,0 260,14 250,0 240,14 230,0 220,14 210,0 200,14 190,0 180,14 170,0 160,14 150,0 140,14 130,0 120,14 110,0 100,14 90,0 80,14 70,0 60,14 50,0 40,14 30,0 20,14 10,0 0,14"
+                fill="#e8d5a3"/>
+            </svg>
+          </div>
+        </div>
+
       </div>
     </div>
 
     <div class="action-btns">
-      <button class="action-btn new-btn" onclick="resetForm()">
-        🌸 Nuevo Vale
-      </button>
-      <button class="action-btn" onclick="shareFlyer()">
-        💌 Compartir
-      </button>
+      <button class="action-btn new-btn" onclick="resetForm()">🌸 Nuevo Vale</button>
+      <button class="action-btn" id="shareBtn" onclick="shareFlyer()">💌 Compartir</button>
     </div>
   </div>
 
@@ -590,159 +520,146 @@
 </div>
 
 <script>
-  // Suggestions per sender
-  const ideas = {
-    Florecilla: [
-      "un abrazo de oso muy largo",
-      "elegir la peli esta noche",
-      "un beso sorpresa",
-      "un masaje en los pies",
-      "una tarde de mimos",
-      "preparo yo la cena",
-      "un día sin quejas 😇",
-      "te dejo el mando",
-    ],
-    Chiquitín: [
-      "un paseo romántico",
-      "flores inesperadas",
-      "desayuno en la cama",
-      "un beso cuando llegues",
-      "una sorpresa secreta",
-      "bailar contigo esta noche",
-      "te escribo una carta",
-      "un día tuyo entero",
-    ]
-  };
+const ideas = {
+  Florecilla: [
+    "un abrazo de oso muy largo","elegir la peli esta noche","un beso sorpresa",
+    "un masaje en los pies","una tarde de mimos","preparo yo la cena",
+    "un día sin quejas 😇","te dejo el mando",
+  ],
+  Chiquitín: [
+    "un paseo romántico","flores inesperadas","desayuno en la cama",
+    "un beso cuando llegues","una sorpresa secreta","bailar contigo esta noche",
+    "te escribo una carta","un día tuyo entero",
+  ]
+};
 
-  let sender = 'Florecilla';
-  let deferredPrompt = null;
+let sender = 'Florecilla';
+let deferredPrompt = null;
 
-  // PWA install
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('installBanner').classList.add('show');
-  });
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
 
-  function installApp() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => {
-        deferredPrompt = null;
-        document.getElementById('installBanner').classList.remove('show');
-      });
-    } else {
-      alert('Para instalar:\n• iPhone: Compartir → Añadir a pantalla de inicio\n• Android: Menú ⋮ → Añadir a pantalla de inicio');
-    }
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('installBanner').classList.remove('show'); });
+  } else {
+    alert('Para instalar:\n• iPhone: Compartir → Añadir a pantalla de inicio\n• Android: Menú ⋮ → Añadir a pantalla de inicio');
   }
+}
 
-  function setSender(name, btn) {
-    sender = name;
-    document.querySelectorAll('.sender-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderTags();
-  }
-
-  function renderTags() {
-    const list = ideas[sender];
-    const container = document.getElementById('tags');
-    container.innerHTML = list.map(idea => 
-      `<span class="tag" onclick="useSuggestion('${idea}')">${idea}</span>`
-    ).join('');
-  }
-
-  function useSuggestion(text) {
-    document.getElementById('conceptInput').value = text;
-    document.getElementById('conceptInput').focus();
-  }
-
-  function generateFlyer() {
-    const concept = document.getElementById('conceptInput').value.trim();
-    if (!concept) {
-      document.getElementById('conceptInput').style.borderColor = 'var(--rose)';
-      setTimeout(() => document.getElementById('conceptInput').style.borderColor = '', 1500);
-      return;
-    }
-    const receiver = sender === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
-    document.getElementById('flyerFrom').textContent = sender;
-    document.getElementById('flyerTo').textContent = receiver;
-    document.getElementById('flyerConcept').textContent = concept;
-
-    const container = document.getElementById('flyerContainer');
-    container.classList.remove('visible');
-    void container.offsetWidth;
-    container.classList.add('visible');
-    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function resetForm() {
-    document.getElementById('conceptInput').value = '';
-    document.getElementById('flyerContainer').classList.remove('visible');
-    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  async function shareFlyer() {
-    const concept = document.getElementById('flyerConcept').textContent;
-    const receiver = sender === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
-    const text = `🌙 Vale de Amor 🌸\n\nDe ${sender} para ${receiver}\n\n💜 Vale por: ${concept}\n\n(Canjeable cuando quieras, amor mío 🌹)`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: 'Vale de Amor 🌙', text });
-      } catch(e) {}
-    } else {
-      await navigator.clipboard.writeText(text);
-      const btn = document.querySelector('.action-btn:last-child');
-      btn.textContent = '✅ ¡Copiado!';
-      setTimeout(() => btn.innerHTML = '💌 Compartir', 2000);
-    }
-  }
-
-  // Generate stars
-  function createStars() {
-    const container = document.getElementById('stars');
-    for (let i = 0; i < 80; i++) {
-      const star = document.createElement('div');
-      const size = Math.random() * 2.5 + 0.5;
-      star.className = 'star';
-      star.style.cssText = `
-        width:${size}px; height:${size}px;
-        top:${Math.random()*100}%;
-        left:${Math.random()*100}%;
-        --d:${2+Math.random()*4}s;
-        animation-delay:${Math.random()*4}s;
-      `;
-      container.appendChild(star);
-    }
-  }
-
-  // Floating decorative emojis
-  function createFloaters() {
-    const emojis = ['🌸','🌙','💜','🌹','🐾','💫','❤️','🌺','⭐','🐶'];
-    const container = document.getElementById('floaters');
-    for (let i = 0; i < 12; i++) {
-      const el = document.createElement('div');
-      el.className = 'floater';
-      el.textContent = emojis[i % emojis.length];
-      el.style.cssText = `
-        top:${Math.random()*100}%;
-        left:${Math.random()*100}%;
-        --d:${3+Math.random()*5}s;
-        animation-delay:${Math.random()*3}s;
-        font-size:${1+Math.random()*2}rem;
-      `;
-      container.appendChild(el);
-    }
-  }
-
-  createStars();
-  createFloaters();
+function setSender(name, btn) {
+  sender = name;
+  document.querySelectorAll('.sender-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
   renderTags();
+}
 
-  // Register service worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+function renderTags() {
+  document.getElementById('tags').innerHTML = ideas[sender].map(idea =>
+    `<span class="tag" onclick="useSuggestion('${idea}')">${idea}</span>`
+  ).join('');
+}
+
+function useSuggestion(text) {
+  document.getElementById('conceptInput').value = text;
+  document.getElementById('conceptInput').focus();
+}
+
+function generateSerial() {
+  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for (let i = 0; i < 8; i++) { if (i===4) s+='-'; s += c[Math.floor(Math.random()*c.length)]; }
+  return s;
+}
+
+function generateBarcode() {
+  const c = document.getElementById('barcode');
+  c.innerHTML = '';
+  [1,2,1,3,1,2,2,1,3,1,2,1,1,3,2,1,2,1,3,1,2].forEach(w => {
+    const b = document.createElement('div');
+    b.className = 'bc-bar';
+    b.style.width = w + 'px';
+    c.appendChild(b);
+  });
+}
+
+function generateFlyer() {
+  const concept = document.getElementById('conceptInput').value.trim();
+  if (!concept) {
+    document.getElementById('conceptInput').style.borderColor = 'var(--rose)';
+    setTimeout(() => document.getElementById('conceptInput').style.borderColor = '', 1500);
+    return;
   }
+  const receiver = sender === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
+  const serial = generateSerial();
+  const dateStr = new Date().toLocaleDateString('es-ES', {day:'2-digit',month:'2-digit',year:'numeric'});
+
+  document.getElementById('ticketFrom').textContent = sender;
+  document.getElementById('ticketTo').textContent = receiver;
+  document.getElementById('ticketConcept').textContent = concept;
+  document.getElementById('serialNum').textContent = serial;
+  document.getElementById('ticketDate').innerHTML = dateStr + '<br>Canjeable cuando quieras';
+  document.getElementById('stubFrom').textContent = 'De ' + sender;
+  document.getElementById('stubConcept').textContent = concept.length > 22 ? concept.slice(0,22)+'…' : concept;
+  document.getElementById('stubSerial').textContent = serial;
+
+  generateBarcode();
+
+  const container = document.getElementById('flyerContainer');
+  container.classList.remove('visible');
+  void container.offsetWidth;
+  container.classList.add('visible');
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetForm() {
+  document.getElementById('conceptInput').value = '';
+  document.getElementById('flyerContainer').classList.remove('visible');
+  document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function shareFlyer() {
+  const concept = document.getElementById('ticketConcept').textContent;
+  const from = document.getElementById('ticketFrom').textContent;
+  const to = document.getElementById('ticketTo').textContent;
+  const serial = document.getElementById('serialNum').textContent;
+  const text = `🌙✨ VALE DE AMOR ✨🌙\n${'─'.repeat(24)}\nDe: ${from}\nPara: ${to}\n${'─'.repeat(24)}\n💜 VALE POR:\n\n   ${concept}\n${'─'.repeat(24)}\nNº ${serial}\nCanjeable cuando quieras\nVálido para siempre 🌸🐾`;
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Vale de Amor 🌙', text }); } catch(e) {}
+  } else {
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById('shareBtn');
+    btn.textContent = '✅ ¡Copiado!';
+    setTimeout(() => btn.innerHTML = '💌 Compartir', 2000);
+  }
+}
+
+function createStars() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement('div'); s.className = 'star';
+    const sz = Math.random()*2.5+0.5;
+    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;
+    c.appendChild(s);
+  }
+}
+function createFloaters() {
+  const emojis = ['🌸','🌙','💜','🌹','🐾','💫','❤️','🌺','⭐','🐶'];
+  const c = document.getElementById('floaters');
+  for (let i = 0; i < 10; i++) {
+    const el = document.createElement('div'); el.className = 'floater';
+    el.textContent = emojis[i%emojis.length];
+    el.style.cssText = `top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${3+Math.random()*5}s;animation-delay:${Math.random()*3}s;font-size:${1+Math.random()*2}rem`;
+    c.appendChild(el);
+  }
+}
+
+createStars(); createFloaters(); renderTags();
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>

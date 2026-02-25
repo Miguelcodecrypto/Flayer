@@ -15,14 +15,14 @@
 
 <style>
 :root {
-  --deep: #0d0520;
-  --night: #1a0a2e;
-  --twilight: #2d1654;
-  --rose: #c4607a;
-  --blush: #e8a0b4;
-  --gold: #d4a853;
-  --cream: #fdf3e7;
-  --moonlight: #e8dff5;
+  --deep: #d0eef8;
+  --night: #c8f0e8;
+  --twilight: #a8d8e8;
+  --rose: #2a7a8a;
+  --blush: #3a8a7a;
+  --gold: #1a6a7a;
+  --cream: #0d3d4a;
+  --moonlight: #1a5a6a;
   --parchment: #f5ead0;
   --parchment-dark: #e8d5a3;
   --ink: #2c1810;
@@ -32,7 +32,8 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: var(--deep);
+  background: linear-gradient(160deg, #d0eef8 0%, #c8f0e8 30%, #d8f0f0 55%, #b8e8f5 80%, #c0f0e0 100%);
+  background-attachment: fixed;
   min-height: 100vh;
   font-family: 'Cormorant Garamond', serif;
   color: var(--cream);
@@ -41,16 +42,16 @@ body {
 
 .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 .star {
-  position: absolute; background: white; border-radius: 50%;
+  position: absolute; border-radius: 50%;
   animation: twinkle var(--d) ease-in-out infinite alternate;
 }
-@keyframes twinkle { from { opacity: 0.1; } to { opacity: 0.9; } }
+@keyframes twinkle { from { opacity: 0.2; transform: scale(0.8); } to { opacity: 0.8; transform: scale(1.2); } }
 
 .floaters { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
 .floater {
   position: absolute;
   animation: float var(--d) ease-in-out infinite alternate;
-  opacity: 0.12;
+  opacity: 0.22;
 }
 @keyframes float {
   0% { transform: translateY(0) rotate(0deg); }
@@ -70,40 +71,66 @@ header { text-align: center; margin-bottom: 2rem; }
   animation: moonGlow 3s ease-in-out infinite alternate;
 }
 @keyframes moonGlow {
-  from { filter: drop-shadow(0 0 10px #d4a85355); }
-  to   { filter: drop-shadow(0 0 30px #d4a853cc); }
+  from { filter: drop-shadow(0 0 8px rgba(42,138,154,0.4)); }
+  to   { filter: drop-shadow(0 0 25px rgba(42,154,122,0.7)); }
 }
 h1 {
   font-family: 'Playfair Display', serif;
   font-size: clamp(1.8rem, 6vw, 3rem);
   font-style: italic;
-  background: linear-gradient(135deg, var(--gold), var(--blush), var(--gold));
+  background: linear-gradient(135deg, #1a7a8a, #2a9a7a, #1a6a9a);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   line-height: 1.2; margin-top: 0.3rem;
 }
 .subtitle {
-  font-size: 0.85rem; color: var(--moonlight); opacity: 0.6;
+  font-size: 0.85rem; color: var(--moonlight); opacity: 0.75;
   letter-spacing: 0.25em; text-transform: uppercase; margin-top: 0.4rem;
 }
 
 .install-banner {
   display: none; width: 100%; max-width: 480px;
-  background: linear-gradient(135deg, rgba(45,22,84,0.9), rgba(196,96,122,0.2));
+  background: rgba(255,255,255,0.6);
   border: 1px solid rgba(196,96,122,0.3); border-radius: 1rem;
   padding: 1rem 1.5rem; margin-bottom: 1.5rem;
   align-items: center; gap: 1rem; cursor: pointer; transition: all 0.3s;
+  backdrop-filter: blur(10px);
 }
 .install-banner:hover { transform: scale(1.01); }
 .install-banner.show { display: flex; animation: fadeUp 0.5s ease; }
 .install-text strong { display: block; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); }
 .install-text span { font-size: 0.8rem; opacity: 0.7; }
 
-.sender-section {
+.sender-avatars-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+.sender-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.sender-avatar-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--moonlight);
+  opacity: 0.8;
+}
+.sender-avatar-wrap svg {
+  filter: drop-shadow(0 3px 8px rgba(42,138,154,0.25));
+  transition: transform 0.3s;
+}
+.sender-avatar-wrap svg:hover { transform: scale(1.1); }
   display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
   margin-bottom: 1.8rem;
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(212,168,83,0.2);
+  background: rgba(255,255,255,0.55); border: 1px solid rgba(196,96,122,0.2);
   border-radius: 1rem; padding: 1rem 1.5rem; backdrop-filter: blur(10px);
   width: 100%; max-width: 480px;
+  box-shadow: 0 4px 20px rgba(196,96,122,0.08);
 }
 .sender-label { font-size: 0.8rem; color: var(--blush); letter-spacing: 0.18em; text-transform: uppercase; }
 .sender-btns { display: flex; gap: 0.7rem; }
@@ -113,37 +140,38 @@ h1 {
   font-family: 'Playfair Display', serif; font-size: 0.95rem; cursor: pointer; transition: all 0.3s;
 }
 .sender-btn.active {
-  background: linear-gradient(135deg, var(--rose), var(--twilight));
-  border-color: var(--rose); box-shadow: 0 0 18px rgba(196,96,122,0.4);
+  background: linear-gradient(135deg, #2a8a9a, #1a7a6a);
+  border-color: #2a8a9a; box-shadow: 0 0 18px rgba(42,138,154,0.4);
+  color: white;
 }
 
 .form-card {
   width: 100%; max-width: 480px;
-  background: linear-gradient(160deg, rgba(45,22,84,0.8), rgba(13,5,32,0.9));
-  border: 1px solid rgba(212,168,83,0.25); border-radius: 1.5rem;
+  background: rgba(255,255,255,0.65);
+  border: 1px solid rgba(196,96,122,0.2); border-radius: 1.5rem;
   padding: 1.8rem; backdrop-filter: blur(20px);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5); margin-bottom: 1.8rem;
+  box-shadow: 0 8px 32px rgba(196,96,122,0.12); margin-bottom: 1.8rem;
 }
 .form-label {
   font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--blush); margin-bottom: 0.5rem; display: block;
 }
 .concept-input {
-  width: 100%; background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(212,168,83,0.3); border-radius: 0.75rem;
+  width: 100%; background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(196,96,122,0.3); border-radius: 0.75rem;
   color: var(--cream); font-family: 'Playfair Display', serif;
   font-size: 1.05rem; font-style: italic; padding: 0.8rem 1rem;
   outline: none; transition: border-color 0.3s, box-shadow 0.3s;
   resize: none; min-height: 75px; margin-bottom: 1.3rem;
 }
-.concept-input::placeholder { color: rgba(253,243,231,0.3); }
-.concept-input:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212,168,83,0.2); }
+.concept-input::placeholder { color: rgba(100,50,120,0.35); }
+.concept-input:focus { border-color: var(--rose); box-shadow: 0 0 15px rgba(196,96,122,0.2); }
 .generate-btn {
   width: 100%; padding: 0.95rem;
-  background: linear-gradient(135deg, var(--rose) 0%, #8b3a8b 50%, var(--twilight) 100%);
+  background: linear-gradient(135deg, #2a8a9a 0%, #1a7a6a 50%, #1a6a9a 100%);
   border: none; border-radius: 0.75rem; color: white;
   font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic;
-  cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 20px rgba(196,96,122,0.4);
+  cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 20px rgba(42,138,154,0.35);
   overflow: hidden; position: relative;
 }
 .generate-btn::before {
@@ -152,7 +180,7 @@ h1 {
   transform: translateX(-100%); transition: transform 0.5s;
 }
 .generate-btn:hover::before { transform: translateX(100%); }
-.generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(196,96,122,0.5); }
+.generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(42,138,154,0.5); }
 
 .suggestions { width: 100%; max-width: 480px; margin-bottom: 2rem; }
 .suggestions-title {
@@ -161,11 +189,11 @@ h1 {
 }
 .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .tag {
-  padding: 0.35rem 0.85rem; border: 1px solid rgba(212,168,83,0.2);
+  padding: 0.35rem 0.85rem; border: 1px solid rgba(196,96,122,0.3);
   border-radius: 2rem; font-size: 0.82rem; color: var(--moonlight);
-  cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.03);
+  cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.5);
 }
-.tag:hover { background: rgba(212,168,83,0.1); border-color: var(--gold); color: var(--gold); }
+.tag:hover { background: rgba(196,96,122,0.1); border-color: var(--rose); color: var(--rose); }
 
 /* ===== TICKET ===== */
 .flyer-container { width: 100%; max-width: 460px; display: none; }
@@ -246,6 +274,9 @@ h1 {
   margin-bottom: 0.8rem; position: relative; z-index: 1;
 }
 .t-party { text-align: center; flex: 1; }
+.t-avatar { display: flex; justify-content: center; margin-bottom: 0.3rem; }
+.t-avatar svg { filter: drop-shadow(0 2px 6px rgba(42,138,154,0.2)); transition: transform 0.3s; }
+.t-avatar svg:hover { transform: scale(1.08); }
 .t-party-label {
   font-family: 'Special Elite', monospace; font-size: 0.52rem;
   letter-spacing: 0.2em; text-transform: uppercase;
@@ -365,11 +396,12 @@ h1 {
 .action-btns { display: flex; gap: 1rem; margin-top: 1.5rem; }
 .action-btn {
   flex: 1; padding: 0.8rem; border-radius: 0.75rem;
-  border: 1px solid rgba(212,168,83,0.3); background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(196,96,122,0.3); background: rgba(255,255,255,0.6);
   color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 0.95rem;
   cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  backdrop-filter: blur(8px);
 }
-.action-btn:hover { background: rgba(212,168,83,0.1); border-color: var(--gold); transform: translateY(-2px); }
+.action-btn:hover { background: rgba(196,96,122,0.1); border-color: var(--rose); transform: translateY(-2px); }
 .new-btn { border-color: rgba(196,96,122,0.3); }
 .new-btn:hover { background: rgba(196,96,122,0.1); border-color: var(--rose); }
 
@@ -384,6 +416,47 @@ h1 {
 }
 
 footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.15em; }
+
+.expiry-section { margin-top: 0.2rem; }
+
+.expiry-select {
+  width: 100%;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(42,138,154,0.3);
+  border-radius: 0.75rem;
+  color: var(--cream);
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-style: italic;
+  padding: 0.7rem 1rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232a8a9a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 12px;
+  padding-right: 2.5rem;
+}
+.expiry-select:focus { border-color: var(--rose); box-shadow: 0 0 15px rgba(42,138,154,0.2); }
+
+.expiry-custom {
+  display: none;
+  width: 100%;
+  margin-top: 0.6rem;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(42,138,154,0.3);
+  border-radius: 0.75rem;
+  color: var(--cream);
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  padding: 0.7rem 1rem;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.expiry-custom:focus { border-color: var(--rose); box-shadow: 0 0 15px rgba(42,138,154,0.2); }
 </style>
 </head>
 <body>
@@ -409,6 +482,17 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
 
   <div class="sender-section">
     <div class="sender-label">¿Quién envía el vale?</div>
+    <div class="sender-avatars-preview">
+      <div class="sender-avatar-wrap">
+        <div id="previewAvatarFrom"></div>
+        <span id="previewNameFrom" class="sender-avatar-name">Florecilla</span>
+      </div>
+      <div style="font-size:1.4rem;opacity:0.45;align-self:center;">💌</div>
+      <div class="sender-avatar-wrap">
+        <div id="previewAvatarTo"></div>
+        <span id="previewNameTo" class="sender-avatar-name">Chiquitín</span>
+      </div>
+    </div>
     <div class="sender-btns">
       <button class="sender-btn active" onclick="setSender('Florecilla', this)">🌸 Florecilla</button>
       <button class="sender-btn" onclick="setSender('Chiquitín', this)">🐾 Chiquitín</button>
@@ -421,6 +505,21 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
       placeholder="un abrazo eterno, un beso sorpresa, una tarde de pelis juntos..."
       rows="3"></textarea>
     <button class="generate-btn" onclick="generateFlyer()">🌙 Crear mi Vale de Amor</button>
+
+    <div class="expiry-section">
+      <label class="form-label" style="margin-top:1.1rem;">📅 Fecha de caducidad</label>
+      <select class="expiry-select" id="expirySelect" onchange="toggleCustomDate(this)">
+        <option value="nunca">✨ No caduca nunca</option>
+        <option value="hoy">Hoy mismo</option>
+        <option value="1semana">En 1 semana</option>
+        <option value="1mes">En 1 mes</option>
+        <option value="3meses">En 3 meses</option>
+        <option value="6meses">En 6 meses</option>
+        <option value="1año">En 1 año</option>
+        <option value="custom">📆 Elegir fecha...</option>
+      </select>
+      <input type="date" class="expiry-custom" id="expiryCustom">
+    </div>
   </div>
 
   <div class="suggestions">
@@ -460,11 +559,83 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
 
           <div class="ticket-parties">
             <div class="t-party">
+              <div class="t-avatar" id="avatarFrom">
+                <!-- Florecilla avatar (default) -->
+                <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Circle bg -->
+                  <circle cx="26" cy="26" r="25" fill="#e8f5f0" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
+                  <!-- Neck -->
+                  <rect x="21" y="33" width="10" height="8" rx="4" fill="#f5c8a0"/>
+                  <!-- Body -->
+                  <ellipse cx="26" cy="47" rx="13" ry="8" fill="#2a2a2a"/>
+                  <!-- Face -->
+                  <circle cx="26" cy="26" r="11" fill="#f5c8a0"/>
+                  <!-- Hair top bun - back -->
+                  <ellipse cx="26" cy="13" rx="8" ry="5" fill="#6b3a1f"/>
+                  <!-- Hair sides -->
+                  <ellipse cx="17" cy="22" rx="3" ry="6" fill="#7a4020"/>
+                  <ellipse cx="35" cy="22" rx="3" ry="6" fill="#7a4020"/>
+                  <!-- Hair top -->
+                  <ellipse cx="26" cy="17" rx="9" ry="7" fill="#7a4020"/>
+                  <!-- Bun -->
+                  <circle cx="26" cy="12" r="5" fill="#6b3a1f"/>
+                  <!-- Fringe -->
+                  <path d="M17 20 Q26 16 35 20" fill="#7a4020"/>
+                  <!-- Eyes -->
+                  <ellipse cx="22" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
+                  <ellipse cx="30" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
+                  <!-- Eye shine -->
+                  <circle cx="23" cy="25" r="0.6" fill="white"/>
+                  <circle cx="31" cy="25" r="0.6" fill="white"/>
+                  <!-- Smile -->
+                  <path d="M21 30 Q26 34 31 30" stroke="#c47a5a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                  <!-- Cheeks -->
+                  <circle cx="19" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
+                  <circle cx="33" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
+                </svg>
+              </div>
               <span class="t-party-label">de</span>
               <div class="t-party-name" id="ticketFrom">Florecilla</div>
             </div>
             <div class="t-arrow">💌</div>
             <div class="t-party">
+              <div class="t-avatar" id="avatarTo">
+                <!-- Chiquitín avatar (default) -->
+                <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Circle bg -->
+                  <circle cx="26" cy="26" r="25" fill="#e8f0f8" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
+                  <!-- Neck -->
+                  <rect x="21" y="33" width="10" height="8" rx="4" fill="#d4a882"/>
+                  <!-- Body -->
+                  <ellipse cx="26" cy="47" rx="13" ry="8" fill="#1a1a1a"/>
+                  <!-- Face -->
+                  <circle cx="26" cy="26" r="11" fill="#d4a882"/>
+                  <!-- Shaved head (very short, almost skin) -->
+                  <circle cx="26" cy="21" r="11" fill="#c09070"/>
+                  <!-- Very subtle stubble on head -->
+                  <circle cx="26" cy="19" r="10.5" fill="#c89878"/>
+                  <!-- Short beard -->
+                  <path d="M18 30 Q26 38 34 30 Q30 35 26 36 Q22 35 18 30Z" fill="#b8a898"/>
+                  <!-- Moustache area -->
+                  <ellipse cx="26" cy="30" rx="5" ry="2" fill="#b0a090"/>
+                  <!-- Sunglasses frame -->
+                  <rect x="16" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
+                  <rect x="28" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
+                  <!-- Bridge -->
+                  <line x1="24" y1="25.5" x2="28" y2="25.5" stroke="#1a1a2e" stroke-width="1.5"/>
+                  <!-- Temple arms -->
+                  <line x1="16" y1="25.5" x2="14" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
+                  <line x1="36" y1="25.5" x2="38" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
+                  <!-- Blue lens shine -->
+                  <rect x="17" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
+                  <rect x="29" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
+                  <!-- Lens glare -->
+                  <line x1="18" y1="24.5" x2="21" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+                  <line x1="30" y1="24.5" x2="33" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+                  <!-- Subtle smile -->
+                  <path d="M22 31.5 Q26 34 30 31.5" stroke="#9a7a5a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                </svg>
+              </div>
               <span class="t-party-label">para</span>
               <div class="t-party-name" id="ticketTo">Chiquitín</div>
             </div>
@@ -485,8 +656,9 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
           <hr class="t-hr">
 
           <div class="ticket-footer">
-            <div class="t-footer-l">Emitido con amor ♥<br>Válido para siempre</div>
-            <div class="t-footer-r" id="ticketDate">--/--/----<br>Canjeable cuando quieras</div>
+            <div class="t-footer-l">Emitido con amor ♥<br>
+            <span id="ticketEmitido">--/--/----</span></div>
+            <div class="t-footer-r">Caduca: <span id="ticketCaduca">nunca ✨</span><br>Canjeable cuando quieras</div>
           </div>
         </div>
 
@@ -507,7 +679,7 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
             <div class="barcode" id="barcode"></div>
             <div class="stub-right">
               <div id="stubSerial">──────</div>
-              <div>No caduca 🌙</div>
+              <div id="stubCaduca">No caduca 🌙</div>
             </div>
           </div>
           <div style="line-height:0;overflow:hidden;height:14px;">
@@ -572,6 +744,7 @@ function setSender(name, btn) {
   document.querySelectorAll('.sender-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderTags();
+  updateAvatars();
 }
 
 function renderTags() {
@@ -583,6 +756,97 @@ function renderTags() {
 function useSuggestion(text) {
   document.getElementById('conceptInput').value = text;
   document.getElementById('conceptInput').focus();
+}
+
+const AVATAR_FLORECILLA = `<svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="26" cy="26" r="25" fill="#e8f5f0" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
+  <rect x="21" y="33" width="10" height="8" rx="4" fill="#f5c8a0"/>
+  <ellipse cx="26" cy="47" rx="13" ry="8" fill="#2a2a2a"/>
+  <circle cx="26" cy="26" r="11" fill="#f5c8a0"/>
+  <ellipse cx="26" cy="13" rx="8" ry="5" fill="#6b3a1f"/>
+  <ellipse cx="17" cy="22" rx="3" ry="6" fill="#7a4020"/>
+  <ellipse cx="35" cy="22" rx="3" ry="6" fill="#7a4020"/>
+  <ellipse cx="26" cy="17" rx="9" ry="7" fill="#7a4020"/>
+  <circle cx="26" cy="12" r="5" fill="#6b3a1f"/>
+  <path d="M17 20 Q26 16 35 20" fill="#7a4020"/>
+  <ellipse cx="22" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
+  <ellipse cx="30" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
+  <circle cx="23" cy="25" r="0.6" fill="white"/>
+  <circle cx="31" cy="25" r="0.6" fill="white"/>
+  <path d="M21 30 Q26 34 31 30" stroke="#c47a5a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <circle cx="19" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
+  <circle cx="33" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
+</svg>`;
+
+const AVATAR_CHIQUTIN = `<svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="26" cy="26" r="25" fill="#e8f0f8" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
+  <rect x="21" y="33" width="10" height="8" rx="4" fill="#d4a882"/>
+  <ellipse cx="26" cy="47" rx="13" ry="8" fill="#1a1a1a"/>
+  <circle cx="26" cy="26" r="11" fill="#d4a882"/>
+  <circle cx="26" cy="21" r="11" fill="#c09070"/>
+  <circle cx="26" cy="19" r="10.5" fill="#c89878"/>
+  <path d="M18 30 Q26 38 34 30 Q30 35 26 36 Q22 35 18 30Z" fill="#b8a898"/>
+  <ellipse cx="26" cy="30" rx="5" ry="2" fill="#b0a090"/>
+  <rect x="16" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
+  <rect x="28" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
+  <line x1="24" y1="25.5" x2="28" y2="25.5" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="16" y1="25.5" x2="14" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="36" y1="25.5" x2="38" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
+  <rect x="17" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
+  <rect x="29" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
+  <line x1="18" y1="24.5" x2="21" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+  <line x1="30" y1="24.5" x2="33" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+  <path d="M22 31.5 Q26 34 30 31.5" stroke="#9a7a5a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+function updateAvatars() {
+  const fromFlor = sender === 'Florecilla';
+  const avatarA = fromFlor ? AVATAR_FLORECILLA : AVATAR_CHIQUTIN;
+  const avatarB = fromFlor ? AVATAR_CHIQUTIN : AVATAR_FLORECILLA;
+  const nameA   = fromFlor ? 'Florecilla' : 'Chiquitín';
+  const nameB   = fromFlor ? 'Chiquitín' : 'Florecilla';
+
+  // Ticket avatars
+  const elFrom = document.getElementById('avatarFrom');
+  const elTo   = document.getElementById('avatarTo');
+  if (elFrom) elFrom.innerHTML = avatarA;
+  if (elTo)   elTo.innerHTML   = avatarB;
+
+  // Sender section previews (always visible)
+  const pFrom = document.getElementById('previewAvatarFrom');
+  const pTo   = document.getElementById('previewAvatarTo');
+  const nFrom = document.getElementById('previewNameFrom');
+  const nTo   = document.getElementById('previewNameTo');
+  if (pFrom) pFrom.innerHTML = avatarA;
+  if (pTo)   pTo.innerHTML   = avatarB;
+  if (nFrom) nFrom.textContent = nameA;
+  if (nTo)   nTo.textContent   = nameB;
+}
+
+function toggleCustomDate(sel) {
+  const custom = document.getElementById('expiryCustom');
+  custom.style.display = sel.value === 'custom' ? 'block' : 'none';
+}
+
+function getExpiryText() {
+  const sel = document.getElementById('expirySelect').value;
+  const now = new Date();
+  const fmt = (d) => d.toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric'});
+
+  if (sel === 'nunca') return 'nunca ✨';
+  if (sel === 'hoy') return fmt(now);
+  if (sel === 'custom') {
+    const val = document.getElementById('expiryCustom').value;
+    if (!val) return 'nunca ✨';
+    return fmt(new Date(val + 'T12:00:00'));
+  }
+  const d = new Date(now);
+  if (sel === '1semana') d.setDate(d.getDate() + 7);
+  if (sel === '1mes')    d.setMonth(d.getMonth() + 1);
+  if (sel === '3meses')  d.setMonth(d.getMonth() + 3);
+  if (sel === '6meses')  d.setMonth(d.getMonth() + 6);
+  if (sel === '1año')    d.setFullYear(d.getFullYear() + 1);
+  return fmt(d);
 }
 
 function generateSerial() {
@@ -613,15 +877,18 @@ function generateFlyer() {
   const receiver = sender === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
   const serial = generateSerial();
   const dateStr = new Date().toLocaleDateString('es-ES', {day:'2-digit',month:'2-digit',year:'numeric'});
+  const expiryText = getExpiryText();
 
   document.getElementById('ticketFrom').textContent = sender;
   document.getElementById('ticketTo').textContent = receiver;
   document.getElementById('ticketConcept').textContent = concept;
   document.getElementById('serialNum').textContent = serial;
-  document.getElementById('ticketDate').innerHTML = dateStr + '<br>Canjeable cuando quieras';
+  document.getElementById('ticketEmitido').textContent = dateStr;
+  document.getElementById('ticketCaduca').textContent = expiryText;
   document.getElementById('stubFrom').textContent = 'De ' + sender;
   document.getElementById('stubConcept').textContent = concept.length > 22 ? concept.slice(0,22)+'…' : concept;
   document.getElementById('stubSerial').textContent = serial;
+  document.getElementById('stubCaduca').textContent = expiryText === 'nunca ✨' ? 'No caduca ✨' : 'Caduca: ' + expiryText;
 
   generateBarcode();
 
@@ -722,10 +989,11 @@ async function shareWhatsapp() {
 
 function createStars() {
   const c = document.getElementById('stars');
-  for (let i = 0; i < 70; i++) {
+  const colors = ['rgba(42,138,154,0.45)','rgba(26,122,102,0.4)','rgba(80,180,200,0.4)','rgba(42,160,130,0.35)','rgba(100,200,220,0.3)'];
+  for (let i = 0; i < 55; i++) {
     const s = document.createElement('div'); s.className = 'star';
-    const sz = Math.random()*2.5+0.5;
-    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;
+    const sz = Math.random()*3+1;
+    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};--d:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;
     c.appendChild(s);
   }
 }
@@ -740,7 +1008,7 @@ function createFloaters() {
   }
 }
 
-createStars(); createFloaters(); renderTags();
+createStars(); createFloaters(); renderTags(); updateAvatars();
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>

@@ -36,8 +36,129 @@ body {
   overflow-x: hidden;
 }
 
+/* ===== ONBOARDING OVERLAY ===== */
+.onboarding-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: linear-gradient(160deg, #d0eef8 0%, #c8f0e8 40%, #b8e8f5 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 2rem; text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+.onboarding-overlay.hidden { display: none; }
+.onboarding-icon { font-size: 4rem; margin-bottom: 1rem; animation: float 3s ease-in-out infinite; }
+.onboarding-title {
+  font-family: 'Playfair Display', serif; font-size: 2rem; font-style: italic;
+  background: linear-gradient(135deg, #1a7a8a, #2a9a7a, #1a6a9a);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 0.5rem;
+}
+.onboarding-sub {
+  font-size: 1rem; color: var(--moonlight); margin-bottom: 2.5rem;
+  font-style: italic; opacity: 0.8;
+}
+.onboarding-question {
+  font-family: 'Playfair Display', serif; font-size: 1.15rem;
+  color: var(--cream); margin-bottom: 1.5rem; font-weight: 700;
+}
+.onboarding-btns { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 280px; }
+.onboarding-btn {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.5rem; border-radius: 1rem;
+  border: 1.5px solid rgba(42,138,154,0.3);
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(10px);
+  cursor: pointer; transition: all 0.25s;
+  box-shadow: 0 4px 16px rgba(42,138,154,0.1);
+}
+.onboarding-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: var(--teal);
+  box-shadow: 0 8px 24px rgba(42,138,154,0.2);
+}
+.onboarding-btn-avatar { flex-shrink: 0; }
+.onboarding-btn-name {
+  font-family: 'Playfair Display', serif; font-size: 1.2rem;
+  font-style: italic; font-weight: 700; color: var(--cream);
+}
+.onboarding-btn-sub { font-size: 0.75rem; color: var(--moonlight); opacity: 0.7; }
 
-/* ===== STARS & FLOATERS ===== */
+/* ===== NEW VALE NOTIFICATION ===== */
+.new-vale-overlay {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.new-vale-overlay.visible { opacity: 1; pointer-events: all; }
+.new-vale-popup {
+  background: linear-gradient(160deg, #e8f8f0, #d8f5f8);
+  border: 1.5px solid rgba(42,138,154,0.25);
+  border-radius: 1.5rem;
+  padding: 1.8rem 1.5rem;
+  max-width: 360px; width: 100%;
+  box-shadow: 0 20px 60px rgba(42,138,154,0.2);
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  text-align: center;
+}
+.new-vale-overlay.visible .new-vale-popup { transform: scale(1) translateY(0); }
+.new-vale-popup-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+.new-vale-popup-title {
+  font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic;
+  color: var(--cream); font-weight: 700; margin-bottom: 0.3rem;
+}
+.new-vale-popup-sub { font-size: 0.9rem; color: var(--moonlight); margin-bottom: 1.2rem; font-style: italic; }
+.new-vale-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.4rem; text-align: left; }
+.new-vale-item {
+  background: rgba(255,255,255,0.7); border: 1px solid rgba(42,138,154,0.2);
+  border-radius: 0.75rem; padding: 0.65rem 0.9rem;
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 0.95rem; color: var(--cream);
+}
+.new-vale-item-from { font-size: 0.7rem; color: var(--moonlight); font-style: normal; margin-top: 2px; }
+.new-vale-close {
+  width: 100%; padding: 0.8rem;
+  background: linear-gradient(135deg, #2a8a9a, #1a7a6a);
+  border: none; border-radius: 0.75rem;
+  color: white; font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-style: italic; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(42,138,154,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.new-vale-close:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(42,138,154,0.45); }
+
+/* ===== WALLET UNREAD BADGE ===== */
+.wallet-tab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #e03030; color: white;
+  border-radius: 50%; width: 18px; height: 18px;
+  font-size: 0.65rem; font-family: sans-serif; font-style: normal; font-weight: 700;
+  margin-left: 0.35rem; vertical-align: middle;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+/* Current user chip */
+.current-user-chip {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: rgba(255,255,255,0.6); border: 1px solid rgba(42,138,154,0.2);
+  border-radius: 2rem; padding: 0.3rem 0.8rem 0.3rem 0.4rem;
+  backdrop-filter: blur(8px); cursor: pointer;
+  transition: all 0.2s; margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 0.8rem; color: var(--moonlight);
+}
+.current-user-chip:hover { background: rgba(255,255,255,0.85); border-color: var(--teal); }
+.current-user-chip-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: linear-gradient(135deg, #2a8a9a, #1a7a6a);
+  flex-shrink: 0;
+}
+
+
 .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 .star {
   position: absolute; border-radius: 50%;
@@ -343,7 +464,31 @@ h1 {
   transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
 }
 .vale-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,138,154,0.15); }
-.vale-card.caducado { opacity: 0.55; border-color: rgba(180,80,80,0.2); background: rgba(255,240,240,0.5); }
+.vale-card.status-caducado  { opacity: 0.6; border-color: rgba(180,60,60,0.25); background: rgba(255,235,235,0.55); }
+.vale-card.status-caduca-1  { border-color: rgba(200,80,80,0.35); background: rgba(255,245,240,0.75); }
+.vale-card.status-caduca-2  { border-color: rgba(210,140,40,0.35); background: rgba(255,250,235,0.75); }
+.vale-card.status-caduca-3  { border-color: rgba(200,170,40,0.3);  background: rgba(255,253,230,0.75); }
+.vale-card.status-en-fecha  { border-color: rgba(42,138,100,0.25); }
+.vale-card.status-eterna    { }
+
+.vale-card-badge {
+  font-size: 0.62rem; font-family: 'Special Elite', monospace;
+  padding: 0.2rem 0.45rem; border-radius: 0.4rem; text-align: center;
+  letter-spacing: 0.03em; white-space: nowrap;
+}
+/* Badge colours per state */
+.status-eterna-badge   { background: rgba(42,138,154,0.1);  color: var(--teal); }
+.status-en-fecha-badge { background: rgba(42,160,100,0.12); color: #1a7a4a; }
+.status-caduca-3-badge { background: rgba(190,160,20,0.15); color: #7a6010; font-weight: 700; }
+.status-caduca-2-badge { background: rgba(210,130,20,0.18); color: #8a5010; font-weight: 700; }
+.status-caduca-1-badge { background: rgba(200,60,40,0.15);  color: #8a2010; font-weight: 700; animation: pulse 1.2s ease-in-out infinite; }
+.status-caducado-badge { background: rgba(180,50,50,0.12);  color: rgba(160,40,40,0.8); text-decoration: line-through; }
+
+/* New vale item expiry tint in popup */
+.status-caduca-1-item { border-left: 3px solid rgba(200,60,40,0.5); padding-left: 0.6rem; }
+.status-caduca-2-item { border-left: 3px solid rgba(210,130,20,0.5); padding-left: 0.6rem; }
+.status-caduca-3-item { border-left: 3px solid rgba(190,160,20,0.5); padding-left: 0.6rem; }
+.status-caducado-item { border-left: 3px solid rgba(180,50,50,0.5); padding-left: 0.6rem; opacity: 0.75; }
 .vale-card-avatar { flex-shrink: 0; }
 .vale-card-body { flex: 1; min-width: 0; }
 .vale-card-concept {
@@ -353,12 +498,6 @@ h1 {
 .vale-card-from { font-size: 0.72rem; font-family: 'Playfair Display', serif; font-style: italic; color: var(--moonlight); margin-top: 2px; }
 .vale-card-meta { font-family: 'Special Elite', monospace; font-size: 0.52rem; letter-spacing: 0.1em; color: var(--moonlight); margin-top: 3px; }
 .vale-card-status { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
-.vale-card-badge {
-  font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase;
-  font-family: 'Special Elite', monospace; padding: 2px 6px; border-radius: 1rem;
-  background: rgba(42,138,154,0.2); color: #0a5060; font-weight: 700;
-}
-.vale-card.caducado .vale-card-badge { background: rgba(180,80,80,0.1); color: rgba(180,80,80,0.7); }
 .vale-card-delete { background: none; border: none; font-size: 0.9rem; cursor: pointer; opacity: 0.3; transition: opacity 0.2s; padding: 2px; }
 .vale-card-delete:hover { opacity: 0.8; }
 .vale-card-action { background: none; border: none; font-size: 0.9rem; cursor: pointer; opacity: 0.5; transition: opacity 0.2s, transform 0.15s; padding: 2px; }
@@ -382,6 +521,41 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
 <div class="floaters" id="floaters"></div>
 
 <div class="container">
+  <!-- ONBOARDING OVERLAY -->
+  <div class="onboarding-overlay hidden" id="onboardingOverlay">
+    <div class="onboarding-icon">💌</div>
+    <div class="onboarding-title">Vales de Amor</div>
+    <div class="onboarding-sub">para Florecilla &amp; Chiquitín</div>
+    <div class="onboarding-question">¿Quién eres tú?</div>
+    <div class="onboarding-btns">
+      <button class="onboarding-btn" onclick="setIdentity('Florecilla')">
+        <div class="onboarding-btn-avatar" id="onboardAvatarFlor"></div>
+        <div>
+          <div class="onboarding-btn-name">🌸 Florecilla</div>
+          <div class="onboarding-btn-sub">Recibirás los vales de Chiquitín</div>
+        </div>
+      </button>
+      <button class="onboarding-btn" onclick="setIdentity('Chiquitín')">
+        <div class="onboarding-btn-avatar" id="onboardAvatarChiq"></div>
+        <div>
+          <div class="onboarding-btn-name">🐾 Chiquitín</div>
+          <div class="onboarding-btn-sub">Recibirás los vales de Florecilla</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- NEW VALE NOTIFICATION POPUP -->
+  <div class="new-vale-overlay" id="newValeOverlay">
+    <div class="new-vale-popup">
+      <div class="new-vale-popup-icon">💌</div>
+      <div class="new-vale-popup-title" id="newValeTitle">¡Tienes vales nuevos!</div>
+      <div class="new-vale-popup-sub" id="newValeSub">Tu pareja te ha enviado:</div>
+      <div class="new-vale-list" id="newValeList"></div>
+      <button class="new-vale-close" onclick="dismissNewVales()">💙 Ver mi Wallet</button>
+    </div>
+  </div>
+
   <div class="header">
     <span class="moon-icon">🌙</span>
     <h1>Vales de Amor</h1>
@@ -395,8 +569,15 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
     </div>
   </div>
 
+  <!-- Current user chip -->
+  <div class="current-user-chip" id="currentUserChip" onclick="showOnboarding(true)" style="display:none;">
+    <div class="current-user-chip-dot"></div>
+    <span id="currentUserChipLabel">Tú: Florecilla</span>
+    <span style="opacity:0.4;margin-left:0.2rem;font-size:0.7rem;">✏️</span>
+  </div>
+
   <div class="sender-section">
-    <div class="sender-label">¿Quién envía el vale?</div>
+    <div class="sender-label" id="senderLabel">¿Quién envía el vale?</div>
     <div class="sender-avatars-preview">
       <div class="sender-avatar-wrap">
         <div id="previewAvatarFrom"></div>
@@ -408,7 +589,7 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
         <span id="previewNameTo" class="sender-avatar-name">Chiquitín</span>
       </div>
     </div>
-    <div class="sender-btns">
+    <div class="sender-btns" id="senderBtns">
       <button class="sender-btn active" onclick="setSender('Florecilla', this)">🌸 Florecilla</button>
       <button class="sender-btn" onclick="setSender('Chiquitín', this)">🐾 Chiquitín</button>
     </div>
@@ -566,8 +747,8 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
       <div class="wallet-title" id="walletTitleEl">💳 Mi Wallet de Amor</div>
     </div>
     <div class="wallet-tabs">
-      <button class="wallet-tab active" onclick="switchWalletTab('Florecilla', this)">🌸 Florecilla</button>
-      <button class="wallet-tab" onclick="switchWalletTab('Chiquitín', this)">🐾 Chiquitín</button>
+      <button class="wallet-tab active" id="tabFlorecilla" onclick="switchWalletTab('Florecilla', this)">🌸 Florecilla<span class="wallet-tab-badge" id="badgeFlorecilla" style="display:none"></span></button>
+      <button class="wallet-tab" id="tabChiquitin" onclick="switchWalletTab('Chiquitín', this)">🐾 Chiquitín<span class="wallet-tab-badge" id="badgeChiquitin" style="display:none"></span></button>
     </div>
     <div id="walletCards" class="wallet-cards"></div>
   </div>
@@ -578,6 +759,198 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
 <script>
 // ===== STATE =====
 let sender = 'Florecilla';
+// ===== IDENTITY & ONBOARDING =====
+let currentUser = localStorage.getItem('vales-identity') || null;
+
+function setIdentity(name) {
+  currentUser = name;
+  localStorage.setItem('vales-identity', name);
+  // Lock sender to current user
+  lockSender();
+  // Hide onboarding
+  document.getElementById('onboardingOverlay').classList.add('hidden');
+  // Show user chip
+  showUserChip();
+  // Check for new vales
+  checkNewVales();
+}
+
+function showOnboarding(forceShow = false) {
+  const overlay = document.getElementById('onboardingOverlay');
+  const oFlor = document.getElementById('onboardAvatarFlor');
+  const oChiq = document.getElementById('onboardAvatarChiq');
+  if (oFlor) oFlor.innerHTML = AVATAR_FLORECILLA.replace('width="52" height="52"', 'width="44" height="44"');
+  if (oChiq) oChiq.innerHTML = AVATAR_CHIQUTIN.replace('width="52" height="52"', 'width="44" height="44"');
+
+  if (!currentUser || forceShow) {
+    // Temporarily restore buttons so identity can be re-chosen
+    const btns = document.getElementById('senderBtns');
+    if (btns) btns.style.display = 'flex';
+    const label = document.getElementById('senderLabel');
+    if (label) label.textContent = '¿Quién envía el vale?';
+    overlay.classList.remove('hidden');
+  } else {
+    overlay.classList.add('hidden');
+    showUserChip();
+    checkNewVales();
+  }
+}
+
+function showUserChip() {
+  if (!currentUser) return;
+  const chip = document.getElementById('currentUserChip');
+  const label = document.getElementById('currentUserChipLabel');
+  if (chip) chip.style.display = 'flex';
+  if (label) label.textContent = (currentUser === 'Florecilla' ? '🌸' : '🐾') + ' Tú: ' + currentUser;
+}
+
+// ===== NEW VALE DETECTION =====
+// We track which serials the user has "seen" via localStorage
+function seenKey(user) { return 'vales-seen:' + user; }
+
+function getSeenSerials(user) {
+  try { return JSON.parse(localStorage.getItem(seenKey(user)) || '[]'); } catch(e) { return []; }
+}
+function markAllSeen(user, data) {
+  const serials = data.map(v => v.serial);
+  localStorage.setItem(seenKey(user), JSON.stringify(serials));
+}
+
+// ===== SOUND & VIBRATION =====
+function playNotificationSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Sweet two-note chime: C5 then E5
+    [[523.25, 0, 0.15], [659.25, 0.18, 0.2]].forEach(([freq, delay, dur]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+      gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + dur);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + dur);
+    });
+  } catch(e) {}
+}
+
+function vibrateDevice() {
+  try {
+    if (navigator.vibrate) navigator.vibrate([120, 60, 80]);
+  } catch(e) {}
+}
+
+async function checkNewVales() {
+  if (!currentUser) return;
+  const data = await loadWalletData(currentUser);
+  const seen = getSeenSerials(currentUser);
+  const newVales = data.filter(v => !seen.includes(v.serial));
+
+  // Update tab badge
+  updateBadge(currentUser, newVales.length);
+
+  // Update PWA app icon badge
+  if (newVales.length > 0 && navigator.setAppBadge) {
+    navigator.setAppBadge(newVales.length).catch(() => {});
+  } else if (newVales.length === 0 && navigator.clearAppBadge) {
+    navigator.clearAppBadge().catch(() => {});
+  }
+
+  if (newVales.length > 0) {
+    playNotificationSound();
+    vibrateDevice();
+    showNewValePopup(newVales);
+  } else {
+    // No new vales — check expiry alerts instead
+    await checkExpiryAlerts(currentUser);
+  }
+}
+
+function updateBadge(user, count) {
+  const badgeId = user === 'Florecilla' ? 'badgeFlorecilla' : 'badgeChiquitin';
+  const badge = document.getElementById(badgeId);
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function showNewValePopup(newVales) {
+  const overlay = document.getElementById('newValeOverlay');
+  const title = document.getElementById('newValeTitle');
+  const sub = document.getElementById('newValeSub');
+  const list = document.getElementById('newValeList');
+  if (!overlay) return;
+
+  const partner = currentUser === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
+  title.textContent = newVales.length === 1 ? '¡Tienes un vale nuevo! 💌' : `¡Tienes ${newVales.length} vales nuevos! 💌`;
+  sub.textContent = partner + ' te ha enviado:';
+  list.innerHTML = newVales.map(v => `
+    <div class="new-vale-item">
+      <div>✨ ${v.concept}</div>
+      <div class="new-vale-item-from">De ${v.from} · ${v.emitido}</div>
+    </div>`).join('');
+
+  overlay.classList.add('visible');
+}
+
+function dismissNewVales() {
+  if (!currentUser) return;
+  const overlay = document.getElementById('newValeOverlay');
+  overlay.classList.remove('visible');
+
+  // Mark all current vales as seen
+  loadWalletData(currentUser).then(data => {
+    markAllSeen(currentUser, data);
+    updateBadge(currentUser, 0);
+    if (navigator.clearAppBadge) navigator.clearAppBadge().catch(() => {});
+  });
+
+  // Switch wallet to current user's tab
+  walletTab = currentUser;
+  document.querySelectorAll('.wallet-tab').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes(currentUser));
+  });
+  renderWallet();
+
+  // Scroll to wallet
+  setTimeout(() => {
+    document.querySelector('.wallet-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
+}
+
+// Polling: check for new vales every 30s while app is open
+// Also play sound+vibrate if new vales appear during polling
+let _lastSeenCount = 0;
+let pollingInterval = null;
+function startPolling() {
+  if (pollingInterval) clearInterval(pollingInterval);
+  pollingInterval = setInterval(async () => {
+    if (!currentUser) return;
+    const data = await loadWalletData(currentUser);
+    const seen = getSeenSerials(currentUser);
+    const newVales = data.filter(v => !seen.includes(v.serial));
+    const newCount = newVales.length;
+    updateBadge(currentUser, newCount);
+    if (newCount > 0 && navigator.setAppBadge) navigator.setAppBadge(newCount).catch(() => {});
+    // New vale arrived during session
+    if (newCount > _lastSeenCount) {
+      playNotificationSound();
+      vibrateDevice();
+      showNewValePopup(newVales);
+    }
+    _lastSeenCount = newCount;
+    // Always check expiry alerts on each poll
+    await checkExpiryAlerts(currentUser);
+  }, 30000);
+}
+
+
 let walletTab = 'Florecilla';
 let deferredPrompt = null;
 
@@ -591,11 +964,32 @@ function installApp() {
 
 // ===== SENDER =====
 function setSender(name, btn) {
+  // If identity is fixed, ignore attempts to change sender
+  if (currentUser && name !== currentUser) return;
   sender = name;
   document.querySelectorAll('.sender-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderTags();
   updateAvatars();
+}
+
+function lockSender() {
+  if (!currentUser) return;
+  // Force sender to currentUser
+  sender = currentUser;
+  // Activate the correct button
+  document.querySelectorAll('.sender-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes(currentUser));
+  });
+  // Hide selector buttons — direction is fixed
+  const btns = document.getElementById('senderBtns');
+  if (btns) btns.style.display = 'none';
+  // Update label to show fixed direction
+  const label = document.getElementById('senderLabel');
+  const icon    = currentUser === 'Florecilla' ? '🌸' : '🐾';
+  const partner = currentUser === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
+  const partnerIcon = partner === 'Florecilla' ? '🌸' : '🐾';
+  if (label) label.textContent = `${icon} ${currentUser} → ${partnerIcon} ${partner}`;
 }
 
 // ===== AVATARS =====
@@ -807,21 +1201,33 @@ async function saveToWallet() {
     return;
   }
 
-  const data = await loadWalletData(to);
+  const vale = { id: Date.now(), concept, from, to, serial, caduca, emitido };
 
-  // Check duplicate
-  if (data.find(v => v.serial === serial)) {
-    if (btn) { btn.textContent = '✅ Ya está guardado'; setTimeout(() => btn.textContent = modeText, 2000); }
-    return;
+  // Save to BOTH wallets — recipient and sender
+  let savedAny = false;
+  for (const owner of [to, from]) {
+    const data = await loadWalletData(owner);
+    if (!data.find(v => v.serial === serial)) {
+      data.unshift(vale);
+      await saveWalletData(owner, data);
+      savedAny = true;
+    }
   }
-
-  data.unshift({ id: Date.now(), concept, from, to, serial, caduca, emitido });
-  await saveWalletData(to, data);
 
   if (btn) {
-    btn.textContent = '✅ Guardado en Wallet de ' + to;
+    if (savedAny) {
+      btn.textContent = `✅ Guardado para ${from} y ${to}`;
+    } else {
+      btn.textContent = '✅ Ya estaba guardado';
+    }
     setTimeout(() => btn.textContent = modeText, 2500);
   }
+
+  // Update badge for recipient (they have unseen vales now)
+  const recipientData = await loadWalletData(to);
+  const recipientSeen = getSeenSerials(to);
+  const recipientNew = recipientData.filter(v => !recipientSeen.includes(v.serial)).length;
+  updateBadge(to, recipientNew);
 
   // Switch wallet tab to recipient so user sees it immediately
   walletTab = to;
@@ -839,18 +1245,95 @@ function switchWalletTab(name, btn) {
   renderWallet();
 }
 
-function isExpired(caduca) {
-  if (!caduca || caduca.includes('nunca') || caduca.includes('✨')) return false;
-  const parts = caduca.replace('Caduca: ','').trim().split('/');
-  if (parts.length !== 3) return false;
-  return new Date(parts[2], parts[1]-1, parts[0]) < new Date();
-}
-function daysLeft(caduca) {
+// ===== VALE STATUS =====
+function parseExpiryDate(caduca) {
   if (!caduca || caduca.includes('nunca') || caduca.includes('✨')) return null;
-  const parts = caduca.replace('Caduca: ','').trim().split('/');
+  const clean = caduca.replace('Caduca: ', '').trim();
+  const parts = clean.split('/');
   if (parts.length !== 3) return null;
-  return Math.ceil((new Date(parts[2], parts[1]-1, parts[0]) - new Date()) / 86400000);
+  const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+  d.setHours(23, 59, 59, 0); // end of that day
+  return isNaN(d.getTime()) ? null : d;
 }
+
+function getValeStatus(caduca) {
+  const expiry = parseExpiryDate(caduca);
+  if (!expiry) return { key: 'eterna',   label: '✨ Sin caducidad', css: 'status-eterna' };
+  const now   = new Date();
+  const days  = Math.ceil((expiry - now) / 86400000);
+  if (days < 0)  return { key: 'caducado', label: '💀 Caducado',      css: 'status-caducado' };
+  if (days === 0) return { key: 'caduca-1', label: '⚠️ Caduca hoy',    css: 'status-caduca-1' };
+  if (days === 1) return { key: 'caduca-1', label: '⚠️ Caduca en 1 día', css: 'status-caduca-1' };
+  if (days === 2) return { key: 'caduca-2', label: '🔶 Caduca en 2 días', css: 'status-caduca-2' };
+  if (days === 3) return { key: 'caduca-3', label: '🔔 Caduca en 3 días', css: 'status-caduca-3' };
+  return { key: 'en-fecha', label: `✅ En fecha · ${days}d`, css: 'status-en-fecha' };
+}
+
+// Keep these for backward compat with previewFromWallet
+function isExpired(caduca) { return getValeStatus(caduca).key === 'caducado'; }
+function daysLeft(caduca) {
+  const expiry = parseExpiryDate(caduca);
+  if (!expiry) return null;
+  return Math.ceil((expiry - new Date()) / 86400000);
+}
+
+// ===== EXPIRY ALERT SYSTEM =====
+function expiryAlertKey(user) { return 'vales-expiry-alerted:' + user; }
+
+function getAlertedSerials(user) {
+  try { return JSON.parse(localStorage.getItem(expiryAlertKey(user)) || '[]'); } catch(e) { return []; }
+}
+function setAlertedSerials(user, serials) {
+  try { localStorage.setItem(expiryAlertKey(user), JSON.stringify(serials)); } catch(e) {}
+}
+
+async function checkExpiryAlerts(user) {
+  if (!user) return;
+  const data = await loadWalletData(user);
+  const alerted = getAlertedSerials(user);
+  const toAlert = [];
+
+  data.forEach(vale => {
+    const status = getValeStatus(vale.caduca);
+    const alertKeys = ['caduca-1', 'caduca-2', 'caduca-3', 'caducado'];
+    if (!alertKeys.includes(status.key)) return;
+    // Alert once per (serial + status key) combo — re-alerts if status changes
+    const alertId = vale.serial + ':' + status.key;
+    if (!alerted.includes(alertId)) toAlert.push({ vale, status, alertId });
+  });
+
+  if (toAlert.length === 0) return;
+
+  // Mark as alerted
+  const newAlerted = [...alerted, ...toAlert.map(a => a.alertId)];
+  setAlertedSerials(user, newAlerted);
+
+  // Play sound + vibrate
+  playNotificationSound();
+  vibrateDevice();
+
+  // Show expiry popup
+  showExpiryPopup(toAlert);
+}
+
+function showExpiryPopup(alerts) {
+  const overlay = document.getElementById('newValeOverlay');
+  const title   = document.getElementById('newValeTitle');
+  const sub     = document.getElementById('newValeSub');
+  const list    = document.getElementById('newValeList');
+  if (!overlay) return;
+
+  title.textContent = alerts.length === 1 ? '⏰ Aviso de caducidad' : `⏰ ${alerts.length} vales con aviso`;
+  sub.textContent   = 'Revisa el estado de tus vales:';
+  list.innerHTML    = alerts.map(({ vale, status }) => `
+    <div class="new-vale-item ${status.css}-item">
+      <div>${status.label} · <em>${vale.concept}</em></div>
+      <div class="new-vale-item-from">De ${vale.from} · vence ${vale.caduca}</div>
+    </div>`).join('');
+
+  overlay.classList.add('visible');
+}
+
 
 async function deleteFromWallet(owner, id) {
   const data = await loadWalletData(owner);
@@ -876,13 +1359,10 @@ async function renderWallet() {
   const smallAv = av => av.replace('width="52" height="52"', 'width="36" height="36"');
 
   container.innerHTML = data.map(vale => {
-    const expired = isExpired(vale.caduca);
-    const days = daysLeft(vale.caduca);
-    let badge = '✨ Sin caducidad';
-    if (days !== null) badge = expired ? 'Caducado' : days === 0 ? '¡Hoy!' : days === 1 ? '1 día' : days + ' días';
+    const status = getValeStatus(vale.caduca);
     const av = vale.from === walletTab ? smallAv(ownerAv) : smallAv(senderAv);
     const idSafe = vale.id;
-    return `<div class="vale-card ${expired ? 'caducado' : ''}">
+    return `<div class="vale-card ${status.css}">
       <div class="vale-card-avatar">${av}</div>
       <div class="vale-card-body">
         <div class="vale-card-concept">${vale.concept}</div>
@@ -890,7 +1370,7 @@ async function renderWallet() {
         <div class="vale-card-meta">Nº ${vale.serial}</div>
       </div>
       <div class="vale-card-status">
-        <div class="vale-card-badge">${badge}</div>
+        <div class="vale-card-badge ${status.css}-badge">${status.label}</div>
         <div style="display:flex;gap:0.3rem;margin-top:0.2rem;">
           <button class="vale-card-action" onclick="previewFromWallet(${idSafe})" title="Ver y compartir">👁</button>
           <button class="vale-card-delete" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Eliminar">🗑</button>
@@ -1019,7 +1499,17 @@ function createFloaters() {
 }
 
 // ===== INIT =====
-createStars(); createFloaters(); renderTags(); updateAvatars(); renderWallet();
+createStars(); createFloaters();
+renderTags(); updateAvatars(); renderWallet();
+
+// Lock sender direction if identity already known
+if (currentUser) lockSender();
+
+// Onboarding / identity check
+showOnboarding();
+
+// Start polling for new vales
+startPolling();
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>

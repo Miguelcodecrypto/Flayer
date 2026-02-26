@@ -498,6 +498,88 @@ h1 {
 .vale-card-from { font-size: 0.72rem; font-family: 'Playfair Display', serif; font-style: italic; color: var(--moonlight); margin-top: 2px; }
 .vale-card-meta { font-family: 'Special Elite', monospace; font-size: 0.52rem; letter-spacing: 0.1em; color: var(--moonlight); margin-top: 3px; }
 .vale-card-status { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+
+/* ===== DELETE CONFIRM DIALOG ===== */
+.delete-confirm-overlay {
+  position: fixed; inset: 0; z-index: 950;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; opacity: 0; pointer-events: none;
+  transition: opacity 0.35s;
+}
+.delete-confirm-overlay.visible { opacity: 1; pointer-events: all; }
+.delete-confirm-box {
+  background: linear-gradient(160deg, #eef8f0, #e8f5f8);
+  border: 1.5px solid rgba(42,138,154,0.25);
+  border-radius: 1.6rem; padding: 2rem 1.6rem 1.6rem;
+  max-width: 340px; width: 100%; text-align: center;
+  box-shadow: 0 24px 60px rgba(42,138,154,0.18);
+  transform: scale(0.88) translateY(24px);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.delete-confirm-overlay.visible .delete-confirm-box { transform: scale(1) translateY(0); }
+.delete-confirm-heart { font-size: 3.2rem; margin-bottom: 0.4rem; animation: float 3s ease-in-out infinite; }
+.delete-confirm-title {
+  font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+  font-size: 1.3rem; color: var(--cream); margin-bottom: 0.4rem;
+}
+.delete-confirm-concept {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 0.95rem; color: var(--moonlight);
+  background: rgba(255,255,255,0.6); border-radius: 0.6rem;
+  padding: 0.4rem 0.8rem; margin: 0.5rem 0 0.9rem;
+  border: 1px solid rgba(42,138,154,0.15);
+}
+.delete-confirm-advm {
+  font-family: 'Special Elite', monospace; font-size: 0.72rem;
+  letter-spacing: 0.18em; color: var(--teal);
+  margin-bottom: 0.3rem; text-transform: uppercase;
+}
+.delete-confirm-ilysm {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1rem; color: var(--rose); margin-bottom: 1.4rem;
+  opacity: 0.85;
+}
+.delete-confirm-step {
+  font-size: 0.8rem; color: var(--moonlight); margin-bottom: 1rem;
+  font-style: italic; opacity: 0.75;
+}
+.delete-confirm-btns { display: flex; flex-direction: column; gap: 0.65rem; }
+.delete-confirm-btn {
+  padding: 0.75rem 1rem; border-radius: 0.85rem; border: none;
+  font-family: 'Playfair Display', serif; font-size: 0.95rem;
+  font-style: italic; cursor: pointer; transition: all 0.2s;
+}
+.delete-confirm-btn.cancel {
+  background: linear-gradient(135deg, #2a8a9a, #1a7a6a);
+  color: white; box-shadow: 0 4px 14px rgba(42,138,154,0.3);
+}
+.delete-confirm-btn.cancel:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(42,138,154,0.4); }
+.delete-confirm-btn.confirm-step {
+  background: rgba(255,255,255,0.6); color: var(--moonlight);
+  border: 1px solid rgba(42,138,154,0.2);
+}
+.delete-confirm-btn.confirm-step:hover { background: rgba(255,255,255,0.85); }
+.delete-confirm-btn.danger {
+  background: rgba(180,60,60,0.1); color: #8a2020;
+  border: 1px solid rgba(180,60,60,0.25);
+}
+.delete-confirm-btn.danger:hover { background: rgba(180,60,60,0.18); }
+
+/* ADVM tag inside card */
+.advm-tag {
+  display: inline-block; font-family: 'Special Elite', monospace;
+  font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+  background: rgba(42,138,154,0.12); color: var(--teal);
+  border: 1px solid rgba(42,138,154,0.2); border-radius: 0.3rem;
+  padding: 1px 5px; vertical-align: middle; margin-left: 0.3rem;
+}
+
+/* Locked delete button */
+.vale-card-delete--locked {
+  cursor: not-allowed !important; opacity: 0.15 !important; filter: grayscale(1);
+}
+.vale-card-delete--locked:hover { opacity: 0.2 !important; transform: none !important; }
 .vale-card-delete { background: none; border: none; font-size: 0.9rem; cursor: pointer; opacity: 0.3; transition: opacity 0.2s; padding: 2px; }
 .vale-card-delete:hover { opacity: 0.8; }
 .vale-card-action { background: none; border: none; font-size: 0.9rem; cursor: pointer; opacity: 0.5; transition: opacity 0.2s, transform 0.15s; padding: 2px; }
@@ -542,6 +624,19 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
           <div class="onboarding-btn-sub">Recibirás los vales de Florecilla</div>
         </div>
       </button>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM DIALOG -->
+  <div class="delete-confirm-overlay" id="deleteConfirmOverlay">
+    <div class="delete-confirm-box">
+      <div class="delete-confirm-heart">💝</div>
+      <div class="delete-confirm-title" id="deleteConfirmTitle">¿Seguro que quieres borrar?</div>
+      <div class="delete-confirm-concept" id="deleteConfirmConcept"></div>
+      <div class="delete-confirm-advm">ADVM — Amor De Mi Vida</div>
+      <div class="delete-confirm-ilysm" id="deleteConfirmMsg">"I Love You So Much…<br>¿de verdad quieres borrar esto?"</div>
+      <div class="delete-confirm-step" id="deleteConfirmStep"></div>
+      <div class="delete-confirm-btns" id="deleteConfirmBtns"></div>
     </div>
   </div>
 
@@ -1335,11 +1430,101 @@ function showExpiryPopup(alerts) {
 }
 
 
+// ===== DELETE CONFIRM FLOW =====
+let _deleteTarget = null; // { owner, id, vale, step }
+
 async function deleteFromWallet(owner, id) {
+  const data = await loadWalletData(owner);
+  const vale = data.find(v => v.id === id);
+  if (!vale) return;
+
+  const status = getValeStatus(vale.caduca);
+
+  // Vales with a date cannot be deleted until caducado
+  if (status.key !== 'eterna' && status.key !== 'caducado') {
+    shakeCard(id);
+    return;
+  }
+
+  // Store target and start confirmation flow
+  _deleteTarget = { owner, id, vale, step: 1 };
+  showDeleteConfirmStep(1);
+}
+
+function showDeleteConfirmStep(step) {
+  const overlay  = document.getElementById('deleteConfirmOverlay');
+  const titleEl  = document.getElementById('deleteConfirmTitle');
+  const conceptEl= document.getElementById('deleteConfirmConcept');
+  const msgEl    = document.getElementById('deleteConfirmMsg');
+  const stepEl   = document.getElementById('deleteConfirmStep');
+  const btnsEl   = document.getElementById('deleteConfirmBtns');
+  if (!overlay || !_deleteTarget) return;
+
+  const { vale } = _deleteTarget;
+  const isADVM   = getValeStatus(vale.caduca).key === 'eterna';
+  const label    = isADVM ? 'ADVM — Amor De Mi Vida' : '💀 Vale caducado';
+  document.getElementById('deleteConfirmTitle').textContent = step === 1
+    ? '¿Seguro que quieres borrar?' : step === 2
+    ? '¿Estás completamente seguro?' : '⚠️ Última oportunidad';
+  conceptEl.textContent = `"${vale.concept}"`;
+  document.querySelector('.delete-confirm-advm').textContent = label;
+
+  if (step === 1) {
+    msgEl.innerHTML = '💝 <em>ILYSM — I Love You So Much…</em><br>este vale nació del amor. ¿De verdad quieres borrarlo?';
+    stepEl.textContent = 'Paso 1 de 3';
+    btnsEl.innerHTML = `
+      <button class="delete-confirm-btn cancel" onclick="cancelDelete()">💙 No, lo guardo con cariño</button>
+      <button class="delete-confirm-btn confirm-step" onclick="showDeleteConfirmStep(2)">Sí, continuar…</button>`;
+  } else if (step === 2) {
+    msgEl.innerHTML = '🌹 <em>ADVM — Amor De Mi Vida…</em><br>una vez borrado, esta semilla de amor desaparece para siempre.';
+    stepEl.textContent = 'Paso 2 de 3';
+    btnsEl.innerHTML = `
+      <button class="delete-confirm-btn cancel" onclick="cancelDelete()">💙 Mejor no, lo conservo</button>
+      <button class="delete-confirm-btn confirm-step" onclick="showDeleteConfirmStep(3)">Entiendo, continuar…</button>`;
+  } else {
+    msgEl.innerHTML = '💔 <em>¿Seguro? No habrá vuelta atrás.</em><br>Pulsa el icono de borrar para confirmar.';
+    stepEl.textContent = 'Paso 3 de 3 — ahora aparece el botón';
+    btnsEl.innerHTML = `
+      <button class="delete-confirm-btn cancel" onclick="cancelDelete()">💙 Me arrepiento, lo guardo</button>
+      <button class="delete-confirm-btn danger" onclick="confirmDelete()">🗑 Borrar para siempre</button>`;
+  }
+
+  overlay.classList.add('visible');
+}
+
+function cancelDelete() {
+  _deleteTarget = null;
+  document.getElementById('deleteConfirmOverlay').classList.remove('visible');
+}
+
+async function confirmDelete() {
+  if (!_deleteTarget) return;
+  const { owner, id } = _deleteTarget;
+  document.getElementById('deleteConfirmOverlay').classList.remove('visible');
+  _deleteTarget = null;
   const data = await loadWalletData(owner);
   await saveWalletData(owner, data.filter(v => v.id !== id));
   renderWallet();
 }
+
+function shakeCard(id) {
+  // Find card by its delete button and shake it
+  const allBtns = document.querySelectorAll('.vale-card-delete--locked');
+  allBtns.forEach(btn => {
+    if (btn.getAttribute('data-id') == id) {
+      const card = btn.closest('.vale-card');
+      if (!card) return;
+      card.style.transition = 'transform 0.08s';
+      card.style.transform  = 'translateX(6px)';
+      setTimeout(() => card.style.transform = 'translateX(-5px)', 80);
+      setTimeout(() => card.style.transform = 'translateX(4px)',  160);
+      setTimeout(() => card.style.transform = 'translateX(-3px)', 240);
+      setTimeout(() => { card.style.transform = 'translateX(0)'; card.style.transition = ''; }, 320);
+    }
+  });
+}
+
+
 
 async function renderWallet() {
   const data = await loadWalletData(walletTab);
@@ -1359,13 +1544,23 @@ async function renderWallet() {
   const smallAv = av => av.replace('width="52" height="52"', 'width="36" height="36"');
 
   container.innerHTML = data.map(vale => {
-    const status = getValeStatus(vale.caduca);
-    const av = vale.from === walletTab ? smallAv(ownerAv) : smallAv(senderAv);
-    const idSafe = vale.id;
+    const status   = getValeStatus(vale.caduca);
+    const av       = vale.from === walletTab ? smallAv(ownerAv) : smallAv(senderAv);
+    const idSafe   = vale.id;
+    const canDelete= status.key === 'eterna' || status.key === 'caducado';
+
+    const advmTag  = status.key === 'eterna'
+      ? `<span class="advm-tag" title="Amor De Mi Vida — sin caducidad">ADVM</span>`
+      : '';
+
+    const deleteBtn = canDelete
+      ? `<button class="vale-card-delete" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Eliminar este vale">🗑</button>`
+      : `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Solo puedes borrar este vale cuando caduque">🔒</button>`;
+
     return `<div class="vale-card ${status.css}">
       <div class="vale-card-avatar">${av}</div>
       <div class="vale-card-body">
-        <div class="vale-card-concept">${vale.concept}</div>
+        <div class="vale-card-concept">${vale.concept}${advmTag}</div>
         <div class="vale-card-from">De ${vale.from} · ${vale.emitido}</div>
         <div class="vale-card-meta">Nº ${vale.serial}</div>
       </div>
@@ -1373,7 +1568,7 @@ async function renderWallet() {
         <div class="vale-card-badge ${status.css}-badge">${status.label}</div>
         <div style="display:flex;gap:0.3rem;margin-top:0.2rem;">
           <button class="vale-card-action" onclick="previewFromWallet(${idSafe})" title="Ver y compartir">👁</button>
-          <button class="vale-card-delete" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Eliminar">🗑</button>
+          ${deleteBtn}
         </div>
       </div>
     </div>`;

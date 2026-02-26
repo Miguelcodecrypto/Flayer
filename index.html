@@ -3,30 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#1a0a2e">
 <meta name="description" content="Vales de Amor para Florecilla y Chiquitín">
+<meta name="theme-color" content="#d0eef8">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Vales de Amor">
 <title>Vales de Amor 🌙</title>
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Special+Elite&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <style>
 :root {
-  --deep: #d0eef8;
-  --night: #c8f0e8;
-  --twilight: #a8d8e8;
-  --rose: #2a7a8a;
-  --blush: #3a8a7a;
-  --gold: #1a6a7a;
-  --cream: #0d3d4a;
-  --moonlight: #1a5a6a;
+  --rose: #1a6070;
+  --blush: #1a6a5a;
+  --gold: #0a4a5a;
+  --cream: #062535;
+  --moonlight: #0d3d50;
   --parchment: #f5ead0;
   --parchment-dark: #e8d5a3;
   --ink: #2c1810;
   --ink-light: #4a2e1a;
+  --teal: #1a6a7a;
+  --mint: #1a6a5a;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -40,35 +36,33 @@ body {
   overflow-x: hidden;
 }
 
+
+/* ===== STARS & FLOATERS ===== */
 .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 .star {
   position: absolute; border-radius: 50%;
-  animation: twinkle var(--d) ease-in-out infinite alternate;
+  animation: twinkle var(--d, 3s) ease-in-out infinite alternate;
 }
 @keyframes twinkle { from { opacity: 0.2; transform: scale(0.8); } to { opacity: 0.8; transform: scale(1.2); } }
-
-.floaters { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.floaters { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 .floater {
-  position: absolute;
-  animation: float var(--d) ease-in-out infinite alternate;
-  opacity: 0.22;
+  position: absolute; opacity: 0.22;
+  animation: floatUp var(--d, 4s) ease-in-out infinite alternate;
 }
-@keyframes float {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-18px) rotate(8deg); }
-}
+@keyframes floatUp { from { transform: translateY(0) rotate(-5deg); } to { transform: translateY(-18px) rotate(5deg); } }
 
-.app {
-  position: relative; z-index: 1; min-height: 100vh;
+/* ===== LAYOUT ===== */
+.container {
+  max-width: 520px; margin: 0 auto; padding: 2rem 1.2rem 3rem;
   display: flex; flex-direction: column; align-items: center;
-  padding: 2rem 1rem 3rem;
+  position: relative; z-index: 1;
 }
 
-header { text-align: center; margin-bottom: 2rem; }
-.moon-icon {
-  font-size: 3.5rem; display: block;
-  filter: drop-shadow(0 0 20px #d4a853bb);
+/* ===== HEADER ===== */
+.header { text-align: center; margin-bottom: 2rem; }
+.moon-icon { font-size: 2.2rem; display: block; margin-bottom: 0.4rem;
   animation: moonGlow 3s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 8px rgba(42,138,154,0.4));
 }
 @keyframes moonGlow {
   from { filter: drop-shadow(0 0 8px rgba(42,138,154,0.4)); }
@@ -76,124 +70,135 @@ header { text-align: center; margin-bottom: 2rem; }
 }
 h1 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 6vw, 3rem);
-  font-style: italic;
+  font-size: 2.1rem; font-style: italic;
   background: linear-gradient(135deg, #1a7a8a, #2a9a7a, #1a6a9a);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  line-height: 1.2; margin-top: 0.3rem;
 }
 .subtitle {
-  font-size: 0.85rem; color: var(--moonlight); opacity: 0.75;
+  font-size: 0.85rem; color: var(--moonlight);
   letter-spacing: 0.25em; text-transform: uppercase; margin-top: 0.4rem;
 }
 
+/* ===== INSTALL BANNER ===== */
 .install-banner {
   display: none; width: 100%; max-width: 480px;
-  background: rgba(255,255,255,0.6);
-  border: 1px solid rgba(196,96,122,0.3); border-radius: 1rem;
-  padding: 1rem 1.5rem; margin-bottom: 1.5rem;
-  align-items: center; gap: 1rem; cursor: pointer; transition: all 0.3s;
-  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.55); border: 1px solid rgba(42,138,154,0.2);
+  border-radius: 0.75rem; padding: 0.8rem 1.2rem; margin-bottom: 1.2rem;
+  cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s;
+  display: flex; align-items: center; gap: 0.8rem;
 }
-.install-banner:hover { transform: scale(1.01); }
-.install-banner.show { display: flex; animation: fadeUp 0.5s ease; }
+.install-icon { font-size: 1.5rem; }
 .install-text strong { display: block; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); }
 .install-text span { font-size: 0.8rem; opacity: 0.7; }
 
-.sender-avatars-preview {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.2rem;
-  margin-bottom: 0.8rem;
-}
-.sender-avatar-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-}
-.sender-avatar-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 0.75rem;
-  font-style: italic;
-  color: var(--moonlight);
-  opacity: 0.8;
-}
-.sender-avatar-wrap svg {
-  filter: drop-shadow(0 3px 8px rgba(42,138,154,0.25));
-  transition: transform 0.3s;
-}
-.sender-avatar-wrap svg:hover { transform: scale(1.1); }
+/* ===== SENDER SECTION ===== */
+.sender-section {
   display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
   margin-bottom: 1.8rem;
-  background: rgba(255,255,255,0.55); border: 1px solid rgba(196,96,122,0.2);
-  border-radius: 1rem; padding: 1rem 1.5rem; backdrop-filter: blur(10px);
-  width: 100%; max-width: 480px;
-  box-shadow: 0 4px 20px rgba(196,96,122,0.08);
+  background: rgba(255,255,255,0.55); border: 1px solid rgba(42,138,154,0.2);
+  border-radius: 1rem; padding: 1rem 1.5rem;
+  backdrop-filter: blur(10px); width: 100%; max-width: 480px;
+  box-shadow: 0 4px 20px rgba(42,138,154,0.1);
 }
-.sender-label { font-size: 0.8rem; color: var(--blush); letter-spacing: 0.18em; text-transform: uppercase; }
+.sender-label { font-size: 0.8rem; color: var(--teal); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; }
+.sender-avatars-preview {
+  display: flex; align-items: center; justify-content: center; gap: 1.2rem; margin-bottom: 0.8rem;
+}
+.sender-avatar-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+.sender-avatar-name {
+  font-family: 'Playfair Display', serif; font-size: 0.75rem; font-style: italic; color: var(--moonlight);
+}
+.sender-avatar-wrap svg { filter: drop-shadow(0 3px 8px rgba(42,138,154,0.25)); transition: transform 0.3s; }
+.sender-avatar-wrap svg:hover { transform: scale(1.1); }
 .sender-btns { display: flex; gap: 0.7rem; }
 .sender-btn {
-  padding: 0.55rem 1.3rem; border: 1px solid rgba(212,168,83,0.4);
-  border-radius: 2rem; background: transparent; color: var(--cream);
+  padding: 0.55rem 1.3rem; border: 1px solid rgba(42,138,154,0.35);
+  border-radius: 2rem; background: rgba(255,255,255,0.5); color: var(--cream);
   font-family: 'Playfair Display', serif; font-size: 0.95rem; cursor: pointer; transition: all 0.3s;
 }
 .sender-btn.active {
   background: linear-gradient(135deg, #2a8a9a, #1a7a6a);
-  border-color: #2a8a9a; box-shadow: 0 0 18px rgba(42,138,154,0.4);
-  color: white;
+  border-color: #2a8a9a; box-shadow: 0 0 18px rgba(42,138,154,0.4); color: white;
 }
+.sender-btn:hover:not(.active) { background: rgba(42,138,154,0.1); }
 
+/* ===== FORM CARD ===== */
 .form-card {
-  width: 100%; max-width: 480px;
-  background: rgba(255,255,255,0.65);
-  border: 1px solid rgba(196,96,122,0.2); border-radius: 1.5rem;
-  padding: 1.8rem; backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px rgba(196,96,122,0.12); margin-bottom: 1.8rem;
+  width: 100%; max-width: 480px; margin-bottom: 1.5rem;
+  background: rgba(255,255,255,0.6); border: 1px solid rgba(42,138,154,0.2);
+  border-radius: 1rem; padding: 1.5rem;
+  backdrop-filter: blur(12px); box-shadow: 0 4px 20px rgba(42,138,154,0.1);
 }
 .form-label {
-  font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--blush); margin-bottom: 0.5rem; display: block;
+  font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 0.5rem; display: block; font-weight: 700;
 }
 .concept-input {
-  width: 100%; background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(196,96,122,0.3); border-radius: 0.75rem;
-  color: var(--cream); font-family: 'Playfair Display', serif;
-  font-size: 1.05rem; font-style: italic; padding: 0.8rem 1rem;
-  outline: none; transition: border-color 0.3s, box-shadow 0.3s;
-  resize: none; min-height: 75px; margin-bottom: 1.3rem;
+  width: 100%; background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(42,138,154,0.25);
+  border-radius: 0.75rem; color: var(--cream);
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; font-style: italic; font-weight: 600;
+  padding: 0.75rem 1rem; outline: none; resize: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
-.concept-input::placeholder { color: rgba(100,50,120,0.35); }
-.concept-input:focus { border-color: var(--rose); box-shadow: 0 0 15px rgba(196,96,122,0.2); }
+.concept-input::placeholder { color: rgba(6,37,53,0.45); }
+.concept-input:focus { border-color: var(--rose); box-shadow: 0 0 15px rgba(42,138,154,0.2); }
+
 .generate-btn {
-  width: 100%; padding: 0.95rem;
+  width: 100%; padding: 0.95rem; margin-top: 1rem;
   background: linear-gradient(135deg, #2a8a9a 0%, #1a7a6a 50%, #1a6a9a 100%);
   border: none; border-radius: 0.75rem; color: white;
   font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic;
-  cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 20px rgba(42,138,154,0.35);
+  cursor: pointer; transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(42,138,154,0.35);
   overflow: hidden; position: relative;
 }
 .generate-btn::before {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.12), transparent);
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
   transform: translateX(-100%); transition: transform 0.5s;
 }
 .generate-btn:hover::before { transform: translateX(100%); }
 .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(42,138,154,0.5); }
 
+/* ===== EXPIRY ===== */
+.expiry-section { margin-top: 0.2rem; }
+.expiry-select {
+  width: 100%; background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(42,138,154,0.3); border-radius: 0.75rem;
+  color: var(--cream); font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-style: italic; padding: 0.7rem 2.5rem 0.7rem 1rem;
+  outline: none; cursor: pointer; transition: border-color 0.3s, box-shadow 0.3s;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232a8a9a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 1rem center; background-size: 12px;
+}
+.expiry-select:focus { border-color: var(--rose); box-shadow: 0 0 15px rgba(42,138,154,0.2); }
+.expiry-custom {
+  display: none; width: 100%; margin-top: 0.6rem;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(42,138,154,0.3); border-radius: 0.75rem;
+  color: var(--cream); font-family: 'Playfair Display', serif;
+  font-size: 1rem; padding: 0.7rem 1rem; outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.expiry-custom:focus { border-color: var(--rose); box-shadow: 0 0 15px rgba(42,138,154,0.2); }
+
+/* ===== SUGGESTIONS ===== */
 .suggestions { width: 100%; max-width: 480px; margin-bottom: 2rem; }
 .suggestions-title {
   font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--blush); opacity: 0.6; margin-bottom: 0.7rem;
+  color: var(--teal); margin-bottom: 0.7rem;
 }
 .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .tag {
-  padding: 0.35rem 0.85rem; border: 1px solid rgba(196,96,122,0.3);
-  border-radius: 2rem; font-size: 0.82rem; color: var(--moonlight);
-  cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.5);
+  padding: 0.3rem 0.75rem; border: 1px solid rgba(42,138,154,0.25);
+  border-radius: 2rem; background: rgba(255,255,255,0.5);
+  font-family: 'Playfair Display', serif; font-size: 0.82rem; font-style: italic; color: var(--cream);
+  cursor: pointer; transition: all 0.25s;
 }
-.tag:hover { background: rgba(196,96,122,0.1); border-color: var(--rose); color: var(--rose); }
+.tag:hover { background: rgba(42,138,154,0.1); border-color: var(--teal); color: var(--moonlight); }
 
 /* ===== TICKET ===== */
 .flyer-container { width: 100%; max-width: 460px; display: none; }
@@ -202,416 +207,192 @@ h1 {
   from { opacity: 0; transform: translateY(40px) scale(0.95); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 .ticket-shadow {
-  filter: drop-shadow(0 25px 50px rgba(0,0,0,0.75)) drop-shadow(0 0 25px rgba(196,96,122,0.15));
+  filter: drop-shadow(0 20px 40px rgba(42,138,154,0.22)) drop-shadow(0 8px 20px rgba(0,0,0,0.12));
 }
-
-.ticket {
-  background: var(--parchment);
-  position: relative;
-  border-radius: 4px;
-}
-
-/* Zigzag edges via SVG-like clip */
-.zz-top {
-  width: 100%; height: 14px; overflow: hidden; line-height: 0;
-}
-.zz-top svg, .zz-bot svg { display: block; width: 100%; }
-
-.ticket-body {
-  background: var(--parchment);
-  padding: 1.2rem 1.6rem 1rem;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Ruled lines texture */
-.ticket-body::after {
-  content: '';
-  position: absolute; inset: 0;
-  background-image: repeating-linear-gradient(
-    0deg, transparent, transparent 27px,
-    rgba(139,90,43,0.07) 27px, rgba(139,90,43,0.07) 28px
-  );
-  pointer-events: none;
-}
-
-.ticket-watermark {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%) rotate(-28deg);
-  font-family: 'Playfair Display', serif;
-  font-size: 4.5rem; font-style: italic;
-  color: rgba(196,96,122,0.06);
-  white-space: nowrap; pointer-events: none; user-select: none;
-}
-
-/* Header */
+.ticket { border-radius: 0.8rem; overflow: hidden; }
 .ticket-header {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  margin-bottom: 0.75rem; position: relative; z-index: 1;
+  background: linear-gradient(135deg, #2a8a9a, #1a7a6a);
+  padding: 0.7rem 1.2rem; display: flex; justify-content: space-between; align-items: center;
 }
-.t-logo-icon { font-size: 1.7rem; line-height: 1; }
+.t-logo { display: flex; align-items: center; gap: 0.4rem; }
+.t-logo-icon { font-size: 1rem; }
 .t-logo-text {
-  font-family: 'Special Elite', monospace; font-size: 0.55rem;
-  letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink-light); margin-top: 3px;
+  font-family: 'Special Elite', monospace; font-size: 0.6rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.9);
 }
+.t-serial { text-align: right; }
 .t-serial-label {
-  font-family: 'Special Elite', monospace; font-size: 0.5rem;
-  letter-spacing: 0.15em; color: var(--ink-light); opacity: 0.55;
-  text-transform: uppercase; text-align: right;
+  font-family: 'Special Elite', monospace; font-size: 0.45rem;
+  letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.7);
 }
 .t-serial-num {
-  font-family: 'Special Elite', monospace; font-size: 0.85rem;
-  color: var(--ink); letter-spacing: 0.1em;
+  font-family: 'Special Elite', monospace; font-size: 0.65rem;
+  letter-spacing: 0.15em; color: rgba(255,255,255,0.95);
 }
-
-.t-hr { border: none; border-top: 1px dashed rgba(139,90,43,0.3); margin: 0.65rem 0; position: relative; z-index:1; }
-
-/* Parties */
-.ticket-parties {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 0.8rem; position: relative; z-index: 1;
+.ticket-body {
+  background: var(--parchment); padding: 1rem 1.2rem; position: relative; overflow: hidden;
 }
+.ticket-body::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(139,90,43,0.06) 27px, rgba(139,90,43,0.06) 28px);
+}
+.ticket-watermark {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(-30deg);
+  font-family: 'Playfair Display', serif; font-size: 4rem; font-style: italic; font-weight: 700;
+  color: rgba(42,138,154,0.06); white-space: nowrap; pointer-events: none; z-index: 0; line-height: 1;
+}
+.t-hr { border: none; border-top: 1px solid rgba(139,90,43,0.15); margin: 0.6rem 0; }
+.ticket-parties { display: flex; align-items: center; justify-content: space-between; margin: 0.5rem 0; position: relative; z-index: 1; }
 .t-party { text-align: center; flex: 1; }
 .t-avatar { display: flex; justify-content: center; margin-bottom: 0.3rem; }
 .t-avatar svg { filter: drop-shadow(0 2px 6px rgba(42,138,154,0.2)); transition: transform 0.3s; }
 .t-avatar svg:hover { transform: scale(1.08); }
-.t-party-label {
-  font-family: 'Special Elite', monospace; font-size: 0.52rem;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--ink-light); opacity: 0.55; display: block; margin-bottom: 2px;
-}
-.t-party-name {
-  font-family: 'Playfair Display', serif; font-size: 1.15rem;
-  font-style: italic; color: var(--ink);
-}
-.t-arrow { font-size: 1.2rem; opacity: 0.4; padding: 0 0.4rem; }
-
-/* Vale box */
+.t-party-label { font-family: 'Special Elite', monospace; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-light); display: block; margin-bottom: 2px; }
+.t-party-name { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-style: italic; color: var(--ink); }
+.t-arrow { font-size: 1.2rem; opacity: 0.7; padding: 0 0.4rem; }
 .ticket-vale {
-  background: rgba(139,90,43,0.07);
-  border: 1px dashed rgba(139,90,43,0.28);
-  border-radius: 5px;
-  padding: 0.9rem 4.5rem 0.9rem 1.1rem; /* right padding for stamp */
-  margin: 0.6rem 0;
-  position: relative; z-index: 1;
-  text-align: center;
-  min-height: 90px;
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  background: rgba(42,138,154,0.06); border: 1px solid rgba(42,138,154,0.25);
+  border-radius: 0.4rem; padding: 0.7rem 0.9rem; margin: 0.5rem 0; position: relative; z-index: 1;
 }
-.t-vale-label {
-  font-family: 'Special Elite', monospace; font-size: 0.58rem;
-  letter-spacing: 0.3em; text-transform: uppercase;
-  color: var(--ink-light); opacity: 0.5; margin-bottom: 0.35rem;
-}
-.t-vale-por {
-  font-family: 'Playfair Display', serif; font-size: 0.82rem;
-  font-style: italic; color: var(--ink-light); margin-bottom: 0.2rem;
-}
-.t-vale-concept {
-  font-family: 'Playfair Display', serif; font-size: 1.4rem;
-  font-weight: 700; color: var(--ink); line-height: 1.3;
-}
-
-/* Stamp */
+.t-vale-label { font-family: 'Special Elite', monospace; font-size: 0.5rem; letter-spacing: 0.2em; color: var(--ink-light); margin-bottom: 0.35rem; }
+.t-vale-por { font-family: 'Cormorant Garamond', serif; font-size: 0.7rem; font-style: italic; color: var(--ink-light); margin-bottom: 0.2rem; }
+.t-vale-concept { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--ink); line-height: 1.3; }
+.ticket-deco { text-align: center; font-size: 1rem; margin: 0.55rem 0; opacity: 0.7; position: relative; z-index: 1; }
 .ticket-stamp {
-  position: absolute; right: 0.8rem; top: 50%;
-  transform: translateY(-50%) rotate(12deg);
-  width: 68px; height: 68px;
-  border: 2.5px solid rgba(196,96,122,0.5);
-  border-radius: 50%;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
+  position: absolute; top: 1rem; right: 1rem;
+  width: 52px; height: 52px; border: 2px solid rgba(42,138,154,0.5);
+  border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transform: rotate(15deg); z-index: 2;
 }
-.ticket-stamp::before {
-  content: '';
-  position: absolute; inset: 3px;
-  border: 1px solid rgba(196,96,122,0.3);
-  border-radius: 50%;
-}
-.t-stamp-icon { font-size: 1.3rem; position: relative; z-index: 1; line-height: 1; }
-.t-stamp-text {
-  font-family: 'Special Elite', monospace; font-size: 0.42rem;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(196,96,122,0.65); position: relative; z-index: 1; line-height: 1.3;
-}
-
-/* Deco row */
-.ticket-deco {
-  display: flex; justify-content: center; gap: 0.35rem;
-  font-size: 1rem; margin: 0.55rem 0; opacity: 0.45;
-  position: relative; z-index: 1;
-}
-
-/* Footer row */
-.ticket-footer {
-  display: flex; justify-content: space-between; align-items: flex-end;
-  position: relative; z-index: 1;
-}
+.t-stamp-icon { font-size: 1.1rem; }
+.t-stamp-text { font-family: 'Special Elite', monospace; font-size: 0.3rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(42,138,154,0.7); text-align: center; line-height: 1.3; }
+.ticket-footer { display: flex; justify-content: space-between; margin-top: 0.5rem; position: relative; z-index: 1; }
 .t-footer-l, .t-footer-r {
-  font-family: 'Special Elite', monospace; font-size: 0.52rem;
-  letter-spacing: 0.08em; color: var(--ink-light); opacity: 0.5; line-height: 1.6;
+  font-family: 'Special Elite', monospace; font-size: 0.5rem;
+  letter-spacing: 0.08em; color: var(--ink-light); line-height: 1.6;
 }
 .t-footer-r { text-align: right; }
 
-/* Tear-off stub */
-.zz-mid-wrap {
-  background: var(--parchment);
-  position: relative;
-}
-.stub-scissors {
-  position: absolute; left: 1rem; top: -0.6rem;
-  font-size: 0.9rem; opacity: 0.35; z-index: 2;
-  background: var(--parchment-dark); padding: 0 3px;
-}
+/* Zigzag tear */
+.zz-mid-wrap { line-height: 0; position: relative; z-index: 2; }
+.zz-mid-wrap svg { display: block; width: 100%; }
 
+/* Stub */
 .ticket-stub {
-  background: linear-gradient(135deg, #f0e0cc, var(--parchment-dark));
-  border-top: 1px dashed rgba(139,90,43,0.3);
-  padding: 0.75rem 1.4rem;
-  display: flex; align-items: center; justify-content: space-between; gap: 0.8rem;
+  background: linear-gradient(135deg, var(--parchment-dark), var(--parchment));
+  padding: 0.65rem 1.2rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
 }
-.stub-info { flex: 1; }
-.stub-title {
-  font-family: 'Playfair Display', serif; font-size: 0.78rem;
-  font-style: italic; font-weight: 700; color: var(--ink);
-}
-.stub-sub {
-  font-family: 'Special Elite', monospace; font-size: 0.52rem;
-  letter-spacing: 0.1em; color: var(--ink-light); opacity: 0.55;
-  text-transform: uppercase; margin-top: 2px;
-}
-.stub-right {
-  font-family: 'Special Elite', monospace; font-size: 0.5rem;
-  color: var(--ink-light); opacity: 0.45; text-align: right; line-height: 1.6;
-}
-
-/* Barcode */
+.stub-left { flex: 1; }
+.stub-title { font-family: 'Playfair Display', serif; font-size: 0.78rem; font-style: italic; font-weight: 700; color: var(--ink); }
+.stub-sub { font-family: 'Special Elite', monospace; font-size: 0.45rem; letter-spacing: 0.1em; color: var(--ink-light); text-transform: uppercase; margin-top: 2px; }
+.stub-right { font-family: 'Special Elite', monospace; font-size: 0.45rem; letter-spacing: 0.08em; color: var(--ink-light); text-align: right; line-height: 1.6; }
 .barcode { display: flex; gap: 1.5px; align-items: stretch; height: 32px; opacity: 0.35; flex-shrink: 0; }
 .bc-bar { background: var(--ink); border-radius: 1px; }
 
-/* Action buttons */
+/* ===== ACTION BTNS ===== */
 .action-btns { display: flex; gap: 1rem; margin-top: 1.5rem; }
 .action-btn {
-  flex: 1; padding: 0.8rem; border-radius: 0.75rem;
-  border: 1px solid rgba(196,96,122,0.3); background: rgba(255,255,255,0.6);
-  color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 0.95rem;
-  cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-  backdrop-filter: blur(8px);
+  flex: 1; padding: 0.75rem; border: 1px solid rgba(42,138,154,0.25);
+  border-radius: 0.75rem; background: rgba(255,255,255,0.6);
+  color: var(--cream); font-weight: 600; font-family: 'Cormorant Garamond', serif; font-size: 0.95rem;
+  cursor: pointer; transition: all 0.3s; backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
 }
-.action-btn:hover { background: rgba(196,96,122,0.1); border-color: var(--rose); transform: translateY(-2px); }
-.new-btn { border-color: rgba(196,96,122,0.3); }
-.new-btn:hover { background: rgba(196,96,122,0.1); border-color: var(--rose); }
-
-.whatsapp-btn {
-  border-color: rgba(37,211,102,0.4) !important;
-  color: #25d366 !important;
+.action-btn:hover { background: rgba(42,138,154,0.1); border-color: var(--teal); }
+.action-btn.whatsapp-btn {
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  border-color: #25d366; color: white !important;
 }
-.whatsapp-btn:hover {
-  background: rgba(37,211,102,0.1) !important;
-  border-color: #25d366 !important;
-  transform: translateY(-2px);
-}
+.action-btn.whatsapp-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
 /* ===== WALLET ===== */
-.wallet-section {
-  width: 100%; max-width: 480px;
-  margin-top: 2.5rem;
-}
-.wallet-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 1rem;
-}
+.wallet-section { width: 100%; max-width: 480px; margin-top: 2.5rem; }
+.wallet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 .wallet-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.3rem; font-style: italic;
-  background: linear-gradient(135deg, #1a7a8a, #2a9a7a);
+  font-family: 'Playfair Display', serif; font-size: 1.3rem; font-style: italic;
+  background: linear-gradient(135deg, #0a5060, #0a6050);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.wallet-tabs {
-  display: flex; gap: 0.5rem;
-  margin-bottom: 1.2rem;
-}
+.wallet-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.2rem; }
 .wallet-tab {
   flex: 1; padding: 0.55rem 0.5rem;
-  border: 1px solid rgba(42,138,154,0.3);
-  border-radius: 2rem;
-  background: rgba(255,255,255,0.5);
-  color: var(--moonlight);
-  font-family: 'Playfair Display', serif;
-  font-size: 0.85rem; font-style: italic;
-  cursor: pointer; transition: all 0.25s;
-  text-align: center;
+  border: 1px solid rgba(42,138,154,0.3); border-radius: 2rem;
+  background: rgba(255,255,255,0.5); color: var(--cream);
+  font-family: 'Playfair Display', serif; font-size: 0.85rem; font-style: italic;
+  cursor: pointer; transition: all 0.25s; text-align: center;
 }
 .wallet-tab.active {
   background: linear-gradient(135deg, #2a8a9a, #1a7a6a);
-  border-color: #2a8a9a; color: white;
-  box-shadow: 0 0 14px rgba(42,138,154,0.35);
+  border-color: #2a8a9a; color: white; box-shadow: 0 0 14px rgba(42,138,154,0.35);
 }
 .wallet-empty {
   text-align: center; padding: 2rem 1rem;
-  background: rgba(255,255,255,0.4);
-  border: 1px dashed rgba(42,138,154,0.25);
-  border-radius: 1rem;
-  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.4); border: 1px dashed rgba(42,138,154,0.25);
+  border-radius: 1rem; backdrop-filter: blur(8px);
 }
 .wallet-empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-.wallet-empty-text {
-  font-family: 'Playfair Display', serif;
-  font-size: 0.95rem; font-style: italic;
-  color: var(--moonlight); opacity: 0.6;
-}
+.wallet-empty-text { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-style: italic; color: var(--moonlight); }
 .wallet-cards { display: flex; flex-direction: column; gap: 0.8rem; }
-
 .vale-card {
-  background: rgba(255,255,255,0.65);
-  border: 1px solid rgba(42,138,154,0.2);
-  border-radius: 1rem;
-  padding: 0.9rem 1.1rem;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 3px 14px rgba(42,138,154,0.08);
+  background: rgba(255,255,255,0.65); border: 1px solid rgba(42,138,154,0.2);
+  border-radius: 1rem; padding: 0.9rem 1.1rem;
+  backdrop-filter: blur(10px); box-shadow: 0 3px 14px rgba(42,138,154,0.08);
   display: flex; align-items: center; gap: 0.9rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-  position: relative; overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
 }
 .vale-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,138,154,0.15); }
-.vale-card.caducado {
-  opacity: 0.55;
-  border-color: rgba(180,80,80,0.2);
-  background: rgba(255,240,240,0.5);
-}
-.vale-card.caducado::after {
-  content: 'CADUCADO';
-  position: absolute; top: 50%; right: -18px;
-  transform: translateY(-50%) rotate(90deg);
-  font-family: 'Special Elite', monospace;
-  font-size: 0.45rem; letter-spacing: 0.2em;
-  color: rgba(180,80,80,0.5);
-}
+.vale-card.caducado { opacity: 0.55; border-color: rgba(180,80,80,0.2); background: rgba(255,240,240,0.5); }
 .vale-card-avatar { flex-shrink: 0; }
-.vale-card-avatar svg { display: block; }
 .vale-card-body { flex: 1; min-width: 0; }
 .vale-card-concept {
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem; font-weight: 700; font-style: italic;
-  color: var(--cream);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; font-style: italic;
+  color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.vale-card-meta {
-  font-family: 'Special Elite', monospace;
-  font-size: 0.52rem; letter-spacing: 0.1em;
-  color: var(--moonlight); opacity: 0.65;
-  margin-top: 3px;
-}
-.vale-card-from {
-  font-size: 0.72rem;
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  color: var(--moonlight); opacity: 0.75;
-  margin-top: 2px;
-}
-.vale-card-status {
-  flex-shrink: 0;
-  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
-}
+.vale-card-from { font-size: 0.72rem; font-family: 'Playfair Display', serif; font-style: italic; color: var(--moonlight); margin-top: 2px; }
+.vale-card-meta { font-family: 'Special Elite', monospace; font-size: 0.52rem; letter-spacing: 0.1em; color: var(--moonlight); margin-top: 3px; }
+.vale-card-status { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
 .vale-card-badge {
-  font-size: 0.5rem; letter-spacing: 0.12em;
-  text-transform: uppercase; font-family: 'Special Elite', monospace;
-  padding: 2px 6px; border-radius: 1rem;
-  background: rgba(42,138,154,0.15); color: #1a7a6a;
+  font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: 'Special Elite', monospace; padding: 2px 6px; border-radius: 1rem;
+  background: rgba(42,138,154,0.2); color: #0a5060; font-weight: 700;
 }
-.vale-card.caducado .vale-card-badge {
-  background: rgba(180,80,80,0.1); color: rgba(180,80,80,0.7);
-}
-.vale-card-delete {
-  background: none; border: none;
-  font-size: 0.9rem; cursor: pointer; opacity: 0.3;
-  transition: opacity 0.2s; padding: 2px;
-}
+.vale-card.caducado .vale-card-badge { background: rgba(180,80,80,0.1); color: rgba(180,80,80,0.7); }
+.vale-card-delete { background: none; border: none; font-size: 0.9rem; cursor: pointer; opacity: 0.3; transition: opacity 0.2s; padding: 2px; }
 .vale-card-delete:hover { opacity: 0.8; }
+.vale-card-action { background: none; border: none; font-size: 0.9rem; cursor: pointer; opacity: 0.5; transition: opacity 0.2s, transform 0.15s; padding: 2px; }
+.vale-card-action:hover { opacity: 1; transform: scale(1.2); }
 
 .wallet-save-btn {
   width: 100%; margin-top: 0.8rem; padding: 0.75rem;
-  border: 1px dashed rgba(42,138,154,0.4);
-  border-radius: 0.75rem;
-  background: rgba(255,255,255,0.4);
-  color: var(--moonlight);
-  font-family: 'Playfair Display', serif;
-  font-size: 0.95rem; font-style: italic;
-  cursor: pointer; transition: all 0.3s;
-  display: none;
+  border: 1px dashed rgba(42,138,154,0.4); border-radius: 0.75rem;
+  background: rgba(255,255,255,0.4); color: var(--cream);
+  font-family: 'Playfair Display', serif; font-size: 0.95rem; font-style: italic;
+  cursor: pointer; transition: all 0.3s; display: none;
 }
 .wallet-save-btn.visible { display: block; }
-.wallet-save-btn:hover {
-  background: rgba(42,138,154,0.1);
-  border-color: var(--teal); color: var(--teal);
-}
+.wallet-save-btn:hover { background: rgba(42,138,154,0.1); border-color: var(--teal); }
 
 footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.15em; }
-
-.expiry-section { margin-top: 0.2rem; }
-
-.expiry-select {
-  width: 100%;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(42,138,154,0.3);
-  border-radius: 0.75rem;
-  color: var(--cream);
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  font-style: italic;
-  padding: 0.7rem 1rem;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.3s, box-shadow 0.3s;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232a8a9a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 12px;
-  padding-right: 2.5rem;
-}
-.expiry-select:focus { border-color: var(--rose); box-shadow: 0 0 15px rgba(42,138,154,0.2); }
-
-.expiry-custom {
-  display: none;
-  width: 100%;
-  margin-top: 0.6rem;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(42,138,154,0.3);
-  border-radius: 0.75rem;
-  color: var(--cream);
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  padding: 0.7rem 1rem;
-  outline: none;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-.expiry-custom:focus { border-color: var(--rose); box-shadow: 0 0 15px rgba(42,138,154,0.2); }
 </style>
 </head>
 <body>
-
 <div class="stars" id="stars"></div>
 <div class="floaters" id="floaters"></div>
 
-<div class="app">
-  <header>
+<div class="container">
+  <div class="header">
     <span class="moon-icon">🌙</span>
     <h1>Vales de Amor</h1>
     <p class="subtitle">para Florecilla &amp; Chiquitín</p>
-  </header>
-
+  </div>
   <div class="install-banner" id="installBanner" onclick="installApp()">
-    <div style="font-size:2rem">📲</div>
+    <div class="install-icon">📱</div>
     <div class="install-text">
-      <strong>Instalar en tu móvil</strong>
+      <strong>Instalar app</strong>
       <span>Añadir a pantalla de inicio</span>
     </div>
-    <div>➕</div>
   </div>
 
   <div class="sender-section">
@@ -634,12 +415,10 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
   </div>
 
   <div class="form-card">
-    <label class="form-label">✦ El vale dice...</label>
-    <textarea class="concept-input" id="conceptInput"
-      placeholder="un abrazo eterno, un beso sorpresa, una tarde de pelis juntos..."
-      rows="3"></textarea>
+    <label class="form-label">✦ el vale dice...</label>
+    <textarea class="concept-input" id="conceptInput" rows="2"
+      placeholder="un abrazo eterno, un beso sorpresa, una tarde de pelis juntos..."></textarea>
     <button class="generate-btn" onclick="generateFlyer()">🌙 Crear mi Vale de Amor</button>
-
     <div class="expiry-section">
       <label class="form-label" style="margin-top:1.1rem;">📅 Fecha de caducidad</label>
       <select class="expiry-select" id="expirySelect" onchange="toggleCustomDate(this)">
@@ -656,74 +435,50 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
     </div>
   </div>
 
-  <div class="suggestions">
-    <div class="suggestions-title">✦ ideas para tu vale</div>
+  <div class="suggestions" id="suggestionsSection">
+    <div class="suggestions-title" id="suggestionsTitle">✦ ideas para tu vale</div>
     <div class="tags" id="tags"></div>
   </div>
 
-  <!-- TICKET -->
   <div class="flyer-container" id="flyerContainer">
     <div class="ticket-shadow">
       <div class="ticket">
-
-        <!-- Zigzag top -->
-        <div style="line-height:0;overflow:hidden;height:14px;">
-          <svg viewBox="0 0 400 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="0,0 400,0 400,14 390,0 380,14 370,0 360,14 350,0 340,14 330,0 320,14 310,0 300,14 290,0 280,14 270,0 260,14 250,0 240,14 230,0 220,14 210,0 200,14 190,0 180,14 170,0 160,14 150,0 140,14 130,0 120,14 110,0 100,14 90,0 80,14 70,0 60,14 50,0 40,14 30,0 20,14 10,0 0,14"
-              fill="#f5ead0"/>
-          </svg>
-        </div>
-
-        <!-- Main body -->
-        <div class="ticket-body">
-          <div class="ticket-watermark">Vale de Amor</div>
-
-          <div class="ticket-header">
-            <div>
-              <div class="t-logo-icon">🌙</div>
-              <div class="t-logo-text">Vale de amor</div>
-            </div>
-            <div>
-              <div class="t-serial-label">Nº de serie</div>
-              <div class="t-serial-num" id="serialNum">──────</div>
-            </div>
+        <div class="ticket-header">
+          <div class="t-logo">
+            <div class="t-logo-icon">🌙</div>
+            <div class="t-logo-text">Vale de amor</div>
           </div>
-
+          <div class="t-serial">
+            <div class="t-serial-label">Nº de serie</div>
+            <div class="t-serial-num" id="serialNum">──────</div>
+          </div>
+        </div>
+        <div class="ticket-body">
+          <div class="ticket-watermark">Vale</div>
+          <div class="ticket-stamp">
+            <div class="t-stamp-icon">💜</div>
+            <div class="t-stamp-text">con todo<br>mi amor</div>
+          </div>
           <hr class="t-hr">
-
           <div class="ticket-parties">
             <div class="t-party">
               <div class="t-avatar" id="avatarFrom">
-                <!-- Florecilla avatar (default) -->
                 <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-                  <!-- Circle bg -->
                   <circle cx="26" cy="26" r="25" fill="#e8f5f0" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
-                  <!-- Neck -->
                   <rect x="21" y="33" width="10" height="8" rx="4" fill="#f5c8a0"/>
-                  <!-- Body -->
                   <ellipse cx="26" cy="47" rx="13" ry="8" fill="#2a2a2a"/>
-                  <!-- Face -->
                   <circle cx="26" cy="26" r="11" fill="#f5c8a0"/>
-                  <!-- Hair top bun - back -->
                   <ellipse cx="26" cy="13" rx="8" ry="5" fill="#6b3a1f"/>
-                  <!-- Hair sides -->
                   <ellipse cx="17" cy="22" rx="3" ry="6" fill="#7a4020"/>
                   <ellipse cx="35" cy="22" rx="3" ry="6" fill="#7a4020"/>
-                  <!-- Hair top -->
                   <ellipse cx="26" cy="17" rx="9" ry="7" fill="#7a4020"/>
-                  <!-- Bun -->
                   <circle cx="26" cy="12" r="5" fill="#6b3a1f"/>
-                  <!-- Fringe -->
                   <path d="M17 20 Q26 16 35 20" fill="#7a4020"/>
-                  <!-- Eyes -->
                   <ellipse cx="22" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
                   <ellipse cx="30" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
-                  <!-- Eye shine -->
                   <circle cx="23" cy="25" r="0.6" fill="white"/>
                   <circle cx="31" cy="25" r="0.6" fill="white"/>
-                  <!-- Smile -->
                   <path d="M21 30 Q26 34 31 30" stroke="#c47a5a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-                  <!-- Cheeks -->
                   <circle cx="19" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
                   <circle cx="33" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
                 </svg>
@@ -734,39 +489,24 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
             <div class="t-arrow">💌</div>
             <div class="t-party">
               <div class="t-avatar" id="avatarTo">
-                <!-- Chiquitín avatar (default) -->
                 <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-                  <!-- Circle bg -->
                   <circle cx="26" cy="26" r="25" fill="#e8f0f8" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
-                  <!-- Neck -->
                   <rect x="21" y="33" width="10" height="8" rx="4" fill="#d4a882"/>
-                  <!-- Body -->
                   <ellipse cx="26" cy="47" rx="13" ry="8" fill="#1a1a1a"/>
-                  <!-- Face -->
                   <circle cx="26" cy="26" r="11" fill="#d4a882"/>
-                  <!-- Shaved head (very short, almost skin) -->
                   <circle cx="26" cy="21" r="11" fill="#c09070"/>
-                  <!-- Very subtle stubble on head -->
                   <circle cx="26" cy="19" r="10.5" fill="#c89878"/>
-                  <!-- Short beard -->
                   <path d="M18 30 Q26 38 34 30 Q30 35 26 36 Q22 35 18 30Z" fill="#b8a898"/>
-                  <!-- Moustache area -->
                   <ellipse cx="26" cy="30" rx="5" ry="2" fill="#b0a090"/>
-                  <!-- Sunglasses frame -->
                   <rect x="16" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
                   <rect x="28" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
-                  <!-- Bridge -->
                   <line x1="24" y1="25.5" x2="28" y2="25.5" stroke="#1a1a2e" stroke-width="1.5"/>
-                  <!-- Temple arms -->
                   <line x1="16" y1="25.5" x2="14" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
                   <line x1="36" y1="25.5" x2="38" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
-                  <!-- Blue lens shine -->
                   <rect x="17" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
                   <rect x="29" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
-                  <!-- Lens glare -->
                   <line x1="18" y1="24.5" x2="21" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
                   <line x1="30" y1="24.5" x2="33" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
-                  <!-- Subtle smile -->
                   <path d="M22 31.5 Q26 34 30 31.5" stroke="#9a7a5a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
                 </svg>
               </div>
@@ -774,61 +514,42 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
               <div class="t-party-name" id="ticketTo">Chiquitín</div>
             </div>
           </div>
-
+          <hr class="t-hr">
           <div class="ticket-vale">
             <div class="t-vale-label">✦ · · · vale por · · · ✦</div>
             <div class="t-vale-por">Este vale te da derecho a</div>
             <div class="t-vale-concept" id="ticketConcept">...</div>
-            <div class="ticket-stamp">
-              <div class="t-stamp-icon">💜</div>
-              <div class="t-stamp-text">con todo<br>mi amor</div>
-            </div>
           </div>
-
-          <div class="ticket-deco">🌸 🌙 🌹 🐾 💫 ❤️ 🌺 🐶</div>
-
-          <hr class="t-hr">
-
+          <div class="ticket-deco">🌸 🌙 🌹 🐾 💫 💙 🌺 🐶</div>
           <div class="ticket-footer">
-            <div class="t-footer-l">Emitido con amor ♥<br>
-            <span id="ticketEmitido">--/--/----</span></div>
+            <div class="t-footer-l">Emitido con amor ♥<br><span id="ticketEmitido">--/--/----</span></div>
             <div class="t-footer-r">Caduca: <span id="ticketCaduca">nunca ✨</span><br>Canjeable cuando quieras</div>
           </div>
         </div>
-
-        <!-- Stub divider (zigzag bottom of main + top of stub) -->
         <div class="zz-mid-wrap">
-          <div class="stub-scissors">✂</div>
-          <div style="line-height:0;overflow:hidden;height:14px;">
-            <svg viewBox="0 0 400 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="0,14 400,14 400,0 390,14 380,0 370,14 360,0 350,14 340,0 330,14 320,0 310,14 300,0 290,14 280,0 270,14 260,0 250,14 240,0 230,14 220,0 210,14 200,0 190,14 180,0 170,14 160,0 150,14 140,0 130,14 120,0 110,14 100,0 90,14 80,0 70,14 60,0 50,14 40,0 30,14 20,0 10,14 0,0"
-                fill="#e8d5a3"/>
-            </svg>
+          <svg viewBox="0 0 400 12" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 400,0 400,12 390,6 380,12 370,6 360,12 350,6 340,12 330,6 320,12 310,6 300,12 290,6 280,12 270,6 260,12 250,6 240,12 230,6 220,12 210,6 200,12 190,6 180,12 170,6 160,12 150,6 140,12 130,6 120,12 110,6 100,12 90,6 80,12 70,6 60,12 50,6 40,12 30,6 20,12 10,6 0,12" fill="#f5ead0"/>
+          </svg>
+        </div>
+        <div class="ticket-stub">
+          <div class="stub-left">
+            <div class="stub-title" id="stubFrom">De Florecilla</div>
+            <div class="stub-sub" id="stubConcept">─────────────</div>
           </div>
-          <div class="ticket-stub">
-            <div class="stub-info">
-              <div class="stub-title" id="stubFrom">De Florecilla</div>
-              <div class="stub-sub" id="stubConcept">vale por...</div>
-            </div>
-            <div class="barcode" id="barcode"></div>
-            <div class="stub-right">
-              <div id="stubSerial">──────</div>
-              <div id="stubCaduca">No caduca 🌙</div>
-            </div>
-          </div>
-          <div style="line-height:0;overflow:hidden;height:14px;">
-            <svg viewBox="0 0 400 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="0,0 400,0 400,14 390,0 380,14 370,0 360,14 350,0 340,14 330,0 320,14 310,0 300,14 290,0 280,14 270,0 260,14 250,0 240,14 230,0 220,14 210,0 200,14 190,0 180,14 170,0 160,14 150,0 140,14 130,0 120,14 110,0 100,14 90,0 80,14 70,0 60,14 50,0 40,14 30,0 20,14 10,0 0,14"
-                fill="#e8d5a3"/>
-            </svg>
+          <canvas class="barcode" id="barcode" width="60" height="32"></canvas>
+          <div class="stub-right">
+            <div id="stubSerial">──────</div>
+            <div id="stubCaduca">No caduca ✨</div>
           </div>
         </div>
-
       </div>
     </div>
 
+    <button class="wallet-save-btn" id="walletSaveBtn" onclick="saveToWallet()">
+      💾 Guardar vale en la Wallet
+    </button>
+
     <div class="action-btns">
-      <button class="action-btn new-btn" onclick="resetForm()">🌸 Nuevo Vale</button>
       <button class="action-btn" id="shareBtn" onclick="shareAsImage()">📸 Guardar imagen</button>
     </div>
     <div class="action-btns" style="margin-top:0.6rem;">
@@ -839,62 +560,36 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
     </div>
   </div>
 
-  <!-- Save to wallet button (shows after ticket is generated) -->
-  <button class="wallet-save-btn" id="walletSaveBtn" onclick="saveToWallet()">
-    💾 Guardar vale en la Wallet
-  </button>
-
-  <!-- WALLET SECTION -->
+  <!-- WALLET -->
   <div class="wallet-section">
     <div class="wallet-header">
-      <div class="wallet-title">💳 Mi Wallet de Amor</div>
+      <div class="wallet-title" id="walletTitleEl">💳 Mi Wallet de Amor</div>
     </div>
     <div class="wallet-tabs">
       <button class="wallet-tab active" onclick="switchWalletTab('Florecilla', this)">🌸 Florecilla</button>
       <button class="wallet-tab" onclick="switchWalletTab('Chiquitín', this)">🐾 Chiquitín</button>
     </div>
-    <div id="walletCards" class="wallet-cards">
-      <div class="wallet-empty">
-        <div class="wallet-empty-icon">💌</div>
-        <div class="wallet-empty-text">Aún no hay vales guardados</div>
-      </div>
-    </div>
+    <div id="walletCards" class="wallet-cards"></div>
   </div>
 
-  <footer>🌙 hecho con amor · para siempre vuestro 🌹</footer>
+  <footer id="footerEl">🌙 hecho con amor · para siempre vuestro 🌹</footer>
 </div>
 
 <script>
-const ideas = {
-  Florecilla: [
-    "un abrazo de oso muy largo","elegir la peli esta noche","un beso sorpresa",
-    "un masaje en los pies","una tarde de mimos","preparo yo la cena",
-    "un día sin quejas 😇","te dejo el mando",
-  ],
-  Chiquitín: [
-    "un paseo romántico","flores inesperadas","desayuno en la cama",
-    "un beso cuando llegues","una sorpresa secreta","bailar contigo esta noche",
-    "te escribo una carta","un día tuyo entero",
-  ]
-};
-
+// ===== STATE =====
 let sender = 'Florecilla';
+let walletTab = 'Florecilla';
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault(); deferredPrompt = e;
-  document.getElementById('installBanner').classList.add('show');
+  document.getElementById('installBanner').style.display = 'flex';
 });
-
 function installApp() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('installBanner').classList.remove('show'); });
-  } else {
-    alert('Para instalar:\n• iPhone: Compartir → Añadir a pantalla de inicio\n• Android: Menú ⋮ → Añadir a pantalla de inicio');
-  }
+  if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; document.getElementById('installBanner').style.display = 'none'; }
 }
 
+// ===== SENDER =====
 function setSender(name, btn) {
   sender = name;
   document.querySelectorAll('.sender-btn').forEach(b => b.classList.remove('active'));
@@ -903,17 +598,7 @@ function setSender(name, btn) {
   updateAvatars();
 }
 
-function renderTags() {
-  document.getElementById('tags').innerHTML = ideas[sender].map(idea =>
-    `<span class="tag" onclick="useSuggestion('${idea}')">${idea}</span>`
-  ).join('');
-}
-
-function useSuggestion(text) {
-  document.getElementById('conceptInput').value = text;
-  document.getElementById('conceptInput').focus();
-}
-
+// ===== AVATARS =====
 const AVATAR_FLORECILLA = `<svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
   <circle cx="26" cy="26" r="25" fill="#e8f5f0" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
   <rect x="21" y="33" width="10" height="8" rx="4" fill="#f5c8a0"/>
@@ -959,42 +644,54 @@ function updateAvatars() {
   const fromFlor = sender === 'Florecilla';
   const avatarA = fromFlor ? AVATAR_FLORECILLA : AVATAR_CHIQUTIN;
   const avatarB = fromFlor ? AVATAR_CHIQUTIN : AVATAR_FLORECILLA;
-  const nameA   = fromFlor ? 'Florecilla' : 'Chiquitín';
-  const nameB   = fromFlor ? 'Chiquitín' : 'Florecilla';
+  const nameA = fromFlor ? 'Florecilla' : 'Chiquitín';
+  const nameB = fromFlor ? 'Chiquitín' : 'Florecilla';
 
-  // Ticket avatars
   const elFrom = document.getElementById('avatarFrom');
-  const elTo   = document.getElementById('avatarTo');
+  const elTo = document.getElementById('avatarTo');
   if (elFrom) elFrom.innerHTML = avatarA;
-  if (elTo)   elTo.innerHTML   = avatarB;
+  if (elTo) elTo.innerHTML = avatarB;
 
-  // Sender section previews (always visible)
   const pFrom = document.getElementById('previewAvatarFrom');
-  const pTo   = document.getElementById('previewAvatarTo');
-  const nFrom = document.getElementById('previewNameFrom');
-  const nTo   = document.getElementById('previewNameTo');
+  const pTo = document.getElementById('previewAvatarTo');
   if (pFrom) pFrom.innerHTML = avatarA;
-  if (pTo)   pTo.innerHTML   = avatarB;
+  if (pTo) pTo.innerHTML = avatarB;
+
+  const nFrom = document.getElementById('previewNameFrom');
+  const nTo = document.getElementById('previewNameTo');
   if (nFrom) nFrom.textContent = nameA;
-  if (nTo)   nTo.textContent   = nameB;
+  if (nTo) nTo.textContent = nameB;
 }
 
+// ===== TAGS =====
+const ideas = {
+  Florecilla: ['un abrazo de oso muy largo','elegir la peli esta noche','un beso sorpresa','un masaje en los pies','una tarde de mimos','preparo yo la cena','un día sin quejas 😇','te dejo el mando'],
+  Chiquitín:  ['un paseo romántico','flores inesperadas','desayuno en la cama','un beso cuando llegues','una sorpresa secreta','bailar contigo esta noche','te escribo una carta','un día tuyo entero']
+};
+function renderTags() {
+  const currentIdeas = ideas;
+  document.getElementById('tags').innerHTML = currentIdeas[sender].map(idea =>
+    `<span class="tag" onclick="useSuggestion(this)" data-idea="${idea.replace(/"/g,'&quot;')}">${idea}</span>`
+  ).join('');
+}
+function useSuggestion(el) {
+  document.getElementById('conceptInput').value = el.dataset.idea;
+  document.getElementById('conceptInput').focus();
+}
+
+// ===== EXPIRY =====
 function toggleCustomDate(sel) {
-  const custom = document.getElementById('expiryCustom');
-  custom.style.display = sel.value === 'custom' ? 'block' : 'none';
+  document.getElementById('expiryCustom').style.display = sel.value === 'custom' ? 'block' : 'none';
 }
-
 function getExpiryText() {
   const sel = document.getElementById('expirySelect').value;
   const now = new Date();
-  const fmt = (d) => d.toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric'});
-
+  const fmt = d => d.toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric'});
   if (sel === 'nunca') return 'nunca ✨';
   if (sel === 'hoy') return fmt(now);
   if (sel === 'custom') {
     const val = document.getElementById('expiryCustom').value;
-    if (!val) return 'nunca ✨';
-    return fmt(new Date(val + 'T12:00:00'));
+    return val ? fmt(new Date(val + 'T12:00:00')) : 'nunca ✨';
   }
   const d = new Date(now);
   if (sel === '1semana') d.setDate(d.getDate() + 7);
@@ -1005,24 +702,26 @@ function getExpiryText() {
   return fmt(d);
 }
 
+// ===== SERIAL & BARCODE =====
 function generateSerial() {
   const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let s = '';
   for (let i = 0; i < 8; i++) { if (i===4) s+='-'; s += c[Math.floor(Math.random()*c.length)]; }
   return s;
 }
-
 function generateBarcode() {
-  const c = document.getElementById('barcode');
-  c.innerHTML = '';
-  [1,2,1,3,1,2,2,1,3,1,2,1,1,3,2,1,2,1,3,1,2].forEach(w => {
-    const b = document.createElement('div');
-    b.className = 'bc-bar';
-    b.style.width = w + 'px';
-    c.appendChild(b);
+  const canvas = document.getElementById('barcode');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#2c1810';
+  let x = 0;
+  [1,2,1,3,1,2,2,1,3,1,2,1,1,3,2,1,2,1,3,1,2].forEach((w,i) => {
+    if (i % 2 === 0) ctx.fillRect(x, 0, w*2, canvas.height);
+    x += w*2 + 1.5;
   });
 }
 
+// ===== GENERATE FLYER =====
 function generateFlyer() {
   const concept = document.getElementById('conceptInput').value.trim();
   if (!concept) {
@@ -1046,129 +745,93 @@ function generateFlyer() {
   document.getElementById('stubSerial').textContent = serial;
   document.getElementById('stubCaduca').textContent = expiryText === 'nunca ✨' ? 'No caduca ✨' : 'Caduca: ' + expiryText;
 
+  updateAvatars();
   generateBarcode();
 
   const container = document.getElementById('flyerContainer');
   container.classList.remove('visible');
   void container.offsetWidth;
   container.classList.add('visible');
+
+  // Show wallet save button
+  const saveBtn = document.getElementById('walletSaveBtn');
+  if (saveBtn) {
+    saveBtn.classList.add('visible');
+    saveBtn.textContent = '💾 Guardar vale en la Wallet';
+  }
+
   container.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function resetForm() {
-  document.getElementById('conceptInput').value = '';
-  document.getElementById('flyerContainer').classList.remove('visible');
-  document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+// ===== WALLET STORAGE (localStorage + window.storage fallback) =====
+function walletKey(owner) {
+  return 'vales-amor:' + owner;
 }
 
-async function captureTicket() {
-  const ticket = document.querySelector('.ticket-shadow');
-  // Temporarily add a white padding wrapper so shadow isn't clipped
-  const canvas = await html2canvas(ticket, {
-    scale: 3,
-    useCORS: true,
-    allowTaint: true,
-    backgroundColor: '#1a0a2e',
-    logging: false,
-    onclone: (doc) => {
-      // Ensure fonts render in clone
-      doc.querySelectorAll('*').forEach(el => {
-        el.style.webkitPrintColorAdjust = 'exact';
-      });
+async function loadWalletData(owner) {
+  // Try window.storage first (Claude.ai), then localStorage (GitHub Pages etc.)
+  try {
+    if (window.storage) {
+      const result = await window.storage.get(walletKey(owner));
+      if (result && result.value) return JSON.parse(result.value);
     }
+  } catch(e) {}
+  try {
+    const raw = localStorage.getItem(walletKey(owner));
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return [];
+}
+
+async function saveWalletData(owner, data) {
+  const json = JSON.stringify(data);
+  // Save to both for maximum compatibility
+  try { if (window.storage) await window.storage.set(walletKey(owner), json); } catch(e) {}
+  try { localStorage.setItem(walletKey(owner), json); } catch(e) {}
+}
+
+async function saveToWallet() {
+  const concept = document.getElementById('ticketConcept')?.textContent?.trim();
+  const from    = document.getElementById('ticketFrom')?.textContent?.trim();
+  const to      = document.getElementById('ticketTo')?.textContent?.trim();
+  const serial  = document.getElementById('serialNum')?.textContent?.trim();
+  const caduca  = document.getElementById('ticketCaduca')?.textContent?.trim();
+  const emitido = document.getElementById('ticketEmitido')?.textContent?.trim();
+
+  const btn = document.getElementById('walletSaveBtn');
+  const modeText = '💾 Guardar vale en la Wallet';
+
+  // Guard: must have a real generated ticket
+  if (!concept || concept === '...' || !to || !serial || serial.startsWith('─')) {
+    if (btn) { btn.textContent = '⚠️ Primero genera un vale'; setTimeout(() => btn.textContent = modeText, 2000); }
+    return;
+  }
+
+  const data = await loadWalletData(to);
+
+  // Check duplicate
+  if (data.find(v => v.serial === serial)) {
+    if (btn) { btn.textContent = '✅ Ya está guardado'; setTimeout(() => btn.textContent = modeText, 2000); }
+    return;
+  }
+
+  data.unshift({ id: Date.now(), concept, from, to, serial, caduca, emitido });
+  await saveWalletData(to, data);
+
+  if (btn) {
+    btn.textContent = '✅ Guardado en Wallet de ' + to;
+    setTimeout(() => btn.textContent = modeText, 2500);
+  }
+
+  // Switch wallet tab to recipient so user sees it immediately
+  walletTab = to;
+  document.querySelectorAll('.wallet-tab').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes(to));
   });
-  return canvas;
+  renderWallet();
 }
 
-async function shareAsImage() {
-  const btn = document.getElementById('shareBtn');
-  btn.textContent = '⏳ Generando...';
-  btn.disabled = true;
-  try {
-    const canvas = await captureTicket();
-    canvas.toBlob(async (blob) => {
-      const file = new File([blob], 'vale-de-amor.png', { type: 'image/png' });
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Vale de Amor 🌙' });
-      } else {
-        // Fallback: download the image
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'vale-de-amor.png'; a.click();
-        URL.revokeObjectURL(url);
-      }
-      btn.textContent = '✅ ¡Listo!';
-      setTimeout(() => { btn.textContent = '📸 Guardar imagen'; btn.disabled = false; }, 2000);
-    }, 'image/png');
-  } catch(e) {
-    btn.textContent = '📸 Guardar imagen';
-    btn.disabled = false;
-  }
-}
-
-async function shareWhatsapp() {
-  const waBtn = document.getElementById('waBtn');
-  waBtn.innerHTML = '⏳ Generando imagen...';
-  waBtn.disabled = true;
-  try {
-    const canvas = await captureTicket();
-    canvas.toBlob(async (blob) => {
-      const file = new File([blob], 'vale-de-amor.png', { type: 'image/png' });
-      // Try Web Share API with file (works on Android Chrome & iOS Safari 15+)
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({ files: [file], title: '💜 Te envío un Vale de Amor 🌙' });
-          waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> ¡Enviado!`;
-          setTimeout(() => {
-            waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar por WhatsApp`;
-            waBtn.disabled = false;
-          }, 2500);
-          return;
-        } catch(e) { /* user cancelled or error, fall through */ }
-      }
-      // Fallback: download image + open WhatsApp
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'vale-de-amor.png'; a.click();
-      URL.revokeObjectURL(url);
-      setTimeout(() => {
-        window.open('https://wa.me/?text=' + encodeURIComponent('💜 Te envío un Vale de Amor 🌙 (adjunta la imagen que acaba de descargarse)'), '_blank');
-      }, 800);
-      waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar por WhatsApp`;
-      waBtn.disabled = false;
-    }, 'image/png');
-  } catch(e) {
-    waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar por WhatsApp`;
-    waBtn.disabled = false;
-  }
-}
-
-function createStars() {
-  const c = document.getElementById('stars');
-  const colors = ['rgba(42,138,154,0.45)','rgba(26,122,102,0.4)','rgba(80,180,200,0.4)','rgba(42,160,130,0.35)','rgba(100,200,220,0.3)'];
-  for (let i = 0; i < 55; i++) {
-    const s = document.createElement('div'); s.className = 'star';
-    const sz = Math.random()*3+1;
-    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};--d:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;
-    c.appendChild(s);
-  }
-}
-function createFloaters() {
-  const emojis = ['🌸','🌙','💜','🌹','🐾','💫','❤️','🌺','⭐','🐶'];
-  const c = document.getElementById('floaters');
-  for (let i = 0; i < 10; i++) {
-    const el = document.createElement('div'); el.className = 'floater';
-    el.textContent = emojis[i%emojis.length];
-    el.style.cssText = `top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${3+Math.random()*5}s;animation-delay:${Math.random()*3}s;font-size:${1+Math.random()*2}rem`;
-    c.appendChild(el);
-  }
-}
-
-createStars(); createFloaters(); renderTags(); updateAvatars();
-
-// ===== WALLET =====
-let walletTab = 'Florecilla';
-
+// ===== WALLET DISPLAY =====
 function switchWalletTab(name, btn) {
   walletTab = name;
   document.querySelectorAll('.wallet-tab').forEach(b => b.classList.remove('active'));
@@ -1176,80 +839,23 @@ function switchWalletTab(name, btn) {
   renderWallet();
 }
 
-function walletKey(owner) {
-  return 'wallet:' + owner;
+function isExpired(caduca) {
+  if (!caduca || caduca.includes('nunca') || caduca.includes('✨')) return false;
+  const parts = caduca.replace('Caduca: ','').trim().split('/');
+  if (parts.length !== 3) return false;
+  return new Date(parts[2], parts[1]-1, parts[0]) < new Date();
 }
-
-async function loadWalletData(owner) {
-  try {
-    const result = await window.storage.get(walletKey(owner));
-    if (result && result.value) return JSON.parse(result.value);
-  } catch(e) {}
-  return [];
-}
-
-async function saveWalletData(owner, data) {
-  try {
-    await window.storage.set(walletKey(owner), JSON.stringify(data));
-  } catch(e) {}
-}
-
-async function saveToWallet() {
-  const concept = document.getElementById('ticketConcept').textContent;
-  const from    = document.getElementById('ticketFrom').textContent;
-  const to      = document.getElementById('ticketTo').textContent;
-  const serial  = document.getElementById('serialNum').textContent;
-  const caduca  = document.getElementById('ticketCaduca').textContent;
-  const emitido = document.getElementById('ticketEmitido').textContent;
-
-  if (!concept || concept === '...') return;
-
-  // Save to recipient's wallet
-  const data = await loadWalletData(to);
-  const already = data.find(v => v.serial === serial);
-  if (already) {
-    const btn = document.getElementById('walletSaveBtn');
-    btn.textContent = '✅ Ya está guardado';
-    setTimeout(() => btn.textContent = '💾 Guardar vale en la Wallet', 2000);
-    return;
-  }
-
-  data.unshift({ id: Date.now(), concept, from, to, serial, caduca, emitido });
-  await saveWalletData(to, data);
-
-  const btn = document.getElementById('walletSaveBtn');
-  btn.textContent = '✅ ¡Guardado en la Wallet de ' + to + '!';
-  setTimeout(() => btn.textContent = '💾 Guardar vale en la Wallet', 2500);
-
-  // Refresh wallet if we're viewing that tab
-  if (walletTab === to) renderWallet();
+function daysLeft(caduca) {
+  if (!caduca || caduca.includes('nunca') || caduca.includes('✨')) return null;
+  const parts = caduca.replace('Caduca: ','').trim().split('/');
+  if (parts.length !== 3) return null;
+  return Math.ceil((new Date(parts[2], parts[1]-1, parts[0]) - new Date()) / 86400000);
 }
 
 async function deleteFromWallet(owner, id) {
   const data = await loadWalletData(owner);
-  const updated = data.filter(v => v.id !== id);
-  await saveWalletData(owner, updated);
+  await saveWalletData(owner, data.filter(v => v.id !== id));
   renderWallet();
-}
-
-function isExpired(caduca) {
-  if (!caduca || caduca.includes('nunca') || caduca.includes('✨')) return false;
-  // caduca format: "dd/mm/yyyy"
-  const clean = caduca.replace('Caduca: ','').trim();
-  const parts = clean.split('/');
-  if (parts.length !== 3) return false;
-  const d = new Date(parts[2], parts[1]-1, parts[0]);
-  return d < new Date();
-}
-
-function daysLeft(caduca) {
-  if (!caduca || caduca.includes('nunca') || caduca.includes('✨')) return null;
-  const clean = caduca.replace('Caduca: ','').trim();
-  const parts = clean.split('/');
-  if (parts.length !== 3) return null;
-  const d = new Date(parts[2], parts[1]-1, parts[0]);
-  const diff = Math.ceil((d - new Date()) / (1000*60*60*24));
-  return diff;
 }
 
 async function renderWallet() {
@@ -1265,49 +871,155 @@ async function renderWallet() {
   }
 
   const isFlor = walletTab === 'Florecilla';
-  const ownerAvatar = isFlor ? AVATAR_FLORECILLA : AVATAR_CHIQUTIN;
-  const senderAvatar = isFlor ? AVATAR_CHIQUTIN : AVATAR_FLORECILLA;
+  const ownerAv = isFlor ? AVATAR_FLORECILLA : AVATAR_CHIQUTIN;
+  const senderAv = isFlor ? AVATAR_CHIQUTIN : AVATAR_FLORECILLA;
+  const smallAv = av => av.replace('width="52" height="52"', 'width="36" height="36"');
 
   container.innerHTML = data.map(vale => {
     const expired = isExpired(vale.caduca);
     const days = daysLeft(vale.caduca);
-    let badgeText = '✨ Sin caducidad';
-    if (days !== null) {
-      if (expired) badgeText = 'Caducado';
-      else if (days === 0) badgeText = '¡Caduca hoy!';
-      else if (days === 1) badgeText = '1 día';
-      else badgeText = days + ' días';
-    }
-    const fromAvatar = vale.from === walletTab ? ownerAvatar : senderAvatar;
-    const smallAvatar = fromAvatar.replace('width="52" height="52"', 'width="36" height="36"');
-
+    let badge = '✨ Sin caducidad';
+    if (days !== null) badge = expired ? 'Caducado' : days === 0 ? '¡Hoy!' : days === 1 ? '1 día' : days + ' días';
+    const av = vale.from === walletTab ? smallAv(ownerAv) : smallAv(senderAv);
+    const idSafe = vale.id;
     return `<div class="vale-card ${expired ? 'caducado' : ''}">
-      <div class="vale-card-avatar">${smallAvatar}</div>
+      <div class="vale-card-avatar">${av}</div>
       <div class="vale-card-body">
         <div class="vale-card-concept">${vale.concept}</div>
         <div class="vale-card-from">De ${vale.from} · ${vale.emitido}</div>
         <div class="vale-card-meta">Nº ${vale.serial}</div>
       </div>
       <div class="vale-card-status">
-        <div class="vale-card-badge">${badgeText}</div>
-        <button class="vale-card-delete" onclick="deleteFromWallet('${walletTab}', ${vale.id})" title="Eliminar">🗑</button>
+        <div class="vale-card-badge">${badge}</div>
+        <div style="display:flex;gap:0.3rem;margin-top:0.2rem;">
+          <button class="vale-card-action" onclick="previewFromWallet(${idSafe})" title="Ver y compartir">👁</button>
+          <button class="vale-card-delete" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Eliminar">🗑</button>
+        </div>
       </div>
     </div>`;
   }).join('');
 }
 
-// Show save button when ticket is generated
-const _origGenerate = generateFlyer;
-generateFlyer = function() {
-  _origGenerate();
-  setTimeout(() => {
-    const btn = document.getElementById('walletSaveBtn');
-    if (btn) btn.classList.add('visible');
-  }, 300);
-};
+async function previewFromWallet(id) {
+  // Find the vale across both wallets
+  let vale = null;
+  for (const owner of ['Florecilla', 'Chiquitín']) {
+    const data = await loadWalletData(owner);
+    const found = data.find(v => v.id === id);
+    if (found) { vale = found; break; }
+  }
+  if (!vale) return;
 
-// Init wallet on load
-renderWallet();
+  // Populate ticket fields
+  document.getElementById('ticketFrom').textContent    = vale.from;
+  document.getElementById('ticketTo').textContent      = vale.to;
+  document.getElementById('ticketConcept').textContent = vale.concept;
+  document.getElementById('serialNum').textContent     = vale.serial;
+  document.getElementById('ticketEmitido').textContent = vale.emitido;
+  document.getElementById('ticketCaduca').textContent  = vale.caduca;
+  document.getElementById('stubFrom').textContent      = 'De ' + vale.from;
+  document.getElementById('stubSerial').textContent    = vale.serial;
+  document.getElementById('stubCaduca').textContent    = vale.caduca.includes('nunca') ? 'No caduca ✨' : 'Caduca: ' + vale.caduca;
+  const conceptShort = vale.concept.length > 22 ? vale.concept.slice(0, 22) + '…' : vale.concept;
+  document.getElementById('stubConcept').textContent   = conceptShort;
+
+  // Update avatars in ticket
+  const isFlor = vale.from === 'Florecilla';
+  document.getElementById('avatarFrom').innerHTML = isFlor ? AVATAR_FLORECILLA : AVATAR_CHIQUTIN;
+  document.getElementById('avatarTo').innerHTML   = isFlor ? AVATAR_CHIQUTIN : AVATAR_FLORECILLA;
+
+  generateBarcode();
+
+  // Show ticket and scroll to it
+  const container = document.getElementById('flyerContainer');
+  container.classList.remove('visible');
+  void container.offsetWidth;
+  container.classList.add('visible');
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Show share buttons
+  showWalletSaveBtn();
+
+  // Visual feedback on card
+  document.querySelectorAll('.vale-card-action').forEach(b => b.textContent = '👁');
+  event.target.textContent = '✅';
+  setTimeout(() => { event.target.textContent = '👁'; }, 1500);
+}
+
+// ===== SHARE / EXPORT =====
+async function captureTicket() {
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  document.head.appendChild(script);
+  await new Promise(r => script.onload = r);
+  const ticket = document.querySelector('.ticket-shadow');
+  return html2canvas(ticket, { scale: 3, backgroundColor: null, useCORS: true });
+}
+async function shareAsImage() {
+  const btn = document.getElementById('shareBtn');
+  btn.textContent = '⏳ Generando...'; btn.disabled = true;
+  try {
+    const canvas = await captureTicket();
+    canvas.toBlob(async blob => {
+      const file = new File([blob], 'vale-de-amor.png', {type:'image/png'});
+      if (navigator.canShare && navigator.canShare({files:[file]})) {
+        await navigator.share({files:[file], title:'Vale de Amor 🌙'});
+      } else {
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+        a.download = 'vale-de-amor.png'; a.click();
+      }
+    }, 'image/png');
+  } catch(e) { console.error(e); }
+  btn.textContent = '📸 Guardar imagen'; btn.disabled = false;
+}
+async function shareWhatsapp() {
+  const waBtn = document.getElementById('waBtn');
+  waBtn.innerHTML = '⏳ Generando imagen...'; waBtn.disabled = true;
+  try {
+    const canvas = await captureTicket();
+    canvas.toBlob(async blob => {
+      const file = new File([blob], 'vale-de-amor.png', {type:'image/png'});
+      try {
+        if (navigator.canShare && navigator.canShare({files:[file]})) {
+          await navigator.share({files:[file], title:'💜 Te envío un Vale de Amor 🌙'});
+        } else {
+          const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+          a.download = 'vale-de-amor.png'; a.click();
+          setTimeout(() => window.open('https://wa.me/?text=' + encodeURIComponent('💜 Te envío un Vale de Amor 🌙'), '_blank'), 1000);
+        }
+        waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> ¡Enviado!`;
+        setTimeout(() => { waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar por WhatsApp`; waBtn.disabled = false; }, 2500);
+      } catch(e) {
+        waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar por WhatsApp`; waBtn.disabled = false;
+      }
+    }, 'image/png');
+  } catch(e) { console.error(e); waBtn.innerHTML = 'Enviar por WhatsApp'; waBtn.disabled = false; }
+}
+
+// ===== PARTICLES =====
+function createStars() {
+  const c = document.getElementById('stars');
+  const colors = ['rgba(42,138,154,0.45)','rgba(26,122,102,0.4)','rgba(80,180,200,0.4)','rgba(42,160,130,0.35)','rgba(100,200,220,0.3)'];
+  for (let i = 0; i < 55; i++) {
+    const s = document.createElement('div'); s.className = 'star';
+    const sz = Math.random()*3+1;
+    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};--d:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;
+    c.appendChild(s);
+  }
+}
+function createFloaters() {
+  const emojis = ['🌸','🌙','💜','🌹','🐾','💫','❤️','🌺','⭐','🐶'];
+  const c = document.getElementById('floaters');
+  for (let i = 0; i < 10; i++) {
+    const el = document.createElement('div'); el.className = 'floater';
+    el.textContent = emojis[i % emojis.length];
+    el.style.cssText = `top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${3+Math.random()*5}s;animation-delay:${Math.random()*3}s;font-size:${1+Math.random()*2}rem`;
+    c.appendChild(el);
+  }
+}
+
+// ===== INIT =====
+createStars(); createFloaters(); renderTags(); updateAvatars(); renderWallet();
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>

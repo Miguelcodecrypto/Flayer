@@ -1269,31 +1269,62 @@ function generateFlyer() {
   container.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ===== WALLET STORAGE (localStorage + window.storage fallback) =====
+// ===== WALLET STORAGE =====
+// window.storage = compartido entre usuarios (Claude.ai persistent storage)
+// localStorage   = solo metadatos locales (identidad, vales vistos, alertas)
+
 function walletKey(owner) {
   return 'vales-amor:' + owner;
 }
 
 async function loadWalletData(owner) {
-  // Try window.storage first (Claude.ai), then localStorage (GitHub Pages etc.)
-  try {
-    if (window.storage) {
+  // window.storage is the ONLY shared store — both users read/write here
+  if (window.storage) {
+    try {
       const result = await window.storage.get(walletKey(owner));
       if (result && result.value) return JSON.parse(result.value);
+      return []; // key doesn't exist yet = empty wallet
+    } catch(e) {
+      // get() throws when key not found — that's fine, return empty
+      return [];
     }
-  } catch(e) {}
+  }
+  // Fallback for environments without window.storage (should not happen in Claude.ai)
   try {
     const raw = localStorage.getItem(walletKey(owner));
-    if (raw) return JSON.parse(raw);
-  } catch(e) {}
-  return [];
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
 }
 
 async function saveWalletData(owner, data) {
   const json = JSON.stringify(data);
-  // Save to both for maximum compatibility
-  try { if (window.storage) await window.storage.set(walletKey(owner), json); } catch(e) {}
+  if (window.storage) {
+    try {
+      await window.storage.set(walletKey(owner), json);
+      return; // saved to shared storage — done
+    } catch(e) {
+      console.warn('window.storage.set failed:', e);
+    }
+  }
+  // Fallback only if window.storage unavailable
   try { localStorage.setItem(walletKey(owner), json); } catch(e) {}
+}
+
+// Diagnostic: log which storage is active on load
+async function diagStorage() {
+  if (!window.storage) {
+    console.warn('⚠️ window.storage NOT available — using localStorage (not shared between users)');
+    return;
+  }
+  try {
+    await window.storage.set('vales-diag', '1');
+    const r = await window.storage.get('vales-diag');
+    if (r && r.value === '1') {
+      console.log('✅ window.storage active — wallet data is shared between users');
+    }
+  } catch(e) {
+    console.warn('⚠️ window.storage test failed:', e);
+  }
 }
 
 async function saveToWallet() {
@@ -1713,12 +1744,15 @@ function createFloaters() {
 
 const _mockDB = {};
 window.storage = {
-  get: async (k) => { try { return _mockDB[k] ? {key:k,value:_mockDB[k]} : null; } catch(e){ return null; } },
+  get: async (k) => {
+    if (_mockDB[k] === undefined) throw new Error('Key not found: ' + k);
+    return {key:k, value:_mockDB[k]};
+  },
   set: async (k,v) => { _mockDB[k]=v; return {key:k,value:v}; },
   delete: async (k) => { delete _mockDB[k]; return {key:k,deleted:true}; },
   list: async (p) => ({ keys: Object.keys(_mockDB).filter(k=>!p||k.startsWith(p)) })
 };
-const _localDB = {'vales-identity': 'Florecilla'};
+const _localDB = {};
 Object.defineProperty(window, 'localStorage', { value: {
   getItem: (k) => _localDB[k] || null,
   setItem: (k,v) => { _localDB[k]=v; },
@@ -1726,22 +1760,25 @@ Object.defineProperty(window, 'localStorage', { value: {
 }, writable: true });
 
 // ===== INIT =====
-createStars(); createFloaters();
-renderTags(); updateAvatars(); renderWallet();
+(async () => {
+  diagStorage();
+  createStars(); createFloaters();
+  renderTags(); updateAvatars(); renderWallet();
 
-// Hide install banner immediately if already running as PWA
-if (isInstalledPWA()) {
-  document.getElementById('installBanner').style.display = 'none';
-}
+  // Hide install banner immediately if already running as PWA
+  if (isInstalledPWA()) {
+    document.getElementById('installBanner').style.display = 'none';
+  }
 
-// Lock sender direction if identity already known
-if (currentUser) lockSender();
+  // Lock sender direction if identity already known
+  if (currentUser) lockSender();
 
-// Onboarding / identity check
-showOnboarding();
+  // Onboarding / identity check
+  showOnboarding();
 
-// Start polling for new vales
-startPolling();
+  // Start polling for new vales
+  startPolling();
+})();
 
 
 </script>

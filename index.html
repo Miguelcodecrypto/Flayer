@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Vales de Amor">
 <title>Vales de Amor 🌙</title>
-
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Special+Elite&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1270,61 +1270,96 @@ function generateFlyer() {
 }
 
 // ===== WALLET STORAGE =====
-// window.storage = compartido entre usuarios (Claude.ai persistent storage)
-// localStorage   = solo metadatos locales (identidad, vales vistos, alertas)
+// localStorage = persistente en el dispositivo (siempre disponible)
+// window.storage = bonus sync si está en Claude.ai artifacts (compartido)
 
 function walletKey(owner) {
   return 'vales-amor:' + owner;
 }
 
 async function loadWalletData(owner) {
-  // window.storage is the ONLY shared store — both users read/write here
+  const key = walletKey(owner);
+
+  // 1. Try window.storage first (Claude.ai artifact env — shared between users)
   if (window.storage) {
     try {
-      const result = await window.storage.get(walletKey(owner));
-      if (result && result.value) return JSON.parse(result.value);
-      return []; // key doesn't exist yet = empty wallet
+      const result = await window.storage.get(key);
+      if (result && result.value) {
+        const data = JSON.parse(result.value);
+        // Mirror to localStorage so it survives if window.storage disappears
+        try { localStorage.setItem(key, result.value); } catch(e) {}
+        return data;
+      }
     } catch(e) {
-      // get() throws when key not found — that's fine, return empty
-      return [];
+      // key not found in window.storage — fall through to localStorage
     }
   }
-  // Fallback for environments without window.storage (should not happen in Claude.ai)
+
+  // 2. localStorage — always works, persists across sessions on same device
   try {
-    const raw = localStorage.getItem(walletKey(owner));
-    return raw ? JSON.parse(raw) : [];
-  } catch(e) { return []; }
+    const raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+
+  return [];
 }
 
 async function saveWalletData(owner, data) {
+  const key  = walletKey(owner);
   const json = JSON.stringify(data);
+
+  // Always save to localStorage first — guaranteed persistence on this device
+  try {
+    localStorage.setItem(key, json);
+    // Verify it actually saved
+    const check = localStorage.getItem(key);
+    if (check !== json) console.warn('⚠️ localStorage verify failed for', key);
+  } catch(e) {
+    console.warn('localStorage.setItem failed:', e);
+  }
+
+  // Also save to window.storage if available — enables cross-device sync
   if (window.storage) {
-    try {
-      await window.storage.set(walletKey(owner), json);
-      return; // saved to shared storage — done
-    } catch(e) {
-      console.warn('window.storage.set failed:', e);
+    try { await window.storage.set(key, json); } catch(e) {
+      console.warn('window.storage.set failed (non-critical):', e);
     }
   }
-  // Fallback only if window.storage unavailable
-  try { localStorage.setItem(walletKey(owner), json); } catch(e) {}
 }
 
-// Diagnostic: log which storage is active on load
+// Diagnostic + persistence self-test
 async function diagStorage() {
-  if (!window.storage) {
-    console.warn('⚠️ window.storage NOT available — using localStorage (not shared between users)');
-    return;
-  }
+  // Test localStorage works
   try {
-    await window.storage.set('vales-diag', '1');
-    const r = await window.storage.get('vales-diag');
-    if (r && r.value === '1') {
-      console.log('✅ window.storage active — wallet data is shared between users');
+    const TEST = '__vales_test__';
+    localStorage.setItem(TEST, '1');
+    const ok = localStorage.getItem(TEST) === '1';
+    localStorage.removeItem(TEST);
+    if (!ok) {
+      console.error('❌ localStorage NO funciona — los vales no se guardarán');
+      showStorageError();
+      return;
     }
   } catch(e) {
-    console.warn('⚠️ window.storage test failed:', e);
+    console.error('❌ localStorage bloqueado:', e);
+    showStorageError();
+    return;
   }
+
+  console.log('✅ localStorage OK — vales persistentes en este dispositivo');
+  if (window.storage) console.log('✅ window.storage disponible — sync entre usuarios activo');
+}
+
+function showStorageError() {
+  // Show a visible warning banner at the top
+  const banner = document.createElement('div');
+  banner.style.cssText = `
+    position:fixed; top:0; left:0; right:0; z-index:9999;
+    background:#c0392b; color:white; text-align:center;
+    padding:0.8rem 1rem; font-family:sans-serif; font-size:0.85rem;
+    box-shadow:0 2px 8px rgba(0,0,0,0.3);
+  `;
+  banner.textContent = '⚠️ Tu navegador bloquea el almacenamiento — activa las cookies o sal del modo incógnito para guardar vales.';
+  document.body.prepend(banner);
 }
 
 async function saveToWallet() {
@@ -1741,24 +1776,6 @@ function createFloaters() {
   }
 }
 
-
-const _mockDB = {};
-window.storage = {
-  get: async (k) => {
-    if (_mockDB[k] === undefined) throw new Error('Key not found: ' + k);
-    return {key:k, value:_mockDB[k]};
-  },
-  set: async (k,v) => { _mockDB[k]=v; return {key:k,value:v}; },
-  delete: async (k) => { delete _mockDB[k]; return {key:k,deleted:true}; },
-  list: async (p) => ({ keys: Object.keys(_mockDB).filter(k=>!p||k.startsWith(p)) })
-};
-const _localDB = {};
-Object.defineProperty(window, 'localStorage', { value: {
-  getItem: (k) => _localDB[k] || null,
-  setItem: (k,v) => { _localDB[k]=v; },
-  removeItem: (k) => { delete _localDB[k]; }
-}, writable: true });
-
 // ===== INIT =====
 (async () => {
   diagStorage();
@@ -1780,7 +1797,7 @@ Object.defineProperty(window, 'localStorage', { value: {
   startPolling();
 })();
 
-
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>

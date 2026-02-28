@@ -10,6 +10,7 @@
 <title>Vales de Amor 🌙</title>
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+<script src="pocketbase.js" defer></script>
 <style>
 :root {
   --rose: #1a6070;
@@ -436,7 +437,7 @@ h1 {
   background: linear-gradient(135deg, #0a5060, #0a6050);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.wallet-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.2rem; }
+.wallet-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
 .wallet-tab {
   flex: 1; padding: 0.55rem 0.5rem;
   border: 1px solid rgba(42,138,154,0.3); border-radius: 2rem;
@@ -448,6 +449,27 @@ h1 {
   background: linear-gradient(135deg, #2a8a9a, #1a7a6a);
   border-color: #2a8a9a; color: white; box-shadow: 0 0 14px rgba(42,138,154,0.35);
 }
+/* Subtabs para Emitidos/Recibidos */
+.wallet-subtabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
+.wallet-subtab {
+  flex: 1; padding: 0.4rem 0.4rem;
+  border: 1px solid rgba(42,138,154,0.2); border-radius: 1.5rem;
+  background: rgba(255,255,255,0.4); color: var(--moonlight);
+  font-family: 'Playfair Display', serif; font-size: 0.75rem; font-style: italic;
+  cursor: pointer; transition: all 0.2s; text-align: center;
+}
+.wallet-subtab:hover { background: rgba(255,255,255,0.6); }
+.wallet-subtab.active {
+  background: rgba(42,138,154,0.15);
+  border-color: rgba(42,138,154,0.4); color: var(--teal); font-weight: 600;
+}
+.wallet-subtab .subtab-count {
+  display: inline-block; min-width: 18px; height: 18px;
+  background: rgba(42,138,154,0.2); border-radius: 50%;
+  font-size: 0.65rem; line-height: 18px; margin-left: 0.3rem;
+  font-weight: 600; font-style: normal;
+}
+.wallet-subtab.active .subtab-count { background: rgba(42,138,154,0.3); }
 .wallet-empty {
   text-align: center; padding: 2rem 1rem;
   background: rgba(255,255,255,0.4); border: 1px dashed rgba(42,138,154,0.25);
@@ -530,7 +552,7 @@ h1 {
   padding: 0.4rem 0.8rem; margin: 0.5rem 0 0.9rem;
   border: 1px solid rgba(42,138,154,0.15);
 }
-.delete-confirm-advm {
+.delete-confirm-ADMV {
   font-family: 'Special Elite', monospace; font-size: 0.72rem;
   letter-spacing: 0.18em; color: var(--teal);
   margin-bottom: 0.3rem; text-transform: uppercase;
@@ -566,14 +588,242 @@ h1 {
 }
 .delete-confirm-btn.danger:hover { background: rgba(180,60,60,0.18); }
 
-/* ADVM tag inside card */
-.advm-tag {
+/* ADMV tag inside card */
+.ADMV-tag {
   display: inline-block; font-family: 'Special Elite', monospace;
   font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
   background: rgba(42,138,154,0.12); color: var(--teal);
   border: 1px solid rgba(42,138,154,0.2); border-radius: 0.3rem;
   padding: 1px 5px; vertical-align: middle; margin-left: 0.3rem;
 }
+
+/* ===== CANJE SYSTEM STYLES ===== */
+.vale-card-canjear {
+  background: linear-gradient(135deg, #2a9a6a, #1a8a5a);
+  color: white; border: none; border-radius: 0.5rem;
+  padding: 0.35rem 0.6rem; font-family: 'Playfair Display', serif;
+  font-size: 0.72rem; font-style: italic; font-weight: 600;
+  cursor: pointer; transition: all 0.25s;
+  box-shadow: 0 2px 8px rgba(42,154,106,0.3);
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.vale-card-canjear:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 4px 12px rgba(42,154,106,0.4); }
+.vale-card-canjear:disabled {
+  background: linear-gradient(135deg, #888, #666);
+  cursor: not-allowed; opacity: 0.6;
+  box-shadow: none;
+}
+.vale-card-canjear.pendiente {
+  background: linear-gradient(135deg, #d4a020, #c09018);
+  animation: pulse 2s ease-in-out infinite;
+}
+.vale-card-canjear.canjeado {
+  background: linear-gradient(135deg, #6a6a6a, #5a5a5a);
+  text-decoration: line-through; opacity: 0.7;
+}
+.vale-card-canjear.aceptado {
+  background: linear-gradient(135deg, #4a90d9, #3a7ac9);
+  font-size: 0.7rem;
+}
+.canje-status-tag {
+  font-family: 'Special Elite', monospace; font-size: 0.5rem;
+  letter-spacing: 0.08em; padding: 2px 6px; border-radius: 0.3rem;
+  margin-left: 0.3rem; vertical-align: middle;
+}
+.canje-status-tag.pendiente {
+  background: rgba(212,160,32,0.2); color: #8a6010;
+  border: 1px solid rgba(212,160,32,0.3);
+}
+.canje-status-tag.canjeado {
+  background: rgba(42,154,106,0.15); color: #1a6a4a;
+  border: 1px solid rgba(42,154,106,0.25);
+}
+.canje-status-tag.aceptado {
+  background: rgba(100,149,237,0.15); color: #2a5a9a;
+  border: 1px solid rgba(100,149,237,0.25);
+}
+
+/* Canje Request Overlay (for emisor) */
+.canje-request-overlay {
+  position: fixed; inset: 0; z-index: 960;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; opacity: 0; pointer-events: none;
+  transition: opacity 0.4s;
+}
+.canje-request-overlay.visible { opacity: 1; pointer-events: all; }
+.canje-request-box {
+  background: linear-gradient(160deg, #f0f8e8, #e8f5f0);
+  border: 2px solid rgba(42,154,106,0.3);
+  border-radius: 1.6rem; padding: 2rem 1.6rem 1.6rem;
+  max-width: 360px; width: 100%; text-align: center;
+  box-shadow: 0 24px 60px rgba(42,154,106,0.2);
+  transform: scale(0.88) translateY(24px);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.canje-request-overlay.visible .canje-request-box { transform: scale(1) translateY(0); }
+.canje-request-icon { font-size: 3.5rem; margin-bottom: 0.5rem; animation: float 3s ease-in-out infinite; }
+.canje-request-title {
+  font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+  font-size: 1.35rem; color: var(--cream); margin-bottom: 0.3rem;
+}
+.canje-request-from {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 0.95rem; color: var(--moonlight); margin-bottom: 0.8rem;
+}
+.canje-request-concept {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1.1rem; color: var(--cream); font-weight: 700;
+  background: rgba(255,255,255,0.7); border-radius: 0.8rem;
+  padding: 0.7rem 1rem; margin: 0.5rem 0 1rem;
+  border: 1px solid rgba(42,154,106,0.2);
+  box-shadow: 0 2px 10px rgba(42,154,106,0.1);
+}
+.canje-request-date {
+  font-family: 'Special Elite', monospace; font-size: 0.7rem;
+  letter-spacing: 0.1em; color: var(--moonlight);
+  margin-bottom: 1.2rem;
+}
+.canje-request-btns { display: flex; flex-direction: column; gap: 0.7rem; }
+.canje-request-btn {
+  padding: 0.8rem 1rem; border-radius: 0.9rem; border: none;
+  font-family: 'Playfair Display', serif; font-size: 1rem;
+  font-style: italic; cursor: pointer; transition: all 0.25s;
+}
+.canje-request-btn.accept {
+  background: linear-gradient(135deg, #2a9a6a, #1a8a5a);
+  color: white; box-shadow: 0 4px 16px rgba(42,154,106,0.35);
+}
+.canje-request-btn.accept:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,154,106,0.45); }
+.canje-request-btn.decline {
+  background: rgba(255,255,255,0.6); color: var(--moonlight);
+  border: 1px solid rgba(42,138,154,0.2);
+}
+.canje-request-btn.decline:hover { background: rgba(255,255,255,0.85); }
+
+/* Canje Success Overlay (for receptor) */
+.canje-success-overlay {
+  position: fixed; inset: 0; z-index: 970;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; opacity: 0; pointer-events: none;
+  transition: opacity 0.4s;
+}
+.canje-success-overlay.visible { opacity: 1; pointer-events: all; }
+.canje-success-box {
+  background: linear-gradient(160deg, #e8f8e0, #d8f5e8, #e0f8f0);
+  border: 2px solid rgba(42,180,106,0.35);
+  border-radius: 1.8rem; padding: 2.2rem 1.8rem 1.8rem;
+  max-width: 380px; width: 100%; text-align: center;
+  box-shadow: 0 24px 70px rgba(42,180,106,0.25);
+  transform: scale(0.85) translateY(30px);
+  transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.canje-success-overlay.visible .canje-success-box { transform: scale(1) translateY(0); }
+.canje-success-confetti { font-size: 3rem; margin-bottom: 0.3rem; }
+.canje-success-icon { font-size: 4rem; margin-bottom: 0.5rem; animation: bounce 1s ease-in-out infinite; }
+.canje-success-title {
+  font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #1a8a5a, #2a9a7a, #1a7a6a);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 0.4rem;
+}
+.canje-success-sub {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1rem; color: var(--moonlight); margin-bottom: 1rem;
+}
+.canje-success-concept {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1.15rem; color: var(--cream); font-weight: 700;
+  background: rgba(255,255,255,0.75); border-radius: 1rem;
+  padding: 0.9rem 1.2rem; margin: 0.5rem 0 0.8rem;
+  border: 1.5px solid rgba(42,180,106,0.25);
+  box-shadow: 0 4px 16px rgba(42,180,106,0.15);
+}
+.canje-success-date {
+  font-family: 'Special Elite', monospace; font-size: 0.75rem;
+  letter-spacing: 0.12em; color: var(--teal);
+  background: rgba(42,180,106,0.1); border-radius: 0.5rem;
+  padding: 0.4rem 0.8rem; margin-bottom: 1.3rem;
+}
+.canje-success-msg {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 0.95rem; color: var(--moonlight);
+  line-height: 1.5; margin-bottom: 1.4rem;
+}
+.canje-success-btn {
+  background: linear-gradient(135deg, #2a9a6a, #1a8a5a);
+  color: white; border: none; border-radius: 1rem;
+  padding: 0.9rem 1.5rem; font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; font-style: italic; cursor: pointer;
+  box-shadow: 0 4px 18px rgba(42,154,106,0.35);
+  transition: all 0.25s;
+}
+.canje-success-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 24px rgba(42,154,106,0.45); }
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ===== IMPORT VALE OVERLAY ===== */
+.import-vale-overlay {
+  position: fixed; inset: 0; z-index: 980;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; opacity: 0; pointer-events: none;
+  transition: opacity 0.4s;
+}
+.import-vale-overlay.visible { opacity: 1; pointer-events: all; }
+.import-vale-popup {
+  background: linear-gradient(160deg, #e8f8f0, #d8f5f8);
+  border: 2px solid rgba(42,138,154,0.3);
+  border-radius: 1.5rem; padding: 1.8rem 1.5rem;
+  max-width: 360px; width: 100%;
+  box-shadow: 0 24px 70px rgba(42,138,154,0.25);
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  text-align: center;
+}
+.import-vale-overlay.visible .import-vale-popup { transform: scale(1) translateY(0); }
+.import-vale-icon { font-size: 3.5rem; margin-bottom: 0.6rem; animation: float 3s ease-in-out infinite; }
+.import-vale-title {
+  font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic;
+  color: var(--cream); font-weight: 700; margin-bottom: 0.3rem;
+}
+.import-vale-from {
+  font-size: 0.85rem; color: var(--moonlight); margin-bottom: 0.8rem;
+  font-style: italic;
+}
+.import-vale-concept {
+  background: rgba(255,255,255,0.7); border: 1px solid rgba(42,138,154,0.2);
+  border-radius: 0.75rem; padding: 0.8rem 1rem;
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1.1rem; font-weight: 600; color: var(--cream);
+  margin-bottom: 0.6rem;
+}
+.import-vale-meta {
+  font-family: 'Special Elite', monospace; font-size: 0.65rem;
+  letter-spacing: 0.1em; color: var(--moonlight); margin-bottom: 1.2rem;
+}
+.import-vale-btns { display: flex; flex-direction: column; gap: 0.7rem; }
+.import-vale-btn {
+  width: 100%; padding: 0.85rem;
+  border-radius: 0.75rem; border: none;
+  font-family: 'Playfair Display', serif; font-size: 1rem;
+  font-style: italic; cursor: pointer; transition: all 0.2s;
+}
+.import-vale-btn.accept {
+  background: linear-gradient(135deg, #2a8a9a, #1a7a6a);
+  color: white; box-shadow: 0 4px 16px rgba(42,138,154,0.35);
+}
+.import-vale-btn.accept:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,138,154,0.45); }
+.import-vale-btn.decline {
+  background: rgba(255,255,255,0.6); color: var(--moonlight);
+  border: 1px solid rgba(42,138,154,0.2);
+}
+.import-vale-btn.decline:hover { background: rgba(255,255,255,0.85); }
 
 /* Locked delete button */
 .vale-card-delete--locked {
@@ -633,7 +883,7 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
       <div class="delete-confirm-heart">💝</div>
       <div class="delete-confirm-title" id="deleteConfirmTitle">¿Seguro que quieres borrar?</div>
       <div class="delete-confirm-concept" id="deleteConfirmConcept"></div>
-      <div class="delete-confirm-advm">ADVM — Amor De Mi Vida</div>
+      <div class="delete-confirm-ADMV">ADMV — Amor De Mi Vida</div>
       <div class="delete-confirm-ilysm" id="deleteConfirmMsg">"I Love You So Much…<br>¿de verdad quieres borrar esto?"</div>
       <div class="delete-confirm-step" id="deleteConfirmStep"></div>
       <div class="delete-confirm-btns" id="deleteConfirmBtns"></div>
@@ -648,6 +898,54 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
       <div class="new-vale-popup-sub" id="newValeSub">Tu pareja te ha enviado:</div>
       <div class="new-vale-list" id="newValeList"></div>
       <button class="new-vale-close" onclick="dismissNewVales()">💙 Ver mi Wallet</button>
+    </div>
+  </div>
+
+  <!-- IMPORT VALE FROM LINK POPUP -->
+  <div class="import-vale-overlay" id="importValeOverlay">
+    <div class="import-vale-popup">
+      <div class="import-vale-icon">💝</div>
+      <div class="import-vale-title" id="importValeTitle">¡Te han enviado un Vale!</div>
+      <div class="import-vale-from" id="importValeFrom">De Florecilla para ti</div>
+      <div class="import-vale-concept" id="importValeConcept">Un abrazo eterno</div>
+      <div class="import-vale-meta" id="importValeMeta">Nº ABC-1234 · Caduca: nunca ✨</div>
+      <div class="import-vale-btns">
+        <button class="import-vale-btn accept" onclick="acceptImportedVale()">💜 ¡Guardar en mi Wallet!</button>
+        <button class="import-vale-btn decline" onclick="declineImportedVale()">Ahora no</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANJE REQUEST POPUP (for emisor) -->
+  <div class="canje-request-overlay" id="canjeRequestOverlay">
+    <div class="canje-request-box">
+      <div class="canje-request-icon">🎁</div>
+      <div class="canje-request-title" id="canjeRequestTitle">¡Quieren canjear un vale!</div>
+      <div class="canje-request-from" id="canjeRequestFrom">Florecilla quiere usar:</div>
+      <div class="canje-request-concept" id="canjeRequestConcept">Un masaje relajante</div>
+      <div class="canje-request-date" id="canjeRequestDate">Solicitado: 28/02/2026</div>
+      <div class="canje-request-btns">
+        <button class="canje-request-btn accept" onclick="acceptCanje()">✨ ¡Conceder el deseo!</button>
+        <button class="canje-request-btn decline" onclick="declineCanje()">Ahora no puedo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANJE SUCCESS POPUP (for receptor) -->
+  <div class="canje-success-overlay" id="canjeSuccessOverlay">
+    <div class="canje-success-box">
+      <div class="canje-success-confetti">🎊✨🎉</div>
+      <div class="canje-success-icon">💚</div>
+      <div class="canje-success-title" id="canjeSuccessTitle">¡Vale Canjeado!</div>
+      <div class="canje-success-sub" id="canjeSuccessSub">Tu deseo ha sido concedido</div>
+      <div class="canje-success-concept" id="canjeSuccessConcept">Un masaje relajante</div>
+      <div class="canje-success-date" id="canjeSuccessDate">📅 Canjeable hoy: 28/02/2026</div>
+      <div class="canje-success-msg" id="canjeSuccessMsg">
+        🌟 <em>¡Enhorabuena!</em><br>
+        Tu pareja ha aceptado tu solicitud.<br>
+        Disfruta de este momento especial juntos 💕
+      </div>
+      <button class="canje-success-btn" onclick="dismissCanjeSuccess()">💚 ¡Gracias mi amor!</button>
     </div>
   </div>
 
@@ -739,25 +1037,7 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
           <div class="ticket-parties">
             <div class="t-party">
               <div class="t-avatar" id="avatarFrom">
-                <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="26" cy="26" r="25" fill="#e8f5f0" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
-                  <rect x="21" y="33" width="10" height="8" rx="4" fill="#f5c8a0"/>
-                  <ellipse cx="26" cy="47" rx="13" ry="8" fill="#2a2a2a"/>
-                  <circle cx="26" cy="26" r="11" fill="#f5c8a0"/>
-                  <ellipse cx="26" cy="13" rx="8" ry="5" fill="#6b3a1f"/>
-                  <ellipse cx="17" cy="22" rx="3" ry="6" fill="#7a4020"/>
-                  <ellipse cx="35" cy="22" rx="3" ry="6" fill="#7a4020"/>
-                  <ellipse cx="26" cy="17" rx="9" ry="7" fill="#7a4020"/>
-                  <circle cx="26" cy="12" r="5" fill="#6b3a1f"/>
-                  <path d="M17 20 Q26 16 35 20" fill="#7a4020"/>
-                  <ellipse cx="22" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
-                  <ellipse cx="30" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
-                  <circle cx="23" cy="25" r="0.6" fill="white"/>
-                  <circle cx="31" cy="25" r="0.6" fill="white"/>
-                  <path d="M21 30 Q26 34 31 30" stroke="#c47a5a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-                  <circle cx="19" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
-                  <circle cx="33" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
-                </svg>
+                <img src="img/florecilla.jpeg" alt="Florecilla" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:center 5%;border:1.5px solid rgba(42,138,154,0.3);box-shadow:0 2px 6px rgba(42,138,154,0.2);">
               </div>
               <span class="t-party-label">de</span>
               <div class="t-party-name" id="ticketFrom">Florecilla</div>
@@ -765,26 +1045,7 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
             <div class="t-arrow">💌</div>
             <div class="t-party">
               <div class="t-avatar" id="avatarTo">
-                <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="26" cy="26" r="25" fill="#e8f0f8" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
-                  <rect x="21" y="33" width="10" height="8" rx="4" fill="#d4a882"/>
-                  <ellipse cx="26" cy="47" rx="13" ry="8" fill="#1a1a1a"/>
-                  <circle cx="26" cy="26" r="11" fill="#d4a882"/>
-                  <circle cx="26" cy="21" r="11" fill="#c09070"/>
-                  <circle cx="26" cy="19" r="10.5" fill="#c89878"/>
-                  <path d="M18 30 Q26 38 34 30 Q30 35 26 36 Q22 35 18 30Z" fill="#b8a898"/>
-                  <ellipse cx="26" cy="30" rx="5" ry="2" fill="#b0a090"/>
-                  <rect x="16" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
-                  <rect x="28" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
-                  <line x1="24" y1="25.5" x2="28" y2="25.5" stroke="#1a1a2e" stroke-width="1.5"/>
-                  <line x1="16" y1="25.5" x2="14" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
-                  <line x1="36" y1="25.5" x2="38" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
-                  <rect x="17" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
-                  <rect x="29" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
-                  <line x1="18" y1="24.5" x2="21" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
-                  <line x1="30" y1="24.5" x2="33" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
-                  <path d="M22 31.5 Q26 34 30 31.5" stroke="#9a7a5a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-                </svg>
+                <img src="img/chiqutin.jpeg" alt="Chiquitín" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:center 10%;border:1.5px solid rgba(42,138,154,0.3);box-shadow:0 2px 6px rgba(42,138,154,0.2);">
               </div>
               <span class="t-party-label">para</span>
               <div class="t-party-name" id="ticketTo">Chiquitín</div>
@@ -841,9 +1102,9 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
     <div class="wallet-header">
       <div class="wallet-title" id="walletTitleEl">💳 Mi Wallet de Amor</div>
     </div>
-    <div class="wallet-tabs">
-      <button class="wallet-tab active" id="tabFlorecilla" onclick="switchWalletTab('Florecilla', this)">🌸 Florecilla<span class="wallet-tab-badge" id="badgeFlorecilla" style="display:none"></span></button>
-      <button class="wallet-tab" id="tabChiquitin" onclick="switchWalletTab('Chiquitín', this)">🐾 Chiquitín<span class="wallet-tab-badge" id="badgeChiquitin" style="display:none"></span></button>
+    <div class="wallet-subtabs" id="walletSubtabs">
+      <button class="wallet-subtab active" onclick="switchWalletSubtab('recibidos', this)">📥 Recibidos <span class="subtab-count" id="countRecibidos">0</span></button>
+      <button class="wallet-subtab" onclick="switchWalletSubtab('emitidos', this)">📤 Emitidos <span class="subtab-count" id="countEmitidos">0</span></button>
     </div>
     <div id="walletCards" class="wallet-cards"></div>
   </div>
@@ -868,14 +1129,24 @@ function setIdentity(name) {
   showUserChip();
   // Check for new vales
   checkNewVales();
+  // Refrescar wallet
+  renderWallet();
+  // Verificar canjes pendientes después de un pequeño delay
+  setTimeout(() => {
+    checkPendingCanjes();
+    checkAcceptedCanjes();
+  }, 500);
 }
 
 function showOnboarding(forceShow = false) {
   const overlay = document.getElementById('onboardingOverlay');
   const oFlor = document.getElementById('onboardAvatarFlor');
   const oChiq = document.getElementById('onboardAvatarChiq');
-  if (oFlor) oFlor.innerHTML = AVATAR_FLORECILLA.replace('width="52" height="52"', 'width="44" height="44"');
-  if (oChiq) oChiq.innerHTML = AVATAR_CHIQUTIN.replace('width="52" height="52"', 'width="44" height="44"');
+  // Avatares pequeños para onboarding (44px)
+  const smallFlor = `<img src="img/florecilla.jpeg" alt="Florecilla" style="width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:center 5%;border:1.5px solid rgba(42,138,154,0.3);">`;
+  const smallChiq = `<img src="img/chiqutin.jpeg" alt="Chiquitín" style="width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:center 10%;border:1.5px solid rgba(42,138,154,0.3);">`;
+  if (oFlor) oFlor.innerHTML = smallFlor;
+  if (oChiq) oChiq.innerHTML = smallChiq;
 
   if (!currentUser || forceShow) {
     // Temporarily restore buttons so identity can be re-chosen
@@ -897,6 +1168,16 @@ function showUserChip() {
   const label = document.getElementById('currentUserChipLabel');
   if (chip) chip.style.display = 'flex';
   if (label) label.textContent = (currentUser === 'Florecilla' ? '🌸' : '🐾') + ' Tú: ' + currentUser;
+  
+  // Actualizar título de wallet
+  const walletTitle = document.getElementById('walletTitleEl');
+  if (walletTitle) {
+    const icon = currentUser === 'Florecilla' ? '🌸' : '🐾';
+    walletTitle.textContent = `${icon} Wallet de ${currentUser}`;
+  }
+  
+  // Actualizar contadores
+  updateWalletCounts();
 }
 
 // ===== NEW VALE DETECTION =====
@@ -1042,11 +1323,17 @@ function startPolling() {
     _lastSeenCount = newCount;
     // Always check expiry alerts on each poll
     await checkExpiryAlerts(currentUser);
+    // Check for pending canjes and accepted canjes
+    await checkPendingCanjes();
+    await checkAcceptedCanjes();
+    // Update counts
+    updateWalletCounts();
   }, 30000);
 }
 
 
 let walletTab = 'Florecilla';
+let walletSubtab = 'recibidos'; // 'recibidos' o 'emitidos'
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -1105,46 +1392,9 @@ function lockSender() {
 }
 
 // ===== AVATARS =====
-const AVATAR_FLORECILLA = `<svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="26" cy="26" r="25" fill="#e8f5f0" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
-  <rect x="21" y="33" width="10" height="8" rx="4" fill="#f5c8a0"/>
-  <ellipse cx="26" cy="47" rx="13" ry="8" fill="#2a2a2a"/>
-  <circle cx="26" cy="26" r="11" fill="#f5c8a0"/>
-  <ellipse cx="26" cy="13" rx="8" ry="5" fill="#6b3a1f"/>
-  <ellipse cx="17" cy="22" rx="3" ry="6" fill="#7a4020"/>
-  <ellipse cx="35" cy="22" rx="3" ry="6" fill="#7a4020"/>
-  <ellipse cx="26" cy="17" rx="9" ry="7" fill="#7a4020"/>
-  <circle cx="26" cy="12" r="5" fill="#6b3a1f"/>
-  <path d="M17 20 Q26 16 35 20" fill="#7a4020"/>
-  <ellipse cx="22" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
-  <ellipse cx="30" cy="26" rx="1.8" ry="2" fill="#3a2010"/>
-  <circle cx="23" cy="25" r="0.6" fill="white"/>
-  <circle cx="31" cy="25" r="0.6" fill="white"/>
-  <path d="M21 30 Q26 34 31 30" stroke="#c47a5a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <circle cx="19" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
-  <circle cx="33" cy="29" r="2.5" fill="rgba(255,150,120,0.25)"/>
-</svg>`;
+const AVATAR_FLORECILLA = `<img src="img/florecilla.jpeg" alt="Florecilla" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:center 5%;border:1.5px solid rgba(42,138,154,0.3);box-shadow:0 2px 8px rgba(42,138,154,0.2);">`;
 
-const AVATAR_CHIQUTIN = `<svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="26" cy="26" r="25" fill="#e8f0f8" stroke="rgba(42,138,154,0.3)" stroke-width="1.5"/>
-  <rect x="21" y="33" width="10" height="8" rx="4" fill="#d4a882"/>
-  <ellipse cx="26" cy="47" rx="13" ry="8" fill="#1a1a1a"/>
-  <circle cx="26" cy="26" r="11" fill="#d4a882"/>
-  <circle cx="26" cy="21" r="11" fill="#c09070"/>
-  <circle cx="26" cy="19" r="10.5" fill="#c89878"/>
-  <path d="M18 30 Q26 38 34 30 Q30 35 26 36 Q22 35 18 30Z" fill="#b8a898"/>
-  <ellipse cx="26" cy="30" rx="5" ry="2" fill="#b0a090"/>
-  <rect x="16" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
-  <rect x="28" y="23" width="8" height="5.5" rx="2.5" fill="#1a1a2e" opacity="0.95"/>
-  <line x1="24" y1="25.5" x2="28" y2="25.5" stroke="#1a1a2e" stroke-width="1.5"/>
-  <line x1="16" y1="25.5" x2="14" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
-  <line x1="36" y1="25.5" x2="38" y2="25" stroke="#1a1a2e" stroke-width="1.5"/>
-  <rect x="17" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
-  <rect x="29" y="23.5" width="6" height="4" rx="2" fill="#3a6aee" opacity="0.6"/>
-  <line x1="18" y1="24.5" x2="21" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
-  <line x1="30" y1="24.5" x2="33" y2="24.5" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
-  <path d="M22 31.5 Q26 34 30 31.5" stroke="#9a7a5a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-</svg>`;
+const AVATAR_CHIQUTIN = `<img src="img/chiqutin.jpeg" alt="Chiquitín" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:center 10%;border:1.5px solid rgba(42,138,154,0.3);box-shadow:0 2px 8px rgba(42,138,154,0.2);">`;
 
 function updateAvatars() {
   const fromFlor = sender === 'Florecilla';
@@ -1279,16 +1529,16 @@ function walletKey(owner) {
 
 async function loadWalletData(owner) {
   const key = walletKey(owner);
+  let localData = [];
 
   // 1. Try window.storage first (Claude.ai artifact env — shared between users)
   if (window.storage) {
     try {
       const result = await window.storage.get(key);
       if (result && result.value) {
-        const data = JSON.parse(result.value);
+        localData = JSON.parse(result.value);
         // Mirror to localStorage so it survives if window.storage disappears
         try { localStorage.setItem(key, result.value); } catch(e) {}
-        return data;
       }
     } catch(e) {
       // key not found in window.storage — fall through to localStorage
@@ -1296,12 +1546,38 @@ async function loadWalletData(owner) {
   }
 
   // 2. localStorage — always works, persists across sessions on same device
-  try {
-    const raw = localStorage.getItem(key);
-    if (raw) return JSON.parse(raw);
-  } catch(e) {}
+  if (localData.length === 0) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) localData = JSON.parse(raw);
+    } catch(e) {}
+  }
 
-  return [];
+  // 3. Si PocketBase está disponible, obtener datos frescos y mergear estados de canje
+  if (window.PB && window.PB.isConnected()) {
+    try {
+      const pbData = await window.PB.getVales(owner);
+      if (pbData && pbData.length > 0) {
+        // Mergear: actualizar estados de canje de PocketBase a datos locales
+        pbData.forEach(pbVale => {
+          const localVale = localData.find(v => v.serial === pbVale.serial);
+          if (localVale) {
+            // Actualizar estado de canje desde PocketBase
+            localVale.canje_status = pbVale.canje_status;
+            localVale.canje_fecha = pbVale.canje_fecha;
+            localVale.canje_aceptado = pbVale.canje_aceptado;
+          } else {
+            // Vale nuevo de PocketBase que no está local
+            localData.unshift(pbVale);
+          }
+        });
+      }
+    } catch(e) {
+      console.warn('Error sincronizando con PocketBase:', e);
+    }
+  }
+
+  return localData;
 }
 
 async function saveWalletData(owner, data) {
@@ -1322,6 +1598,14 @@ async function saveWalletData(owner, data) {
   if (window.storage) {
     try { await window.storage.set(key, json); } catch(e) {
       console.warn('window.storage.set failed (non-critical):', e);
+    }
+  }
+
+  // Sincronizar con PocketBase si está disponible
+  if (window.PB && window.PB.isConnected()) {
+    // Guardar cada vale individualmente en PocketBase
+    for (const vale of data) {
+      await window.PB.save(vale);
     }
   }
 }
@@ -1381,20 +1665,18 @@ async function saveToWallet() {
 
   const vale = { id: Date.now(), concept, from, to, serial, caduca, emitido };
 
-  // Save to BOTH wallets — recipient and sender
+  // Save ONLY to recipient's wallet (not sender's)
   let savedAny = false;
-  for (const owner of [to, from]) {
-    const data = await loadWalletData(owner);
-    if (!data.find(v => v.serial === serial)) {
-      data.unshift(vale);
-      await saveWalletData(owner, data);
-      savedAny = true;
-    }
+  const recipientData = await loadWalletData(to);
+  if (!recipientData.find(v => v.serial === serial)) {
+    recipientData.unshift(vale);
+    await saveWalletData(to, recipientData);
+    savedAny = true;
   }
 
   if (btn) {
     if (savedAny) {
-      btn.textContent = `✅ Guardado para ${from} y ${to}`;
+      btn.textContent = `✅ Enviado a ${to}`;
     } else {
       btn.textContent = '✅ Ya estaba guardado';
     }
@@ -1402,7 +1684,6 @@ async function saveToWallet() {
   }
 
   // Update badge for recipient (they have unseen vales now)
-  const recipientData = await loadWalletData(to);
   const recipientSeen = getSeenSerials(to);
   const recipientNew = recipientData.filter(v => !recipientSeen.includes(v.serial)).length;
   updateBadge(to, recipientNew);
@@ -1544,13 +1825,13 @@ function showDeleteConfirmStep(step) {
   if (!overlay || !_deleteTarget) return;
 
   const { vale } = _deleteTarget;
-  const isADVM   = getValeStatus(vale.caduca).key === 'eterna';
-  const label    = isADVM ? 'ADVM — Amor De Mi Vida' : '💀 Vale caducado';
+  const isADMV   = getValeStatus(vale.caduca).key === 'eterna';
+  const label    = isADMV ? 'ADMV — Amor De Mi Vida' : '💀 Vale caducado';
   document.getElementById('deleteConfirmTitle').textContent = step === 1
     ? '¿Seguro que quieres borrar?' : step === 2
     ? '¿Estás completamente seguro?' : '⚠️ Última oportunidad';
   conceptEl.textContent = `"${vale.concept}"`;
-  document.querySelector('.delete-confirm-advm').textContent = label;
+  document.querySelector('.delete-confirm-ADMV').textContent = label;
 
   if (step === 1) {
     msgEl.innerHTML = '💝 <em>ILYSM — I Love You So Much…</em><br>este vale nació del amor. ¿De verdad quieres borrarlo?';
@@ -1559,7 +1840,7 @@ function showDeleteConfirmStep(step) {
       <button class="delete-confirm-btn cancel" onclick="cancelDelete()">💙 No, lo guardo con cariño</button>
       <button class="delete-confirm-btn confirm-step" onclick="showDeleteConfirmStep(2)">Sí, continuar…</button>`;
   } else if (step === 2) {
-    msgEl.innerHTML = '🌹 <em>ADVM — Amor De Mi Vida…</em><br>una vez borrado, esta semilla de amor desaparece para siempre.';
+    msgEl.innerHTML = '🌹 <em>ADMV — Amor De Mi Vida…</em><br>una vez borrado, esta semilla de amor desaparece para siempre.';
     stepEl.textContent = 'Paso 2 de 3';
     btnsEl.innerHTML = `
       <button class="delete-confirm-btn cancel" onclick="cancelDelete()">💙 Mejor no, lo conservo</button>
@@ -1584,9 +1865,20 @@ async function confirmDelete() {
   if (!_deleteTarget) return;
   const { owner, id } = _deleteTarget;
   document.getElementById('deleteConfirmOverlay').classList.remove('visible');
-  _deleteTarget = null;
+  
+  // Obtener el serial antes de eliminar para sincronizar con PocketBase
   const data = await loadWalletData(owner);
+  const valeToDelete = data.find(v => v.id === id);
+  const serial = valeToDelete?.serial;
+  
+  _deleteTarget = null;
   await saveWalletData(owner, data.filter(v => v.id !== id));
+  
+  // Eliminar también de PocketBase
+  if (serial && window.PB && window.PB.isConnected()) {
+    await window.PB.delete(serial);
+  }
+  
   renderWallet();
 }
 
@@ -1610,52 +1902,170 @@ function shakeCard(id) {
 
 
 async function renderWallet() {
-  const data = await loadWalletData(walletTab);
-  const container = document.getElementById('walletCards');
-
-  if (!data.length) {
+  if (!currentUser) {
+    const container = document.getElementById('walletCards');
     container.innerHTML = `<div class="wallet-empty">
-      <div class="wallet-empty-icon">💌</div>
-      <div class="wallet-empty-text">Aún no hay vales para ${walletTab}</div>
+      <div class="wallet-empty-icon">👤</div>
+      <div class="wallet-empty-text">Selecciona tu perfil para ver tus vales</div>
     </div>`;
     return;
   }
 
-  const isFlor = walletTab === 'Florecilla';
-  const ownerAv = isFlor ? AVATAR_FLORECILLA : AVATAR_CHIQUTIN;
-  const senderAv = isFlor ? AVATAR_CHIQUTIN : AVATAR_FLORECILLA;
-  const smallAv = av => av.replace('width="52" height="52"', 'width="36" height="36"');
+  // Cargar vales según el subtab activo
+  let data = [];
+  if (walletSubtab === 'recibidos') {
+    data = await loadWalletData(currentUser); // Vales donde to === currentUser
+  } else {
+    data = await loadEmitidosData(currentUser); // Vales donde from === currentUser
+  }
+
+  const container = document.getElementById('walletCards');
+
+  // Actualizar contadores
+  updateWalletCounts();
+
+  if (!data.length) {
+    const emptyMsg = walletSubtab === 'recibidos' 
+      ? 'Aún no has recibido ningún vale 💌'
+      : 'Aún no has emitido ningún vale ✨';
+    container.innerHTML = `<div class="wallet-empty">
+      <div class="wallet-empty-icon">${walletSubtab === 'recibidos' ? '📥' : '📤'}</div>
+      <div class="wallet-empty-text">${emptyMsg}</div>
+    </div>`;
+    return;
+  }
+
+  // Función para redimensionar avatares
+  const smallAv = av => av.replace(/width[=:]["']?52(px)?["']?/gi, 'width:36px').replace(/height[=:]["']?52(px)?["']?/gi, 'height:36px').replace('width="52"', 'width="36"').replace('height="52"', 'height="36"').replace('width:52px', 'width:36px').replace('height:52px', 'height:36px');
 
   container.innerHTML = data.map(vale => {
     const status   = getValeStatus(vale.caduca);
-    const av       = vale.from === walletTab ? smallAv(ownerAv) : smallAv(senderAv);
+    // Avatar según si es emitido o recibido
+    const avatarUser = walletSubtab === 'recibidos' ? vale.from : vale.to;
+    const avatarImg = avatarUser === 'Florecilla' ? AVATAR_FLORECILLA : AVATAR_CHIQUTIN;
+    const av = smallAv(avatarImg);
     const idSafe   = vale.id;
     const canDelete= status.key === 'eterna' || status.key === 'caducado';
 
-    const advmTag  = status.key === 'eterna'
-      ? `<span class="advm-tag" title="Amor De Mi Vida — sin caducidad">ADVM</span>`
+    const ADMVTag  = status.key === 'eterna'
+      ? `<span class="ADMV-tag" title="Amor De Mi Vida — sin caducidad">ADMV</span>`
       : '';
 
     const deleteBtn = canDelete
-      ? `<button class="vale-card-delete" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Eliminar este vale">🗑</button>`
-      : `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Solo puedes borrar este vale cuando caduque">🔒</button>`;
+      ? `<button class="vale-card-delete" onclick="deleteFromWallet('${currentUser}', ${idSafe})" title="Eliminar este vale">🗑</button>`
+      : `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" onclick="deleteFromWallet('${currentUser}', ${idSafe})" title="Solo puedes borrar este vale cuando caduque">🔒</button>`;
 
-    return `<div class="vale-card ${status.css}">
+    // Botón de canjear - SOLO en vales recibidos
+    const esRecibido = walletSubtab === 'recibidos';
+    const canCanjear = status.key !== 'caducado' && esRecibido;
+    const canjeStatus = vale.canje_status || null;
+    let canjearBtn = '';
+    
+    // Función para verificar si la fecha de canje ya pasó
+    const fechaCanjePasada = () => {
+      if (!vale.canje_aceptado) return false;
+      const partes = vale.canje_aceptado.split('/');
+      if (partes.length !== 3) return false;
+      const fechaCanje = new Date(partes[2], partes[1] - 1, partes[0]);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      return fechaCanje < hoy;
+    };
+    
+    if (!esRecibido) {
+      // En emitidos: mostrar estado según canje
+      if (canjeStatus === 'pendiente') {
+        canjearBtn = `<span class="canje-status-tag pendiente" style="padding:0.35rem 0.6rem;">⏳ Solicitud pendiente</span>`;
+      } else if (canjeStatus === 'canjeado') {
+        if (fechaCanjePasada()) {
+          canjearBtn = `<span class="canje-status-tag canjeado" style="padding:0.35rem 0.6rem;">✓ Vale canjeado</span>`;
+        } else {
+          canjearBtn = `<span class="canje-status-tag aceptado" style="padding:0.35rem 0.6rem;">📅 Se canjeará el ${vale.canje_aceptado}</span>`;
+        }
+      }
+    } else if (canjeStatus === 'canjeado') {
+      if (fechaCanjePasada()) {
+        canjearBtn = `<button class="vale-card-canjear canjeado" disabled title="Ya canjeado">✓ Vale canjeado</button>`;
+      } else {
+        canjearBtn = `<button class="vale-card-canjear aceptado" disabled title="Canje aprobado">📅 Se canjeará el ${vale.canje_aceptado}</button>`;
+      }
+    } else if (canjeStatus === 'pendiente') {
+      canjearBtn = `<button class="vale-card-canjear pendiente" disabled title="Esperando respuesta...">⏳ Pendiente</button>`;
+    } else if (canCanjear) {
+      canjearBtn = `<button class="vale-card-canjear" onclick="solicitarCanje('${vale.serial}')" title="Solicitar canjear este vale">🎁 Canjear</button>`;
+    } else if (esRecibido) {
+      canjearBtn = `<button class="vale-card-canjear" disabled title="Vale caducado">❌ Caducado</button>`;
+    }
+
+    // Tag de estado de canje
+    const canjeTag = canjeStatus === 'pendiente' 
+      ? `<span class="canje-status-tag pendiente">⏳ PENDIENTE</span>`
+      : canjeStatus === 'canjeado'
+        ? (fechaCanjePasada() 
+            ? `<span class="canje-status-tag canjeado">✓ CANJEADO</span>`
+            : `<span class="canje-status-tag aceptado">📅 ${vale.canje_aceptado}</span>`)
+        : '';
+
+    // Texto de "De" o "Para" según el subtab
+    const fromToText = walletSubtab === 'recibidos' 
+      ? `De ${vale.from}` 
+      : `Para ${vale.to}`;
+
+    return `<div class="vale-card ${status.css}" data-serial="${vale.serial}">
       <div class="vale-card-avatar">${av}</div>
       <div class="vale-card-body">
-        <div class="vale-card-concept">${vale.concept}${advmTag}</div>
-        <div class="vale-card-from">De ${vale.from} · ${vale.emitido}</div>
+        <div class="vale-card-concept">${vale.concept}${ADMVTag}${canjeTag}</div>
+        <div class="vale-card-from">${fromToText} · ${vale.emitido}</div>
         <div class="vale-card-meta">Nº ${vale.serial}</div>
       </div>
       <div class="vale-card-status">
         <div class="vale-card-badge ${status.css}-badge">${status.label}</div>
-        <div style="display:flex;gap:0.3rem;margin-top:0.2rem;">
-          <button class="vale-card-action" onclick="previewFromWallet(${idSafe})" title="Ver y compartir">👁</button>
-          ${deleteBtn}
+        <div style="display:flex;flex-direction:column;gap:0.3rem;margin-top:0.2rem;">
+          ${canjearBtn}
+          <div style="display:flex;gap:0.3rem;">
+            <button class="vale-card-action" onclick="previewFromWallet(${idSafe})" title="Ver y compartir">👁</button>
+            ${deleteBtn}
+          </div>
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+// Función para cargar vales emitidos por el usuario
+async function loadEmitidosData(user) {
+  // Primero intentar de PocketBase
+  if (window.PB && window.PB.isConnected()) {
+    try {
+      const result = await window.PB.getEmitidos(user);
+      if (result && result.length > 0) return result;
+    } catch(e) { console.warn('PB emitidos error:', e); }
+  }
+  
+  // Fallback: buscar en localStorage del otro usuario
+  const partner = user === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
+  const partnerData = await loadWalletData(partner);
+  // Filtrar los que yo emití (from === user)
+  return partnerData.filter(v => v.from === user);
+}
+
+// Función para cambiar subtab
+function switchWalletSubtab(subtab, btn) {
+  walletSubtab = subtab;
+  document.querySelectorAll('.wallet-subtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWallet();
+}
+
+// Actualizar contadores de vales
+async function updateWalletCounts() {
+  if (!currentUser) return;
+  
+  const recibidos = await loadWalletData(currentUser);
+  const emitidos = await loadEmitidosData(currentUser);
+  
+  document.getElementById('countRecibidos').textContent = recibidos.length;
+  document.getElementById('countEmitidos').textContent = emitidos.length;
 }
 
 async function previewFromWallet(id) {
@@ -1704,6 +2114,144 @@ async function previewFromWallet(id) {
   setTimeout(() => { event.target.textContent = '👁'; }, 1500);
 }
 
+// ===== VALE ENCODING/DECODING FOR DEEP LINKS =====
+function encodeValeForURL(vale) {
+  // Create a compact object with shortened keys
+  const compact = {
+    c: vale.concept,
+    f: vale.from,
+    t: vale.to,
+    s: vale.serial,
+    x: vale.caduca,
+    e: vale.emitido,
+    i: vale.id
+  };
+  // Encode to base64 (URL-safe)
+  const json = JSON.stringify(compact);
+  const base64 = btoa(unescape(encodeURIComponent(json)));
+  // Make URL-safe: replace + with -, / with _, remove =
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodeValeFromURL(encoded) {
+  try {
+    // Restore standard base64
+    let base64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+    // Add padding if needed
+    while (base64.length % 4) base64 += '=';
+    // Decode
+    const json = decodeURIComponent(escape(atob(base64)));
+    const compact = JSON.parse(json);
+    // Expand to full vale object
+    return {
+      id: compact.i || Date.now(),
+      concept: compact.c,
+      from: compact.f,
+      to: compact.t,
+      serial: compact.s,
+      caduca: compact.x,
+      emitido: compact.e
+    };
+  } catch (e) {
+    console.error('Error decoding vale:', e);
+    return null;
+  }
+}
+
+function getAppBaseURL() {
+  // Get the base URL of the app (works for GitHub Pages, localhost, etc.)
+  const url = new URL(window.location.href);
+  url.search = ''; // Remove query params
+  url.hash = '';   // Remove hash
+  return url.toString();
+}
+
+function generateValeLink(vale) {
+  const encoded = encodeValeForURL(vale);
+  return getAppBaseURL() + '?vale=' + encoded;
+}
+
+// ===== IMPORT VALE FROM URL =====
+let _pendingImportVale = null;
+
+function checkURLForVale() {
+  const params = new URLSearchParams(window.location.search);
+  const valeParam = params.get('vale');
+  
+  if (!valeParam) return;
+  
+  const vale = decodeValeFromURL(valeParam);
+  if (!vale) {
+    console.warn('Invalid vale in URL');
+    return;
+  }
+  
+  // Clean URL without reloading (remove the vale param)
+  const cleanURL = getAppBaseURL();
+  window.history.replaceState({}, document.title, cleanURL);
+  
+  // Store and show import popup
+  _pendingImportVale = vale;
+  showImportPopup(vale);
+}
+
+function showImportPopup(vale) {
+  const overlay = document.getElementById('importValeOverlay');
+  if (!overlay) return;
+  
+  document.getElementById('importValeTitle').textContent = '¡Te han enviado un Vale! 💌';
+  document.getElementById('importValeFrom').textContent = `De ${vale.from} para ${vale.to}`;
+  document.getElementById('importValeConcept').textContent = vale.concept;
+  document.getElementById('importValeMeta').textContent = `Nº ${vale.serial} · Caduca: ${vale.caduca}`;
+  
+  // Play notification
+  playNotificationSound();
+  vibrateDevice();
+  
+  overlay.classList.add('visible');
+}
+
+async function acceptImportedVale() {
+  if (!_pendingImportVale) return;
+  
+  const vale = _pendingImportVale;
+  const overlay = document.getElementById('importValeOverlay');
+  
+  // Save ONLY to the recipient's wallet (not sender's)
+  const recipientData = await loadWalletData(vale.to);
+  if (!recipientData.find(v => v.serial === vale.serial)) {
+    recipientData.unshift(vale);
+    await saveWalletData(vale.to, recipientData);
+  }
+  
+  // Mark as seen for recipient
+  const seenSerials = getSeenSerials(vale.to);
+  if (!seenSerials.includes(vale.serial)) {
+    seenSerials.push(vale.serial);
+    localStorage.setItem(seenKey(vale.to), JSON.stringify(seenSerials));
+  }
+  
+  overlay.classList.remove('visible');
+  _pendingImportVale = null;
+  
+  // Switch to recipient's wallet tab and refresh
+  walletTab = vale.to;
+  document.querySelectorAll('.wallet-tab').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes(vale.to));
+  });
+  renderWallet();
+  
+  // Scroll to wallet
+  setTimeout(() => {
+    document.querySelector('.wallet-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
+}
+
+function declineImportedVale() {
+  _pendingImportVale = null;
+  document.getElementById('importValeOverlay').classList.remove('visible');
+}
+
 // ===== SHARE / EXPORT =====
 async function captureTicket() {
   const script = document.createElement('script');
@@ -1732,26 +2280,47 @@ async function shareAsImage() {
 }
 async function shareWhatsapp() {
   const waBtn = document.getElementById('waBtn');
-  waBtn.innerHTML = '⏳ Generando imagen...'; waBtn.disabled = true;
+  waBtn.innerHTML = '⏳ Generando...'; waBtn.disabled = true;
+  
+  // Get current vale data to create the deep link
+  const vale = {
+    id: Date.now(),
+    concept: document.getElementById('ticketConcept')?.textContent?.trim(),
+    from: document.getElementById('ticketFrom')?.textContent?.trim(),
+    to: document.getElementById('ticketTo')?.textContent?.trim(),
+    serial: document.getElementById('serialNum')?.textContent?.trim(),
+    caduca: document.getElementById('ticketCaduca')?.textContent?.trim(),
+    emitido: document.getElementById('ticketEmitido')?.textContent?.trim()
+  };
+  
+  // Generate the deep link
+  const valeLink = generateValeLink(vale);
+  const shareMessage = `💜 ¡Te envío un Vale de Amor! 🌙
+
+✨ "${vale.concept}"
+
+👆 Abre este enlace para guardarlo en tu Wallet:
+${valeLink}`;
+  
+  // Always copy link to clipboard first
   try {
-    const canvas = await captureTicket();
-    canvas.toBlob(async blob => {
-      const file = new File([blob], 'vale-de-amor.png', {type:'image/png'});
-      try {
-        if (navigator.canShare && navigator.canShare({files:[file]})) {
-          await navigator.share({files:[file], title:'💜 Te envío un Vale de Amor 🌙'});
-        } else {
-          const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-          a.download = 'vale-de-amor.png'; a.click();
-          setTimeout(() => window.open('https://wa.me/?text=' + encodeURIComponent('💜 Te envío un Vale de Amor 🌙'), '_blank'), 1000);
-        }
-        waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> ¡Enviado!`;
-        setTimeout(() => { waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar por WhatsApp`; waBtn.disabled = false; }, 2500);
-      } catch(e) {
-        waBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar por WhatsApp`; waBtn.disabled = false;
-      }
-    }, 'image/png');
-  } catch(e) { console.error(e); waBtn.innerHTML = 'Enviar por WhatsApp'; waBtn.disabled = false; }
+    await navigator.clipboard.writeText(shareMessage);
+    console.log('✅ Mensaje copiado al portapapeles');
+  } catch(e) {
+    console.warn('No se pudo copiar al portapapeles:', e);
+  }
+  
+  // Open WhatsApp directly with the message (most reliable method)
+  const waURL = 'https://wa.me/?text=' + encodeURIComponent(shareMessage);
+  window.open(waURL, '_blank');
+  
+  // Show success with instructions
+  const waIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+  waBtn.innerHTML = `${waIcon} ✅ ¡Enlace copiado!`;
+  setTimeout(() => { 
+    waBtn.innerHTML = `${waIcon} Enviar por WhatsApp`; 
+    waBtn.disabled = false; 
+  }, 3000);
 }
 
 // ===== PARTICLES =====
@@ -1776,6 +2345,332 @@ function createFloaters() {
   }
 }
 
+// ===== CANJE SYSTEM =====
+let _pendingCanje = null; // { serial, vale }
+
+// Función de debug para probar el flujo manualmente
+window.testCanje = {
+  // Ver estado completo de ambos usuarios
+  status: () => {
+    console.log('═══════════════════════════════════════');
+    console.log('👤 USUARIO ACTUAL:', currentUser);
+    console.log('═══════════════════════════════════════');
+    
+    // Leer ambos localStorage directamente
+    ['Florecilla', 'Chiquitín'].forEach(user => {
+      const key = 'vales-amor:' + user;
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const data = JSON.parse(raw);
+        console.log(`\n📦 WALLET de ${user}: (${data.length} vales)`);
+        data.forEach((v, i) => {
+          console.log(`  ${i+1}. "${v.concept}"`);
+          console.log(`     from: ${v.from} → to: ${v.to}`);
+          console.log(`     serial: ${v.serial}`);
+          console.log(`     canje_status: ${v.canje_status || '(null)'}`);
+          console.log(`     canje_fecha: ${v.canje_fecha || '(null)'}`);
+        });
+      } else {
+        console.log(`\n📦 WALLET de ${user}: (vacía)`);
+      }
+    });
+    console.log('═══════════════════════════════════════');
+  },
+  
+  // Forzar verificación de canjes
+  check: async () => {
+    console.log('🔍 Forzando verificación de canjes...');
+    await checkPendingCanjes();
+    await checkAcceptedCanjes();
+    console.log('✅ Verificación completada');
+  },
+  
+  // Simular solicitud de canje
+  request: (serial) => {
+    console.log('📤 Solicitando canje para:', serial);
+    solicitarCanje(serial);
+  },
+  
+  // Simular popup directamente
+  showPopup: (serial) => {
+    const partner = currentUser === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
+    const key = 'vales-amor:' + partner;
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const data = JSON.parse(raw);
+      const vale = data.find(v => v.serial === serial);
+      if (vale) {
+        console.log('🎁 Mostrando popup para:', vale.concept);
+        showCanjeRequest(vale);
+      } else {
+        console.error('❌ Vale no encontrado');
+      }
+    }
+  },
+  
+  // Ver pendientes del usuario actual (como emisor)
+  pending: () => {
+    const partner = currentUser === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
+    const key = 'vales-amor:' + partner;
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const data = JSON.parse(raw);
+      const pending = data.filter(v => v.from === currentUser && v.canje_status === 'pendiente');
+      console.log(`📬 Canjes pendientes que ${currentUser} debe aprobar:`, pending.length);
+      pending.forEach(v => console.log(`  - "${v.concept}" solicitado por ${v.to}`));
+      return pending;
+    }
+    return [];
+  }
+};
+
+/**
+ * Solicitar canje de un vale (receptor solicita al emisor)
+ */
+async function solicitarCanje(serial) {
+  if (!currentUser) {
+    console.error('❌ No hay usuario actual');
+    return;
+  }
+  
+  console.log('🎁 Solicitando canje para serial:', serial);
+  
+  // Buscar el vale en los recibidos del usuario actual
+  const data = await loadWalletData(currentUser);
+  const vale = data.find(v => v.serial === serial);
+  if (!vale) {
+    console.error('❌ Vale no encontrado:', serial);
+    return;
+  }
+
+  console.log('📝 Vale encontrado:', vale.concept);
+
+  // Verificar que no esté caducado
+  const status = getValeStatus(vale.caduca);
+  if (status.key === 'caducado') {
+    alert('Este vale ha caducado y no se puede canjear.');
+    return;
+  }
+
+  // Verificar que no esté ya en proceso
+  if (vale.canje_status === 'pendiente' || vale.canje_status === 'canjeado') {
+    console.log('⚠️ Vale ya tiene estado:', vale.canje_status);
+    return;
+  }
+
+  // Actualizar estado a pendiente
+  vale.canje_status = 'pendiente';
+  vale.canje_fecha = new Date().toLocaleDateString('es-ES');
+  
+  console.log('💾 Guardando estado pendiente en localStorage...');
+  await saveWalletData(currentUser, data);
+
+  // Guardar en PocketBase si está disponible
+  if (window.PB && window.PB.isConnected()) {
+    console.log('☁️ Actualizando en PocketBase...');
+    const result = await window.PB.updateCanjeStatus(serial, 'pendiente', vale.canje_fecha);
+    console.log('☁️ PocketBase resultado:', result);
+  }
+
+  // Feedback visual
+  playNotificationSound();
+  vibrateDevice();
+
+  // Refrescar la wallet
+  renderWallet();
+
+  // Mostrar confirmación
+  alert(`✨ ¡Solicitud enviada!\n\n${vale.from} recibirá la notificación para aprobar tu canje de:\n\n"${vale.concept}"`);
+  
+  console.log('✅ Solicitud de canje completada');
+}
+
+/**
+ * Mostrar popup de solicitud de canje (para el emisor)
+ */
+function showCanjeRequest(vale) {
+  console.log('🎁 Mostrando popup de solicitud:', vale);
+  
+  _pendingCanje = { serial: vale.serial, vale };
+
+  const overlay = document.getElementById('canjeRequestOverlay');
+  const solicitante = vale.to; // Quien solicita el canje (el receptor del vale)
+
+  document.getElementById('canjeRequestTitle').textContent = '¡Quieren canjear un vale!';
+  document.getElementById('canjeRequestFrom').textContent = `${solicitante} quiere usar:`;
+  document.getElementById('canjeRequestConcept').textContent = vale.concept;
+  document.getElementById('canjeRequestDate').textContent = `Solicitado: ${vale.canje_fecha || new Date().toLocaleDateString('es-ES')}`;
+
+  overlay.classList.add('visible');
+
+  playNotificationSound();
+  vibrateDevice();
+}
+
+/**
+ * Aceptar solicitud de canje (emisor acepta)
+ */
+async function acceptCanje() {
+  if (!_pendingCanje) return;
+
+  const { serial, vale } = _pendingCanje;
+  const recipient = vale.to; // Quien recibe el vale (quien solicitó el canje)
+
+  // Actualizar el vale del receptor a "canjeado"
+  const recipientData = await loadWalletData(recipient);
+  const recipientVale = recipientData.find(v => v.serial === serial);
+  if (recipientVale) {
+    recipientVale.canje_status = 'canjeado';
+    recipientVale.canje_aceptado = new Date().toLocaleDateString('es-ES');
+    await saveWalletData(recipient, recipientData);
+  }
+
+  // Actualizar en PocketBase
+  if (window.PB && window.PB.isConnected()) {
+    await window.PB.updateCanjeStatus(serial, 'canjeado', vale.canje_fecha);
+  }
+
+  // Cerrar popup
+  document.getElementById('canjeRequestOverlay').classList.remove('visible');
+  _pendingCanje = null;
+
+  // Feedback
+  playNotificationSound();
+  
+  // Refrescar wallet
+  renderWallet();
+
+  console.log('✅ Canje aceptado para:', serial);
+}
+
+/**
+ * Rechazar solicitud de canje (emisor no puede ahora)
+ */
+async function declineCanje() {
+  if (!_pendingCanje) return;
+
+  const { serial, vale } = _pendingCanje;
+  const recipient = vale.to;
+
+  // Volver el estado a null (no pendiente)
+  const recipientData = await loadWalletData(recipient);
+  const recipientVale = recipientData.find(v => v.serial === serial);
+  if (recipientVale) {
+    recipientVale.canje_status = null;
+    recipientVale.canje_fecha = null;
+    await saveWalletData(recipient, recipientData);
+  }
+
+  // Actualizar en PocketBase
+  if (window.PB && window.PB.isConnected()) {
+    await window.PB.updateCanjeStatus(serial, null, null);
+  }
+
+  // Cerrar popup
+  document.getElementById('canjeRequestOverlay').classList.remove('visible');
+  _pendingCanje = null;
+
+  // Refrescar wallet
+  renderWallet();
+}
+
+/**
+ * Mostrar popup de éxito de canje (para el receptor)
+ */
+function showCanjeSuccess(vale) {
+  const overlay = document.getElementById('canjeSuccessOverlay');
+
+  document.getElementById('canjeSuccessTitle').textContent = '¡Vale Canjeado!';
+  document.getElementById('canjeSuccessSub').textContent = `${vale.from} ha aceptado tu solicitud`;
+  document.getElementById('canjeSuccessConcept').textContent = vale.concept;
+  document.getElementById('canjeSuccessDate').textContent = `📅 Canjeable hoy: ${vale.canje_aceptado || new Date().toLocaleDateString('es-ES')}`;
+
+  overlay.classList.add('visible');
+
+  playNotificationSound();
+  vibrateDevice();
+}
+
+/**
+ * Cerrar popup de éxito de canje
+ */
+function dismissCanjeSuccess() {
+  document.getElementById('canjeSuccessOverlay').classList.remove('visible');
+  renderWallet();
+}
+
+/**
+ * Verificar si hay solicitudes de canje pendientes para el usuario actual (como emisor)
+ */
+async function checkPendingCanjes() {
+  if (!currentUser) return;
+  
+  // Evitar mostrar si ya hay un popup visible
+  if (document.getElementById('canjeRequestOverlay').classList.contains('visible')) return;
+
+  let pendingCanjes = [];
+
+  // Siempre intentar desde PocketBase primero (es la única forma de sincronizar entre dispositivos)
+  if (window.PB && window.PB.isConnected()) {
+    try {
+      pendingCanjes = await window.PB.getPendingCanjes(currentUser);
+      if (pendingCanjes.length > 0) {
+        console.log('🔍 ¡Canje pendiente encontrado en PB!', pendingCanjes[0].concept);
+      }
+    } catch(e) {
+      console.warn('Error obteniendo canjes pendientes de PB:', e);
+    }
+  }
+
+  // Fallback a localStorage solo para modo offline (mismo dispositivo)
+  if (pendingCanjes.length === 0) {
+    const partner = currentUser === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
+    const partnerKey = 'vales-amor:' + partner;
+    try {
+      const raw = localStorage.getItem(partnerKey);
+      if (raw) {
+        const partnerData = JSON.parse(raw);
+        pendingCanjes = partnerData.filter(v => 
+          v.from === currentUser && v.canje_status === 'pendiente'
+        );
+        if (pendingCanjes.length > 0) {
+          console.log('🔍 Canje pendiente encontrado en localStorage');
+        }
+      }
+    } catch(e) {
+      console.warn('Error leyendo localStorage del partner:', e);
+    }
+  }
+
+  if (pendingCanjes.length > 0) {
+    console.log('📬 Mostrando solicitud de canje:', pendingCanjes[0].concept);
+    showCanjeRequest(pendingCanjes[0]);
+  }
+}
+
+/**
+ * Verificar si hay canjes aceptados para notificar al receptor
+ */
+async function checkAcceptedCanjes() {
+  if (!currentUser) return;
+
+  const myData = await loadWalletData(currentUser);
+
+  // Buscar vales con canje recién aceptado (tiene canje_aceptado pero no se ha mostrado popup)
+  const acceptedCanjes = myData.filter(v => 
+    v.canje_status === 'canjeado' && v.canje_aceptado && !v.canje_notified
+  );
+
+  if (acceptedCanjes.length > 0) {
+    // Marcar como notificado
+    acceptedCanjes.forEach(v => v.canje_notified = true);
+    await saveWalletData(currentUser, myData);
+
+    // Mostrar popup para el primero
+    showCanjeSuccess(acceptedCanjes[0]);
+  }
+}
+
 // ===== INIT =====
 (async () => {
   diagStorage();
@@ -1790,11 +2685,56 @@ function createFloaters() {
   // Lock sender direction if identity already known
   if (currentUser) lockSender();
 
-  // Onboarding / identity check
-  showOnboarding();
+  // Check if there's a vale in the URL (from a shared link)
+  checkURLForVale();
+
+  // Onboarding / identity check (only if no vale import popup is showing)
+  if (!_pendingImportVale) {
+    showOnboarding();
+  }
 
   // Start polling for new vales
   startPolling();
+
+  // ===== POCKETBASE INTEGRATION =====
+  // Inicializar PocketBase después de un pequeño delay para no bloquear
+  setTimeout(async () => {
+    if (window.PB) {
+      const connected = await window.PB.init();
+      if (connected && currentUser) {
+        // Sincronizar vales con PocketBase
+        await window.PB.sync(currentUser);
+        
+        // Suscribirse a cambios en tiempo real
+        window.PB.subscribe(currentUser, (newVale) => {
+          // Cuando llega un vale nuevo por realtime
+          playNotificationSound();
+          vibrateDevice();
+          showNewValePopup([newVale]);
+        });
+        
+        // Refrescar wallet después de sincronizar
+        renderWallet();
+        
+        // Verificar canjes pendientes (si alguien me pidió canjear un vale que yo emití)
+        checkPendingCanjes();
+        
+        // Verificar canjes aceptados (si aceptaron mi solicitud de canje)
+        checkAcceptedCanjes();
+        
+        console.log('🔗 PocketBase integrado correctamente');
+      }
+    }
+    
+    // Iniciar polling de canjes cada 5 segundos (para notificaciones entre usuarios)
+    setInterval(() => {
+      if (currentUser) {
+        checkPendingCanjes();
+        checkAcceptedCanjes();
+      }
+    }, 5000);
+    
+  }, 1000);
 })();
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});

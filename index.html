@@ -1795,8 +1795,9 @@ async function renderWallet() {
       ? `<button class="vale-card-delete" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Eliminar este vale">🗑</button>`
       : `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Solo puedes borrar este vale cuando caduque">🔒</button>`;
 
-    // Canje button - only show if user is the RECIPIENT (to) and vale is not expired
-    const isRecipient = vale.to === walletTab;
+    // Canje button - only show if CURRENT USER is the RECIPIENT (to) and vale is not expired
+    // This ensures you can only redeem vales addressed TO you, regardless of which tab you're viewing
+    const isRecipient = currentUser && vale.to === currentUser;
     const canCanje = isRecipient && status.key !== 'caducado';
     let canjeBtn = '';
     if (canCanje) {
@@ -1986,6 +1987,12 @@ async function solicitarCanje(serial) {
   const vale = data.find(v => v.serial === serial);
   if (!vale) {
     console.error('❌ Vale no encontrado:', serial);
+    return;
+  }
+
+  // IMPORTANTE: Verificar que el usuario actual es el RECEPTOR del vale
+  if (vale.to !== currentUser) {
+    alert('Solo puedes canjear vales que te han enviado a ti.');
     return;
   }
 

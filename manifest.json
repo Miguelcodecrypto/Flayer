@@ -5,14 +5,42 @@
   "start_url": "/Flayer/",
   "scope": "/Flayer/",
   "display": "standalone",
-  "background_color": "#0d0520",
-  "theme_color": "#1a0a2e",
+  "background_color": "#d0eef8",
+  "theme_color": "#2a8a9a",
   "orientation": "portrait",
+  "categories": ["lifestyle", "social"],
+  "lang": "es",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%232a8a9a' width='100' height='100' rx='20'/><text y='.9em' x='5' font-size='90'>🌙</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Crear Vale",
+      "short_name": "Nuevo",
+      "description": "Crear un nuevo vale de amor",
+      "url": "/Flayer/?action=create",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💝</text></svg>", "sizes": "96x96" }]
+    },
+    {
+      "name": "Mi Wallet",
+      "short_name": "Wallet",
+      "description": "Ver mis vales recibidos",
+      "url": "/Flayer/?tab=wallet",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👛</text></svg>", "sizes": "96x96" }]
     }
   ]
 }

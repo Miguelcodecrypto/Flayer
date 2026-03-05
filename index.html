@@ -595,6 +595,156 @@ h1 {
 .wallet-save-btn.visible { display: block; }
 .wallet-save-btn:hover { background: rgba(42,138,154,0.1); border-color: var(--teal); }
 
+/* ===== CANJE SYSTEM ===== */
+/* Canje button in card */
+.vale-card-canje {
+  background: linear-gradient(135deg, #2a9a6a, #1a8a5a);
+  border: none; border-radius: 0.5rem;
+  color: white; font-size: 0.7rem; font-family: 'Playfair Display', serif;
+  padding: 0.35rem 0.6rem; cursor: pointer;
+  transition: all 0.2s; font-style: italic;
+  box-shadow: 0 2px 8px rgba(42,154,106,0.3);
+}
+.vale-card-canje:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(42,154,106,0.4); }
+.vale-card-canje:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.vale-card-canje.pendiente {
+  background: linear-gradient(135deg, #d4a020, #c09010);
+  box-shadow: 0 2px 8px rgba(200,150,20,0.3);
+}
+.vale-card-canje.canjeado {
+  background: linear-gradient(135deg, #60a060, #509050);
+  cursor: default;
+}
+
+/* Canje Request Overlay (for emisor) */
+.canje-request-overlay {
+  position: fixed; inset: 0; z-index: 960;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; opacity: 0; pointer-events: none;
+  transition: opacity 0.4s;
+}
+.canje-request-overlay.visible { opacity: 1; pointer-events: all; }
+.canje-request-box {
+  background: linear-gradient(160deg, #f0f8e8, #e8f5f0);
+  border: 2px solid rgba(42,154,106,0.3);
+  border-radius: 1.6rem; padding: 2rem 1.6rem 1.6rem;
+  max-width: 360px; width: 100%; text-align: center;
+  box-shadow: 0 24px 60px rgba(42,154,106,0.2);
+  transform: scale(0.88) translateY(24px);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.canje-request-overlay.visible .canje-request-box { transform: scale(1) translateY(0); }
+.canje-request-icon { font-size: 3.5rem; margin-bottom: 0.5rem; animation: float 3s ease-in-out infinite; }
+.canje-request-title {
+  font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+  font-size: 1.35rem; color: var(--cream); margin-bottom: 0.3rem;
+}
+.canje-request-from {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 0.95rem; color: var(--moonlight); margin-bottom: 0.8rem;
+}
+.canje-request-concept {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1.1rem; color: var(--cream); font-weight: 700;
+  background: rgba(255,255,255,0.7); border-radius: 0.8rem;
+  padding: 0.7rem 1rem; margin: 0.5rem 0 1rem;
+  border: 1px solid rgba(42,154,106,0.2);
+  box-shadow: 0 2px 10px rgba(42,154,106,0.1);
+}
+.canje-request-date {
+  font-family: 'Special Elite', monospace; font-size: 0.7rem;
+  letter-spacing: 0.1em; color: var(--moonlight);
+  margin-bottom: 1.2rem;
+}
+.canje-request-btns { display: flex; flex-direction: column; gap: 0.7rem; }
+.canje-request-btn {
+  padding: 0.8rem 1rem; border-radius: 0.9rem; border: none;
+  font-family: 'Playfair Display', serif; font-size: 1rem;
+  font-style: italic; cursor: pointer; transition: all 0.25s;
+}
+.canje-request-btn.accept {
+  background: linear-gradient(135deg, #2a9a6a, #1a8a5a);
+  color: white; box-shadow: 0 4px 16px rgba(42,154,106,0.35);
+}
+.canje-request-btn.accept:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,154,106,0.45); }
+.canje-request-btn.decline {
+  background: rgba(255,255,255,0.6); color: var(--moonlight);
+  border: 1px solid rgba(42,138,154,0.2);
+}
+.canje-request-btn.decline:hover { background: rgba(255,255,255,0.85); }
+
+/* Canje Success Overlay (for receptor) */
+.canje-success-overlay {
+  position: fixed; inset: 0; z-index: 970;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; opacity: 0; pointer-events: none;
+  transition: opacity 0.4s;
+}
+.canje-success-overlay.visible { opacity: 1; pointer-events: all; }
+.canje-success-box {
+  background: linear-gradient(160deg, #e8f8e0, #d8f5e8, #e0f8f0);
+  border: 2px solid rgba(42,180,106,0.35);
+  border-radius: 1.8rem; padding: 2.2rem 1.8rem 1.8rem;
+  max-width: 380px; width: 100%; text-align: center;
+  box-shadow: 0 24px 70px rgba(42,180,106,0.25);
+  transform: scale(0.85) translateY(30px);
+  transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.canje-success-overlay.visible .canje-success-box { transform: scale(1) translateY(0); }
+.canje-success-confetti { font-size: 3rem; margin-bottom: 0.3rem; }
+.canje-success-icon { font-size: 4rem; margin-bottom: 0.5rem; animation: bounce 1s ease-in-out infinite; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.canje-success-title {
+  font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #1a8a5a, #2a9a7a, #1a7a6a);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 0.4rem;
+}
+.canje-success-sub {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1rem; color: var(--moonlight); margin-bottom: 1rem;
+}
+.canje-success-concept {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1.15rem; color: var(--cream); font-weight: 700;
+  background: rgba(255,255,255,0.75); border-radius: 1rem;
+  padding: 0.9rem 1.2rem; margin: 0.5rem 0 0.8rem;
+  border: 1.5px solid rgba(42,180,106,0.25);
+  box-shadow: 0 4px 16px rgba(42,180,106,0.15);
+}
+.canje-success-date {
+  font-family: 'Special Elite', monospace; font-size: 0.75rem;
+  letter-spacing: 0.12em; color: var(--teal);
+  background: rgba(42,180,106,0.1); border-radius: 0.5rem;
+  padding: 0.4rem 0.8rem; margin-bottom: 1.3rem;
+}
+.canje-success-btn {
+  width: 100%; padding: 0.9rem;
+  background: linear-gradient(135deg, #2a9a6a, #1a8a5a);
+  border: none; border-radius: 0.9rem;
+  color: white; font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; font-style: italic; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(42,154,106,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.canje-success-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,154,106,0.5); }
+
+/* Canje status badge in card */
+.vale-canje-status {
+  font-size: 0.6rem; font-family: 'Special Elite', monospace;
+  padding: 0.15rem 0.4rem; border-radius: 0.3rem;
+  margin-top: 0.2rem;
+}
+.vale-canje-status.pendiente {
+  background: rgba(200,150,20,0.15); color: #8a6010;
+}
+.vale-canje-status.canjeado {
+  background: rgba(42,154,106,0.15); color: #1a6a4a;
+}
+
 footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.25; letter-spacing: 0.15em; }
 </style>
 </head>
@@ -648,6 +798,34 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
       <div class="new-vale-popup-sub" id="newValeSub">Tu pareja te ha enviado:</div>
       <div class="new-vale-list" id="newValeList"></div>
       <button class="new-vale-close" onclick="dismissNewVales()">💙 Ver mi Wallet</button>
+    </div>
+  </div>
+
+  <!-- CANJE REQUEST POPUP (for emisor) -->
+  <div class="canje-request-overlay" id="canjeRequestOverlay">
+    <div class="canje-request-box">
+      <div class="canje-request-icon">🎁</div>
+      <div class="canje-request-title" id="canjeRequestTitle">¡Quieren canjear un vale!</div>
+      <div class="canje-request-from" id="canjeRequestFrom">Florecilla quiere usar:</div>
+      <div class="canje-request-concept" id="canjeRequestConcept">Un masaje relajante</div>
+      <div class="canje-request-date" id="canjeRequestDate">Solicitado: 05/03/2026</div>
+      <div class="canje-request-btns">
+        <button class="canje-request-btn accept" onclick="acceptCanje()">✨ ¡Conceder el deseo!</button>
+        <button class="canje-request-btn decline" onclick="declineCanje()">Ahora no puedo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANJE SUCCESS POPUP (for receptor) -->
+  <div class="canje-success-overlay" id="canjeSuccessOverlay">
+    <div class="canje-success-box">
+      <div class="canje-success-confetti">🎊✨🎉</div>
+      <div class="canje-success-icon">💚</div>
+      <div class="canje-success-title" id="canjeSuccessTitle">¡Vale Canjeado!</div>
+      <div class="canje-success-sub" id="canjeSuccessSub">Tu deseo ha sido concedido</div>
+      <div class="canje-success-concept" id="canjeSuccessConcept">Un masaje relajante</div>
+      <div class="canje-success-date" id="canjeSuccessDate">📅 Canjeable hoy: 05/03/2026</div>
+      <button class="canje-success-btn" onclick="dismissCanjeSuccess()">💚 ¡Gracias mi amor!</button>
     </div>
   </div>
 
@@ -1617,15 +1795,39 @@ async function renderWallet() {
       ? `<button class="vale-card-delete" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Eliminar este vale">🗑</button>`
       : `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Solo puedes borrar este vale cuando caduque">🔒</button>`;
 
+    // Canje button - only show if user is the RECIPIENT (to) and vale is not expired
+    const isRecipient = vale.to === walletTab;
+    const canCanje = isRecipient && status.key !== 'caducado';
+    let canjeBtn = '';
+    if (canCanje) {
+      if (vale.canje_status === 'canjeado') {
+        canjeBtn = `<button class="vale-card-canje canjeado" disabled>✅ Canjeado</button>`;
+      } else if (vale.canje_status === 'pendiente') {
+        canjeBtn = `<button class="vale-card-canje pendiente" disabled>⏳ Pendiente</button>`;
+      } else {
+        canjeBtn = `<button class="vale-card-canje" onclick="solicitarCanje('${vale.serial}')" title="Solicitar canjear este vale">🎁 Canjear</button>`;
+      }
+    }
+
+    // Canje status badge
+    let canjeStatusBadge = '';
+    if (vale.canje_status === 'pendiente') {
+      canjeStatusBadge = `<div class="vale-canje-status pendiente">⏳ Canje pendiente</div>`;
+    } else if (vale.canje_status === 'canjeado') {
+      canjeStatusBadge = `<div class="vale-canje-status canjeado">✅ Canjeado ${vale.canje_aceptado || ''}</div>`;
+    }
+
     return `<div class="vale-card ${status.css}">
       <div class="vale-card-avatar">${av}</div>
       <div class="vale-card-body">
         <div class="vale-card-concept">${vale.concept}${advmTag}</div>
         <div class="vale-card-from">De ${vale.from} · ${vale.emitido}</div>
         <div class="vale-card-meta">Nº ${vale.serial}</div>
+        ${canjeStatusBadge}
       </div>
       <div class="vale-card-status">
         <div class="vale-card-badge ${status.css}-badge">${status.label}</div>
+        ${canjeBtn}
         <div style="display:flex;gap:0.3rem;margin-top:0.2rem;">
           <button class="vale-card-action" onclick="previewFromWallet(${idSafe})" title="Ver y compartir">👁</button>
           ${deleteBtn}
@@ -1753,6 +1955,268 @@ function createFloaters() {
   }
 }
 
+// ===== CANJE SYSTEM WITH SUPABASE =====
+let _pendingCanje = null; // { serial, vale }
+
+/**
+ * Buscar un vale por serial en los datos de un owner
+ */
+async function findValeBySerial(serial) {
+  for (const owner of ['Florecilla', 'Chiquitín']) {
+    const data = await loadWalletData(owner);
+    const vale = data.find(v => v.serial === serial);
+    if (vale) return { vale, owner };
+  }
+  return null;
+}
+
+/**
+ * Solicitar canje de un vale (receptor solicita al emisor)
+ */
+async function solicitarCanje(serial) {
+  if (!currentUser) {
+    alert('Debes identificarte primero');
+    return;
+  }
+  
+  console.log('🎁 Solicitando canje para serial:', serial);
+  
+  // Buscar el vale en los recibidos del usuario actual
+  const data = await loadWalletData(currentUser);
+  const vale = data.find(v => v.serial === serial);
+  if (!vale) {
+    console.error('❌ Vale no encontrado:', serial);
+    return;
+  }
+
+  // Verificar que no esté caducado
+  const status = getValeStatus(vale.caduca);
+  if (status.key === 'caducado') {
+    alert('Este vale ha caducado y no se puede canjear.');
+    return;
+  }
+
+  // Verificar que no esté ya en proceso
+  if (vale.canje_status === 'pendiente' || vale.canje_status === 'canjeado') {
+    console.log('⚠️ Vale ya tiene estado:', vale.canje_status);
+    return;
+  }
+
+  // Actualizar estado a pendiente
+  vale.canje_status = 'pendiente';
+  vale.canje_fecha = new Date().toLocaleDateString('es-ES');
+  
+  console.log('💾 Guardando estado pendiente...');
+  await saveWalletData(currentUser, data);
+
+  // También actualizar en el wallet del emisor para que vea la solicitud
+  const emisorData = await loadWalletData(vale.from);
+  const emisorVale = emisorData.find(v => v.serial === serial);
+  if (emisorVale) {
+    emisorVale.canje_status = 'pendiente';
+    emisorVale.canje_fecha = vale.canje_fecha;
+    await saveWalletData(vale.from, emisorData);
+  }
+
+  // Refrescar la wallet
+  renderWallet();
+
+  // Mostrar confirmación
+  alert(`✨ ¡Solicitud enviada!\n\n${vale.from} recibirá la notificación para aprobar tu canje de:\n\n"${vale.concept}"`);
+  
+  console.log('✅ Solicitud de canje completada');
+}
+
+/**
+ * Mostrar popup de solicitud de canje (para el emisor)
+ */
+function showCanjeRequest(vale) {
+  console.log('🎁 Mostrando popup de solicitud:', vale);
+  
+  _pendingCanje = { serial: vale.serial, vale };
+
+  const overlay = document.getElementById('canjeRequestOverlay');
+  const solicitante = vale.to; // Quien solicita el canje (el receptor del vale)
+
+  document.getElementById('canjeRequestTitle').textContent = '¡Quieren canjear un vale!';
+  document.getElementById('canjeRequestFrom').textContent = `${solicitante} quiere usar:`;
+  document.getElementById('canjeRequestConcept').textContent = vale.concept;
+  document.getElementById('canjeRequestDate').textContent = `Solicitado: ${vale.canje_fecha || new Date().toLocaleDateString('es-ES')}`;
+
+  overlay.classList.add('visible');
+
+  // Play notification sound/vibrate
+  if ('vibrate' in navigator) navigator.vibrate([100, 50, 100]);
+}
+
+/**
+ * Aceptar solicitud de canje (emisor acepta)
+ */
+async function acceptCanje() {
+  if (!_pendingCanje) return;
+
+  const { serial, vale } = _pendingCanje;
+  const recipient = vale.to; // Quien recibe el vale (quien solicitó el canje)
+  const emisor = vale.from;
+
+  // Actualizar el vale del receptor a "canjeado"
+  const recipientData = await loadWalletData(recipient);
+  const recipientVale = recipientData.find(v => v.serial === serial);
+  if (recipientVale) {
+    recipientVale.canje_status = 'canjeado';
+    recipientVale.canje_aceptado = new Date().toLocaleDateString('es-ES');
+    await saveWalletData(recipient, recipientData);
+  }
+
+  // Actualizar también en el wallet del emisor
+  const emisorData = await loadWalletData(emisor);
+  const emisorVale = emisorData.find(v => v.serial === serial);
+  if (emisorVale) {
+    emisorVale.canje_status = 'canjeado';
+    emisorVale.canje_aceptado = recipientVale?.canje_aceptado;
+    await saveWalletData(emisor, emisorData);
+  }
+
+  // Cerrar popup
+  document.getElementById('canjeRequestOverlay').classList.remove('visible');
+  _pendingCanje = null;
+
+  // Feedback
+  if ('vibrate' in navigator) navigator.vibrate([100, 50, 100, 50, 100]);
+  
+  // Refrescar wallet
+  renderWallet();
+
+  console.log('✅ Canje aceptado para:', serial);
+  alert(`✨ ¡Has concedido el deseo!\n\n"${vale.concept}"\n\n${recipient} ya puede disfrutar de este vale 💕`);
+}
+
+/**
+ * Rechazar solicitud de canje (emisor no puede ahora)
+ */
+async function declineCanje() {
+  if (!_pendingCanje) return;
+
+  const { serial, vale } = _pendingCanje;
+  const recipient = vale.to;
+  const emisor = vale.from;
+
+  // Volver el estado a null (no pendiente)
+  const recipientData = await loadWalletData(recipient);
+  const recipientVale = recipientData.find(v => v.serial === serial);
+  if (recipientVale) {
+    recipientVale.canje_status = null;
+    recipientVale.canje_fecha = null;
+    await saveWalletData(recipient, recipientData);
+  }
+
+  // También en el wallet del emisor
+  const emisorData = await loadWalletData(emisor);
+  const emisorVale = emisorData.find(v => v.serial === serial);
+  if (emisorVale) {
+    emisorVale.canje_status = null;
+    emisorVale.canje_fecha = null;
+    await saveWalletData(emisor, emisorData);
+  }
+
+  // Cerrar popup
+  document.getElementById('canjeRequestOverlay').classList.remove('visible');
+  _pendingCanje = null;
+
+  // Refrescar wallet
+  renderWallet();
+}
+
+/**
+ * Mostrar popup de éxito de canje (para el receptor)
+ */
+function showCanjeSuccess(vale) {
+  const overlay = document.getElementById('canjeSuccessOverlay');
+
+  document.getElementById('canjeSuccessTitle').textContent = '¡Vale Canjeado!';
+  document.getElementById('canjeSuccessSub').textContent = `${vale.from} ha aceptado tu solicitud`;
+  document.getElementById('canjeSuccessConcept').textContent = vale.concept;
+  document.getElementById('canjeSuccessDate').textContent = `📅 Canjeable hoy: ${vale.canje_aceptado || new Date().toLocaleDateString('es-ES')}`;
+
+  overlay.classList.add('visible');
+
+  if ('vibrate' in navigator) navigator.vibrate([100, 50, 100, 50, 100]);
+}
+
+/**
+ * Cerrar popup de éxito de canje
+ */
+function dismissCanjeSuccess() {
+  document.getElementById('canjeSuccessOverlay').classList.remove('visible');
+  renderWallet();
+}
+
+/**
+ * Verificar si hay solicitudes de canje pendientes para el usuario actual (como emisor)
+ */
+async function checkPendingCanjes() {
+  if (!currentUser) return;
+  
+  // Evitar mostrar si ya hay un popup visible
+  if (document.getElementById('canjeRequestOverlay').classList.contains('visible')) return;
+
+  // Buscar en ambos wallets vales donde yo soy el emisor y hay solicitud pendiente
+  for (const owner of ['Florecilla', 'Chiquitín']) {
+    const data = await loadWalletData(owner);
+    const pendientes = data.filter(v => 
+      v.from === currentUser && 
+      v.canje_status === 'pendiente'
+    );
+    
+    if (pendientes.length > 0) {
+      console.log('📬 Canje pendiente encontrado:', pendientes[0].concept);
+      showCanjeRequest(pendientes[0]);
+      return;
+    }
+  }
+}
+
+/**
+ * Verificar si hay canjes aceptados para notificar al receptor
+ */
+async function checkAcceptedCanjes() {
+  if (!currentUser) return;
+
+  const myData = await loadWalletData(currentUser);
+  const canjeAlertKey = 'canje-notified:' + currentUser;
+  let notified = [];
+  try { notified = JSON.parse(localStorage.getItem(canjeAlertKey) || '[]'); } catch(e) {}
+
+  // Buscar vales con canje aceptado que no hemos notificado aún
+  const acceptedCanjes = myData.filter(v => 
+    v.to === currentUser && // Soy el receptor
+    v.canje_status === 'canjeado' && 
+    v.canje_aceptado && 
+    !notified.includes(v.serial)
+  );
+
+  if (acceptedCanjes.length > 0) {
+    // Marcar como notificado
+    notified.push(...acceptedCanjes.map(v => v.serial));
+    try { localStorage.setItem(canjeAlertKey, JSON.stringify(notified)); } catch(e) {}
+
+    // Mostrar popup para el primero
+    showCanjeSuccess(acceptedCanjes[0]);
+  }
+}
+
+/**
+ * Iniciar polling de canjes cada 5 segundos
+ */
+function startCanjePolling() {
+  setInterval(() => {
+    if (currentUser) {
+      checkPendingCanjes();
+      checkAcceptedCanjes();
+    }
+  }, 5000);
+}
+
 // ===== INIT =====
 (async () => {
   diagStorage();
@@ -1772,6 +2236,15 @@ function createFloaters() {
 
   // Start polling for new vales
   startPolling();
+
+  // Start polling for canje requests/acceptances
+  startCanjePolling();
+  
+  // Check for pending canjes on load
+  setTimeout(() => {
+    checkPendingCanjes();
+    checkAcceptedCanjes();
+  }, 2000);
 })();
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});

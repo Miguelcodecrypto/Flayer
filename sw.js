@@ -1,31 +1,86 @@
-const CACHE = 'vales-amor-v2';
-const ASSETS = ['/manifest.json'];
+const CACHE_VERSION = 'v4';
+const CACHE_NAME = `vales-amor-${CACHE_VERSION}`;
+const ASSETS = [
+  '/Flayer/',
+  '/Flayer/index.html',
+  '/Flayer/manifest.json'
+];
 
+// Instalar y cachear assets esenciales
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
-  self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
+  );
 });
 
+// Limpiar caches antiguos al activar
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
+    caches.keys()
+      .then(keys => Promise.all(
+        keys
+          .filter(k => k.startsWith('vales-amor-') && k !== CACHE_NAME)
+          .map(k => caches.delete(k))
+      ))
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
+// Estrategia de caché
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-
-  // Never cache the main HTML — always fetch fresh so updates apply immediately
-  if (e.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === '/') {
-    e.respondWith(fetch(e.request).catch(() => caches.match('/index.html')));
+  
+  // Ignorar peticiones a PocketBase y APIs externas
+  if (url.hostname !== location.hostname || 
+      url.pathname.includes('/api/') ||
+      url.port === '8090') {
     return;
   }
 
-  // Cache-first for static assets (fonts, manifest, icons)
+  // Network-first para HTML (siempre fresco)
+  if (e.request.mode === 'navigate' || 
+      url.pathname.endsWith('.html') || 
+      url.pathname.endsWith('/')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(response => {
+          // Cachear la respuesta fresca
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(e.request) || caches.match('/Flayer/index.html'))
+    );
+    return;
+  }
+
+  // Stale-while-revalidate para JS y otros assets
+  if (url.pathname.endsWith('.js')) {
+    e.respondWith(
+      caches.match(e.request).then(cached => {
+        const fetchPromise = fetch(e.request).then(response => {
+          caches.open(CACHE_NAME).then(cache => cache.put(e.request, response.clone()));
+          return response;
+        });
+        return cached || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // Cache-first para el resto (fuentes, imágenes)
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
+    caches.match(e.request)
+      .then(cached => cached || fetch(e.request).then(response => {
+        // Solo cachear respuestas exitosas
+        if (response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        }
+        return response;
+      }))
+      .catch(() => new Response('Offline', { status: 503 }))
   );
 });

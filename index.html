@@ -206,8 +206,9 @@ h1 {
   background: rgba(255,255,255,0.55); border: 1px solid rgba(42,138,154,0.2);
   border-radius: 0.75rem; padding: 0.8rem 1.2rem; margin-bottom: 1.2rem;
   cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s;
-  display: flex; align-items: center; gap: 0.8rem;
+  align-items: center; gap: 0.8rem;
 }
+.install-banner.show { display: flex; }
 .install-icon { font-size: 1.5rem; }
 .install-text strong { display: block; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); }
 .install-text span { font-size: 0.8rem; opacity: 0.7; }
@@ -1268,11 +1269,34 @@ let walletTab = 'recibidos'; // 'recibidos' or 'emitidos'
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault(); deferredPrompt = e;
-  // Only show if not already running as installed PWA
+  e.preventDefault(); 
+  deferredPrompt = e;
+  // Show install banner when prompt is available
   if (!isInstalledPWA()) {
-    document.getElementById('installBanner').style.display = 'flex';
+    const banner = document.getElementById('installBanner');
+    banner.classList.add('show');
+    banner.querySelector('.install-text strong').textContent = 'Instalar app';
+    banner.querySelector('.install-text span').textContent = 'Añadir a pantalla de inicio';
   }
+});
+
+// Show install banner on load if not installed (for manual instructions)
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (!isInstalledPWA()) {
+      const banner = document.getElementById('installBanner');
+      banner.classList.add('show');
+      banner.querySelector('.install-text strong').textContent = 'Instalar app';
+      // Show manual install hint if no prompt available
+      if (!deferredPrompt) {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const hint = isIOS 
+          ? 'Toca ⬆️ y "Añadir a inicio"' 
+          : 'Menú ⋮ → "Instalar app"';
+        banner.querySelector('.install-text span').textContent = hint;
+      }
+    }
+  }, 1000);
 });
 
 function isInstalledPWA() {
@@ -1285,10 +1309,22 @@ function isInstalledPWA() {
 function installApp() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        // User accepted, hide banner
+        document.getElementById('installBanner').classList.remove('show');
+      }
+      // Keep deferredPrompt = null after use (browser requirement)
       deferredPrompt = null;
-      document.getElementById('installBanner').style.display = 'none';
     });
+  } else {
+    // No prompt available, show manual instructions
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      alert('Para instalar:\n1. Toca el botón Compartir ⬆️\n2. Selecciona "Añadir a pantalla de inicio"');
+    } else {
+      alert('Para instalar:\n1. Abre el menú del navegador (⋮)\n2. Selecciona "Instalar aplicación" o "Añadir a pantalla de inicio"');
+    }
   }
 }
 

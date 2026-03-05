@@ -430,11 +430,17 @@ h1 {
 
 /* ===== WALLET ===== */
 .wallet-section { width: 100%; max-width: 480px; margin-top: 2.5rem; }
-.wallet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.wallet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
 .wallet-title {
   font-family: 'Playfair Display', serif; font-size: 1.3rem; font-style: italic;
   background: linear-gradient(135deg, #0a5060, #0a6050);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.wallet-user-badge {
+  font-family: 'Playfair Display', serif; font-size: 0.85rem; font-style: italic;
+  padding: 0.3rem 0.8rem; border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(42,138,154,0.15), rgba(26,122,106,0.15));
+  border: 1px solid rgba(42,138,154,0.3); color: var(--cream);
 }
 .wallet-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.2rem; }
 .wallet-tab {
@@ -1018,10 +1024,11 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
   <div class="wallet-section">
     <div class="wallet-header">
       <div class="wallet-title" id="walletTitleEl">💳 Mi Wallet de Amor</div>
+      <div class="wallet-user-badge" id="walletUserBadge"></div>
     </div>
     <div class="wallet-tabs">
-      <button class="wallet-tab active" id="tabFlorecilla" onclick="switchWalletTab('Florecilla', this)">🌸 Florecilla<span class="wallet-tab-badge" id="badgeFlorecilla" style="display:none"></span></button>
-      <button class="wallet-tab" id="tabChiquitin" onclick="switchWalletTab('Chiquitín', this)">🐾 Chiquitín<span class="wallet-tab-badge" id="badgeChiquitin" style="display:none"></span></button>
+      <button class="wallet-tab active" id="tabRecibidos" onclick="switchWalletTab('recibidos', this)">📥 Recibidos<span class="wallet-tab-badge" id="badgeRecibidos" style="display:none"></span></button>
+      <button class="wallet-tab" id="tabEmitidos" onclick="switchWalletTab('emitidos', this)">📤 Emitidos<span class="wallet-tab-badge" id="badgeEmitidos" style="display:none"></span></button>
     </div>
     <div id="walletCards" class="wallet-cards"></div>
   </div>
@@ -1142,8 +1149,9 @@ async function checkNewVales() {
 }
 
 function updateBadge(user, count) {
-  const badgeId = user === 'Florecilla' ? 'badgeFlorecilla' : 'badgeChiquitin';
-  const badge = document.getElementById(badgeId);
+  // Badge now shows on Recibidos tab when there are new vales for currentUser
+  if (user !== currentUser) return;
+  const badge = document.getElementById('badgeRecibidos');
   if (!badge) return;
   if (count > 0) {
     badge.textContent = count;
@@ -1184,10 +1192,10 @@ function dismissNewVales() {
     if (navigator.clearAppBadge) navigator.clearAppBadge().catch(() => {});
   });
 
-  // Switch wallet to current user's tab
-  walletTab = currentUser;
+  // Switch wallet to recibidos tab
+  walletTab = 'recibidos';
   document.querySelectorAll('.wallet-tab').forEach(b => {
-    b.classList.toggle('active', b.textContent.includes(currentUser));
+    b.classList.toggle('active', b.id === 'tabRecibidos');
   });
   renderWallet();
 
@@ -1224,7 +1232,7 @@ function startPolling() {
 }
 
 
-let walletTab = 'Florecilla';
+let walletTab = 'recibidos'; // 'recibidos' or 'emitidos'
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -1562,20 +1570,32 @@ async function saveToWallet() {
   const recipientNew = recipientData.filter(v => !recipientSeen.includes(v.serial)).length;
   updateBadge(to, recipientNew);
 
-  // Switch wallet tab to recipient so user sees it immediately
-  walletTab = to;
+  // Switch wallet tab to emitidos (to see what you just sent)
+  walletTab = 'emitidos';
   document.querySelectorAll('.wallet-tab').forEach(b => {
-    b.classList.toggle('active', b.textContent.includes(to));
+    b.classList.toggle('active', b.id === 'tabEmitidos');
   });
   renderWallet();
 }
 
 // ===== WALLET DISPLAY =====
-function switchWalletTab(name, btn) {
-  walletTab = name;
+function switchWalletTab(tabType, btn) {
+  walletTab = tabType; // 'recibidos' or 'emitidos'
   document.querySelectorAll('.wallet-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderWallet();
+}
+
+function updateWalletUserBadge() {
+  const badge = document.getElementById('walletUserBadge');
+  if (!badge) return;
+  if (currentUser) {
+    const emoji = currentUser === 'Florecilla' ? '🌸' : '🐾';
+    badge.innerHTML = `${emoji} ${currentUser}`;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
 }
 
 // ===== VALE STATUS =====
@@ -1765,25 +1785,64 @@ function shakeCard(id) {
 
 
 async function renderWallet() {
-  const data = await loadWalletData(walletTab);
   const container = document.getElementById('walletCards');
-
-  if (!data.length) {
+  
+  // Update user badge
+  updateWalletUserBadge();
+  
+  // Si no hay usuario, mostrar mensaje
+  if (!currentUser) {
     container.innerHTML = `<div class="wallet-empty">
-      <div class="wallet-empty-icon">💌</div>
-      <div class="wallet-empty-text">Aún no hay vales para ${walletTab}</div>
+      <div class="wallet-empty-icon">🔐</div>
+      <div class="wallet-empty-text">Elige tu identidad arriba para ver tu wallet</div>
     </div>`;
     return;
   }
 
-  const isFlor = walletTab === 'Florecilla';
-  const ownerAv = isFlor ? AVATAR_FLORECILLA : AVATAR_CHIQUTIN;
-  const senderAv = isFlor ? AVATAR_CHIQUTIN : AVATAR_FLORECILLA;
+  // Cargar datos de AMBOS usuarios y filtrar
+  const dataFlor = await loadWalletData('Florecilla');
+  const dataChiq = await loadWalletData('Chiquitín');
+  const allVales = [...dataFlor, ...dataChiq];
+  
+  // Filtrar según tab: emitidos (from === currentUser) o recibidos (to === currentUser)
+  let filteredVales;
+  if (walletTab === 'emitidos') {
+    filteredVales = allVales.filter(v => v.from === currentUser);
+  } else {
+    // recibidos
+    filteredVales = allVales.filter(v => v.to === currentUser);
+  }
+  
+  // Eliminar duplicados por serial (puede estar en ambas wallets)
+  const seen = new Set();
+  filteredVales = filteredVales.filter(v => {
+    if (seen.has(v.serial)) return false;
+    seen.add(v.serial);
+    return true;
+  });
+
+  if (!filteredVales.length) {
+    const emptyMsg = walletTab === 'emitidos' 
+      ? 'No has emitido ningún vale aún' 
+      : 'No has recibido ningún vale aún';
+    container.innerHTML = `<div class="wallet-empty">
+      <div class="wallet-empty-icon">💌</div>
+      <div class="wallet-empty-text">${emptyMsg}</div>
+    </div>`;
+    return;
+  }
+
+  const isFlor = currentUser === 'Florecilla';
+  const myAv = isFlor ? AVATAR_FLORECILLA : AVATAR_CHIQUTIN;
+  const partnerAv = isFlor ? AVATAR_CHIQUTIN : AVATAR_FLORECILLA;
   const smallAv = av => av.replace('width:52px;height:52px', 'width:36px;height:36px');
 
-  container.innerHTML = data.map(vale => {
+  container.innerHTML = filteredVales.map(vale => {
     const status   = getValeStatus(vale.caduca);
-    const av       = vale.from === walletTab ? smallAv(ownerAv) : smallAv(senderAv);
+    // En emitidos, mostrar avatar del receptor. En recibidos, del emisor.
+    const av = walletTab === 'emitidos' 
+      ? (vale.to === 'Florecilla' ? smallAv(AVATAR_FLORECILLA) : smallAv(AVATAR_CHIQUTIN))
+      : (vale.from === 'Florecilla' ? smallAv(AVATAR_FLORECILLA) : smallAv(AVATAR_CHIQUTIN));
     const idSafe   = vale.id;
     const canDelete= status.key === 'eterna' || status.key === 'caducado';
 
@@ -1791,14 +1850,16 @@ async function renderWallet() {
       ? `<span class="advm-tag" title="Amor De Mi Vida — sin caducidad">ADVM</span>`
       : '';
 
+    // Owner para delete es el receptor del vale
+    const deleteOwner = vale.to;
     const deleteBtn = canDelete
-      ? `<button class="vale-card-delete" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Eliminar este vale">🗑</button>`
-      : `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" onclick="deleteFromWallet('${walletTab}', ${idSafe})" title="Solo puedes borrar este vale cuando caduque">🔒</button>`;
+      ? `<button class="vale-card-delete" onclick="deleteFromWallet('${deleteOwner}', ${idSafe})" title="Eliminar este vale">🗑</button>`
+      : `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" onclick="deleteFromWallet('${deleteOwner}', ${idSafe})" title="Solo puedes borrar este vale cuando caduque">🔒</button>`;
 
-    // Canje button - only show if CURRENT USER is the RECIPIENT (to) and vale is not expired
-    // This ensures you can only redeem vales addressed TO you, regardless of which tab you're viewing
-    const isRecipient = currentUser && vale.to === currentUser;
-    const canCanje = isRecipient && status.key !== 'caducado';
+    // Canje button - SOLO en tab recibidos y si eres el receptor
+    const isRecibidosTab = walletTab === 'recibidos';
+    const isRecipient = vale.to === currentUser;
+    const canCanje = isRecibidosTab && isRecipient && status.key !== 'caducado';
     let canjeBtn = '';
     if (canCanje) {
       if (vale.canje_status === 'canjeado') {
@@ -1818,11 +1879,16 @@ async function renderWallet() {
       canjeStatusBadge = `<div class="vale-canje-status canjeado">✅ Canjeado ${vale.canje_aceptado || ''}</div>`;
     }
 
+    // Texto según tab
+    const fromToText = walletTab === 'emitidos' 
+      ? `Para ${vale.to} · ${vale.emitido}`
+      : `De ${vale.from} · ${vale.emitido}`;
+
     return `<div class="vale-card ${status.css}">
       <div class="vale-card-avatar">${av}</div>
       <div class="vale-card-body">
         <div class="vale-card-concept">${vale.concept}${advmTag}</div>
-        <div class="vale-card-from">De ${vale.from} · ${vale.emitido}</div>
+        <div class="vale-card-from">${fromToText}</div>
         <div class="vale-card-meta">Nº ${vale.serial}</div>
         ${canjeStatusBadge}
       </div>

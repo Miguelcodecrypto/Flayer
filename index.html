@@ -1124,9 +1124,25 @@ function vibrateDevice() {
 
 async function checkNewVales() {
   if (!currentUser) return;
-  const data = await loadWalletData(currentUser);
-  const seen = getSeenSerials(currentUser);
-  const newVales = data.filter(v => !seen.includes(v.serial));
+  
+  // Cargar vales de ambas wallets y filtrar solo los RECIBIDOS por el usuario actual
+  const dataFlor = await loadWalletData('Florecilla');
+  const dataChiq = await loadWalletData('Chiquitín');
+  const allVales = [...dataFlor, ...dataChiq];
+  
+  // Filtrar vales donde yo soy el RECEPTOR (to === currentUser)
+  const recibidos = allVales.filter(v => v.to === currentUser);
+  
+  // Eliminar duplicados por serial
+  const seen = new Set();
+  const uniqueRecibidos = recibidos.filter(v => {
+    if (seen.has(v.serial)) return false;
+    seen.add(v.serial);
+    return true;
+  });
+  
+  const seenSerials = getSeenSerials(currentUser);
+  const newVales = uniqueRecibidos.filter(v => !seenSerials.includes(v.serial));
 
   // Update tab badge
   updateBadge(currentUser, newVales.length);
@@ -1213,12 +1229,28 @@ function startPolling() {
   if (pollingInterval) clearInterval(pollingInterval);
   pollingInterval = setInterval(async () => {
     if (!currentUser) return;
-    const data = await loadWalletData(currentUser);
-    const seen = getSeenSerials(currentUser);
-    const newVales = data.filter(v => !seen.includes(v.serial));
+    
+    // Cargar de ambas wallets y filtrar solo RECIBIDOS
+    const dataFlor = await loadWalletData('Florecilla');
+    const dataChiq = await loadWalletData('Chiquitín');
+    const allVales = [...dataFlor, ...dataChiq];
+    const recibidos = allVales.filter(v => v.to === currentUser);
+    
+    // Eliminar duplicados
+    const seen = new Set();
+    const uniqueRecibidos = recibidos.filter(v => {
+      if (seen.has(v.serial)) return false;
+      seen.add(v.serial);
+      return true;
+    });
+    
+    const seenSerials = getSeenSerials(currentUser);
+    const newVales = uniqueRecibidos.filter(v => !seenSerials.includes(v.serial));
     const newCount = newVales.length;
+    
     updateBadge(currentUser, newCount);
     if (newCount > 0 && navigator.setAppBadge) navigator.setAppBadge(newCount).catch(() => {});
+    
     // New vale arrived during session
     if (newCount > _lastSeenCount) {
       playNotificationSound();
@@ -2255,13 +2287,17 @@ async function checkPendingCanjes() {
 async function checkAcceptedCanjes() {
   if (!currentUser) return;
 
-  const myData = await loadWalletData(currentUser);
+  // Cargar de ambos wallets y filtrar donde yo soy receptor
+  const dataFlor = await loadWalletData('Florecilla');
+  const dataChiq = await loadWalletData('Chiquitín');
+  const allVales = [...dataFlor, ...dataChiq];
+  
   const canjeAlertKey = 'canje-notified:' + currentUser;
   let notified = [];
   try { notified = JSON.parse(localStorage.getItem(canjeAlertKey) || '[]'); } catch(e) {}
 
-  // Buscar vales con canje aceptado que no hemos notificado aún
-  const acceptedCanjes = myData.filter(v => 
+  // Buscar vales con canje aceptado donde yo soy el RECEPTOR
+  const acceptedCanjes = allVales.filter(v => 
     v.to === currentUser && // Soy el receptor
     v.canje_status === 'canjeado' && 
     v.canje_aceptado && 

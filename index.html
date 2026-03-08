@@ -443,6 +443,18 @@ h1 {
   background: linear-gradient(135deg, rgba(42,138,154,0.15), rgba(26,122,106,0.15));
   border: 1px solid rgba(42,138,154,0.3); color: var(--cream);
 }
+.sync-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(42,138,154,0.3);
+  background: rgba(255,255,255,0.6);
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.sync-btn:hover { background: rgba(42,138,154,0.15); border-color: var(--teal); }
+.sync-btn:active { transform: scale(0.95); }
+.sync-btn .sync-icon { font-size: 1.1rem; transition: transform 0.5s; }
+.sync-btn.syncing .sync-icon { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .wallet-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.2rem; }
 .wallet-tab {
   flex: 1; padding: 0.55rem 0.5rem;
@@ -879,7 +891,7 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
     <label class="form-label">✦ el vale dice...</label>
     <textarea class="concept-input" id="conceptInput" rows="2"
       placeholder="un abrazo eterno, un beso sorpresa, una tarde de pelis juntos..."></textarea>
-    <button class="generate-btn" onclick="generateFlyer()">🌙 Crear mi Vale de Amor</button>
+    <button class="generate-btn" onclick="generateAndSendVale()">💌 Enviar Vale de Amor</button>
     <div class="expiry-section">
       <label class="form-label" style="margin-top:1.1rem;">📅 Fecha de caducidad</label>
       <select class="expiry-select" id="expirySelect" onchange="toggleCustomDate(this)">
@@ -1006,8 +1018,8 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
       </div>
     </div>
 
-    <button class="wallet-save-btn" id="walletSaveBtn" onclick="saveToWallet()">
-      💾 Guardar vale en la Wallet
+    <button class="wallet-save-btn" id="walletSaveBtn" style="display:none !important;">
+      💾 Guardado automáticamente
     </button>
 
     <div class="action-btns">
@@ -1025,7 +1037,12 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
   <div class="wallet-section">
     <div class="wallet-header">
       <div class="wallet-title" id="walletTitleEl">💳 Mi Wallet de Amor</div>
-      <div class="wallet-user-badge" id="walletUserBadge"></div>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <button class="sync-btn" id="syncBtn" onclick="manualSync()" title="Sincronizar">
+          <span class="sync-icon">🔄</span>
+        </button>
+        <div class="wallet-user-badge" id="walletUserBadge"></div>
+      </div>
     </div>
     <div class="wallet-tabs">
       <button class="wallet-tab active" id="tabRecibidos" onclick="switchWalletTab('recibidos', this)">📥 Recibidos<span class="wallet-tab-badge" id="badgeRecibidos" style="display:none"></span></button>
@@ -1226,42 +1243,109 @@ function dismissNewVales() {
 // Also play sound+vibrate if new vales appear during polling
 let _lastSeenCount = 0;
 let pollingInterval = null;
+let _lastSyncTime = 0;
+
+async function doFullSync(source = 'poll') {
+  if (!currentUser) return;
+  console.log(`🔄 Sync iniciado (${source})`);
+  
+  // Cargar de ambas wallets y filtrar solo RECIBIDOS
+  const dataFlor = await loadWalletData('Florecilla');
+  const dataChiq = await loadWalletData('Chiquitín');
+  const allVales = [...dataFlor, ...dataChiq];
+  const recibidos = allVales.filter(v => v.to === currentUser);
+  
+  // Eliminar duplicados
+  const seen = new Set();
+  const uniqueRecibidos = recibidos.filter(v => {
+    if (seen.has(v.serial)) return false;
+    seen.add(v.serial);
+    return true;
+  });
+  
+  const seenSerials = getSeenSerials(currentUser);
+  const newVales = uniqueRecibidos.filter(v => !seenSerials.includes(v.serial));
+  const newCount = newVales.length;
+  
+  updateBadge(currentUser, newCount);
+  if (newCount > 0 && navigator.setAppBadge) navigator.setAppBadge(newCount).catch(() => {});
+  
+  // New vale arrived during session
+  if (newCount > _lastSeenCount) {
+    playNotificationSound();
+    vibrateDevice();
+    showNewValePopup(newVales);
+  }
+  _lastSeenCount = newCount;
+  _lastSyncTime = Date.now();
+  
+  // Refresh wallet UI
+  renderWallet();
+  
+  // Always check expiry alerts on each poll
+  await checkExpiryAlerts(currentUser);
+  console.log(`✅ Sync completado (${source})`);
+}
+
 function startPolling() {
   if (pollingInterval) clearInterval(pollingInterval);
-  pollingInterval = setInterval(async () => {
-    if (!currentUser) return;
-    
-    // Cargar de ambas wallets y filtrar solo RECIBIDOS
-    const dataFlor = await loadWalletData('Florecilla');
-    const dataChiq = await loadWalletData('Chiquitín');
-    const allVales = [...dataFlor, ...dataChiq];
-    const recibidos = allVales.filter(v => v.to === currentUser);
-    
-    // Eliminar duplicados
-    const seen = new Set();
-    const uniqueRecibidos = recibidos.filter(v => {
-      if (seen.has(v.serial)) return false;
-      seen.add(v.serial);
-      return true;
-    });
-    
-    const seenSerials = getSeenSerials(currentUser);
-    const newVales = uniqueRecibidos.filter(v => !seenSerials.includes(v.serial));
-    const newCount = newVales.length;
-    
-    updateBadge(currentUser, newCount);
-    if (newCount > 0 && navigator.setAppBadge) navigator.setAppBadge(newCount).catch(() => {});
-    
-    // New vale arrived during session
-    if (newCount > _lastSeenCount) {
-      playNotificationSound();
-      vibrateDevice();
-      showNewValePopup(newVales);
+  pollingInterval = setInterval(() => doFullSync('interval'), 30000);
+}
+
+// ===== VISIBILITY CHANGE — Crucial para móviles =====
+// En móviles, los setInterval se pausan cuando la app está en segundo plano.
+// Al volver a primer plano, debemos recargar datos inmediatamente.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    const timeSinceLastSync = Date.now() - _lastSyncTime;
+    // Solo sincronizar si han pasado más de 5 segundos desde la última sync
+    if (timeSinceLastSync > 5000) {
+      console.log('📱 App visible — sincronizando...');
+      doFullSync('visibility');
+      checkPendingCanjes();
+      checkAcceptedCanjes();
     }
-    _lastSeenCount = newCount;
-    // Always check expiry alerts on each poll
-    await checkExpiryAlerts(currentUser);
-  }, 30000);
+  }
+});
+
+// Safari iOS usa bfcache — pageshow se dispara al volver atrás/adelante
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    console.log('📱 Página restaurada de bfcache — sincronizando...');
+    doFullSync('pageshow');
+    checkPendingCanjes();
+    checkAcceptedCanjes();
+  }
+});
+
+// Focus event — respaldo adicional para cuando la ventana obtiene foco
+window.addEventListener('focus', () => {
+  const timeSinceLastSync = Date.now() - _lastSyncTime;
+  if (timeSinceLastSync > 10000) {
+    console.log('🔍 Window focus — sincronizando...');
+    doFullSync('focus');
+  }
+});
+
+// ===== SINCRONIZACIÓN MANUAL =====
+async function manualSync() {
+  const btn = document.getElementById('syncBtn');
+  if (btn.classList.contains('syncing')) return; // Evitar múltiples clicks
+  
+  btn.classList.add('syncing');
+  try {
+    await doFullSync('manual');
+    await checkPendingCanjes();
+    await checkAcceptedCanjes();
+    // Feedback visual de éxito
+    btn.style.borderColor = '#2a8a5a';
+    setTimeout(() => { btn.style.borderColor = ''; }, 1000);
+  } catch(e) {
+    console.warn('⚠️ Error en sync manual:', e);
+    btn.style.borderColor = '#c03030';
+    setTimeout(() => { btn.style.borderColor = ''; }, 1000);
+  }
+  btn.classList.remove('syncing');
 }
 
 
@@ -1444,19 +1528,32 @@ function generateBarcode() {
   });
 }
 
-// ===== GENERATE FLYER =====
-function generateFlyer() {
+// ===== GENERATE AND SEND VALE =====
+async function generateAndSendVale() {
   const concept = document.getElementById('conceptInput').value.trim();
   if (!concept) {
     document.getElementById('conceptInput').style.borderColor = 'var(--rose)';
     setTimeout(() => document.getElementById('conceptInput').style.borderColor = '', 1500);
     return;
   }
+  
   const receiver = sender === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
   const serial = generateSerial();
   const dateStr = new Date().toLocaleDateString('es-ES', {day:'2-digit',month:'2-digit',year:'numeric'});
   const expiryText = getExpiryText();
 
+  // Crear objeto del vale
+  const vale = {
+    id: Date.now(),
+    concept,
+    from: sender,
+    to: receiver,
+    serial,
+    caduca: expiryText,
+    emitido: dateStr
+  };
+
+  // Actualizar UI del ticket
   document.getElementById('ticketFrom').textContent = sender;
   document.getElementById('ticketTo').textContent = receiver;
   document.getElementById('ticketConcept').textContent = concept;
@@ -1471,19 +1568,60 @@ function generateFlyer() {
   updateAvatars();
   generateBarcode();
 
+  // Mostrar ticket con animación
   const container = document.getElementById('flyerContainer');
   container.classList.remove('visible');
   void container.offsetWidth;
   container.classList.add('visible');
 
-  // Show wallet save button
-  const saveBtn = document.getElementById('walletSaveBtn');
-  if (saveBtn) {
-    saveBtn.classList.add('visible');
-    saveBtn.textContent = '💾 Guardar vale en la Wallet';
+  // === GUARDAR AUTOMÁTICAMENTE EN AMBAS WALLETS ===
+  let savedOk = false;
+  for (const owner of [receiver, sender]) {
+    const data = await loadWalletData(owner);
+    if (!data.find(v => v.serial === serial)) {
+      data.unshift(vale);
+      await saveWalletData(owner, data);
+      savedOk = true;
+    }
   }
 
+  // Mostrar confirmación
+  if (savedOk) {
+    showSendConfirmation(receiver, concept);
+  }
+
+  // Limpiar formulario
+  document.getElementById('conceptInput').value = '';
+  document.getElementById('expirySelect').value = 'nunca';
+  document.getElementById('expiryCustom').style.display = 'none';
+
+  // Refrescar wallet
+  renderWallet();
+
   container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Mostrar confirmación de envío
+function showSendConfirmation(receiver, concept) {
+  const overlay = document.getElementById('newValeOverlay');
+  const title = document.getElementById('newValeTitle');
+  const sub = document.getElementById('newValeSub');
+  const list = document.getElementById('newValeList');
+  const closeBtn = document.querySelector('.new-vale-close');
+  
+  const emoji = receiver === 'Florecilla' ? '🌸' : '🐾';
+  title.textContent = '💌 ¡Vale Enviado!';
+  sub.textContent = `${emoji} ${receiver} recibirá:`;
+  list.innerHTML = `<div class="new-vale-item"><div>✨ ${concept}</div><div class="new-vale-item-from">Enviado ahora mismo</div></div>`;
+  closeBtn.textContent = '💚 ¡Perfecto!';
+  closeBtn.onclick = () => { overlay.classList.remove('visible'); closeBtn.onclick = dismissNewVales; closeBtn.textContent = '💙 Ver mi Wallet'; };
+  
+  overlay.classList.add('visible');
+}
+
+// Mantener generateFlyer para compatibilidad con previewFromWallet
+function generateFlyer() {
+  generateAndSendVale();
 }
 
 // ===== WALLET STORAGE — Supabase + localStorage fallback =====
@@ -1759,21 +1897,29 @@ function showExpiryPopup(alerts) {
 // ===== DELETE CONFIRM FLOW =====
 let _deleteTarget = null; // { owner, id, vale, step }
 
-async function deleteFromWallet(owner, id) {
+async function deleteFromWallet(owner, id, serial) {
+  // Verificar que el usuario actual es el CREADOR del vale
   const data = await loadWalletData(owner);
   const vale = data.find(v => v.id === id);
   if (!vale) return;
 
+  // Solo el creador puede borrar
+  if (vale.from !== currentUser) {
+    alert('Solo el creador del vale puede borrarlo.');
+    return;
+  }
+
   const status = getValeStatus(vale.caduca);
 
-  // Vales with a date cannot be deleted until caducado
-  if (status.key !== 'eterna' && status.key !== 'caducado') {
+  // Solo se pueden borrar vales eternos, canjeados o caducados
+  const canDelete = status.key === 'eterna' || status.key === 'caducado' || vale.canje_status === 'canjeado';
+  if (!canDelete) {
     shakeCard(id);
     return;
   }
 
-  // Store target and start confirmation flow
-  _deleteTarget = { owner, id, vale, step: 1 };
+  // Store target and start confirmation flow (incluir serial para borrado en ambas wallets)
+  _deleteTarget = { owner, id, vale, serial: serial || vale.serial, step: 1 };
   showDeleteConfirmStep(1);
 }
 
@@ -1787,8 +1933,10 @@ function showDeleteConfirmStep(step) {
   if (!overlay || !_deleteTarget) return;
 
   const { vale } = _deleteTarget;
-  const isADVM   = getValeStatus(vale.caduca).key === 'eterna';
-  const label    = isADVM ? 'ADVM — Amor De Mi Vida' : '💀 Vale caducado';
+  const status   = getValeStatus(vale.caduca);
+  const isADVM   = status.key === 'eterna';
+  const isCanjeado = vale.canje_status === 'canjeado';
+  const label    = isADVM ? 'ADVM — Amor De Mi Vida' : isCanjeado ? '✅ Vale canjeado' : '💀 Vale caducado';
   document.getElementById('deleteConfirmTitle').textContent = step === 1
     ? '¿Seguro que quieres borrar?' : step === 2
     ? '¿Estás completamente seguro?' : '⚠️ Última oportunidad';
@@ -1825,11 +1973,20 @@ function cancelDelete() {
 
 async function confirmDelete() {
   if (!_deleteTarget) return;
-  const { owner, id } = _deleteTarget;
+  const { serial } = _deleteTarget;
   document.getElementById('deleteConfirmOverlay').classList.remove('visible');
   _deleteTarget = null;
-  const data = await loadWalletData(owner);
-  await saveWalletData(owner, data.filter(v => v.id !== id));
+  
+  // Borrar de AMBAS wallets (Florecilla y Chiquitín) usando el serial
+  for (const owner of ['Florecilla', 'Chiquitín']) {
+    const data = await loadWalletData(owner);
+    const filtered = data.filter(v => v.serial !== serial);
+    if (filtered.length !== data.length) {
+      await saveWalletData(owner, filtered);
+      console.log(`🗑 Vale ${serial} eliminado de wallet de ${owner}`);
+    }
+  }
+  
   renderWallet();
 }
 
@@ -1912,17 +2069,27 @@ async function renderWallet() {
       ? (vale.to === 'Florecilla' ? smallAv(AVATAR_FLORECILLA) : smallAv(AVATAR_CHIQUTIN))
       : (vale.from === 'Florecilla' ? smallAv(AVATAR_FLORECILLA) : smallAv(AVATAR_CHIQUTIN));
     const idSafe   = vale.id;
-    const canDelete= status.key === 'eterna' || status.key === 'caducado';
+    // Borrable si: eterno, caducado, O canjeado
+    const canDelete= status.key === 'eterna' || status.key === 'caducado' || vale.canje_status === 'canjeado';
 
     const advmTag  = status.key === 'eterna'
       ? `<span class="advm-tag" title="Amor De Mi Vida — sin caducidad">ADVM</span>`
       : '';
 
-    // Owner para delete es el receptor del vale
-    const deleteOwner = vale.to;
-    const deleteBtn = canDelete
-      ? `<button class="vale-card-delete" onclick="deleteFromWallet('${deleteOwner}', ${idSafe})" title="Eliminar este vale">🗑</button>`
-      : `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" onclick="deleteFromWallet('${deleteOwner}', ${idSafe})" title="Solo puedes borrar este vale cuando caduque">🔒</button>`;
+    // Solo el CREADOR (emisor) puede borrar vales canjeados o caducados
+    const isCreator = vale.from === currentUser;
+    const canDeleteAsCreator = isCreator && canDelete;
+    
+    let deleteBtn = '';
+    if (isCreator) {
+      // Mostrar botón solo al creador
+      deleteBtn = canDeleteAsCreator
+        ? `<button class="vale-card-delete" onclick="deleteFromWallet('${vale.from}', ${idSafe}, '${vale.serial}')" title="Eliminar este vale (eres el creador)">🗑</button>`
+        : `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" onclick="deleteFromWallet('${vale.from}', ${idSafe}, '${vale.serial}')" title="Solo puedes borrar cuando esté canjeado o caducado">🔒</button>`;
+    } else {
+      // Receptor no puede borrar, mostrar candado informativo
+      deleteBtn = `<button class="vale-card-delete vale-card-delete--locked" data-id="${idSafe}" title="Solo ${vale.from} puede borrar este vale" style="cursor:not-allowed;">🔐</button>`;
+    }
 
     // Canje button - SOLO en tab recibidos y si eres el receptor
     const isRecibidosTab = walletTab === 'recibidos';

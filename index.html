@@ -205,15 +205,23 @@ h1 {
 /* ===== INSTALL BANNER ===== */
 .install-banner {
   display: none; width: 100%; max-width: 480px;
-  background: rgba(255,255,255,0.55); border: 1px solid rgba(42,138,154,0.2);
-  border-radius: 0.75rem; padding: 0.8rem 1.2rem; margin-bottom: 1.2rem;
+  background: linear-gradient(135deg, rgba(42,138,154,0.15), rgba(26,122,106,0.15));
+  border: 2px solid rgba(42,138,154,0.4);
+  border-radius: 1rem; padding: 1rem 1.2rem; margin-bottom: 1.2rem;
   cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s;
   align-items: center; gap: 0.8rem;
+  box-shadow: 0 4px 20px rgba(42,138,154,0.2);
+  animation: pulse-install 2s ease-in-out infinite;
+}
+@keyframes pulse-install {
+  0%, 100% { box-shadow: 0 4px 20px rgba(42,138,154,0.2); }
+  50% { box-shadow: 0 4px 30px rgba(42,138,154,0.4); }
 }
 .install-banner.show { display: flex; }
-.install-icon { font-size: 1.5rem; }
-.install-text strong { display: block; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); }
-.install-text span { font-size: 0.8rem; opacity: 0.7; }
+.install-banner:hover { transform: translateY(-2px); border-color: var(--teal); }
+.install-icon { font-size: 2rem; }
+.install-text strong { display: block; font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--cream); font-style: italic; }
+.install-text span { font-size: 0.85rem; color: var(--moonlight); }
 
 /* ===== SENDER SECTION ===== */
 .sender-section {
@@ -855,11 +863,11 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
     <h1>Vales de Amor</h1>
     <p class="subtitle">para Florecilla &amp; Chiquitín</p>
   </div>
-  <div class="install-banner" id="installBanner" onclick="installApp()">
-    <div class="install-icon">📱</div>
+  <div class="install-banner show" id="installBanner" onclick="installApp()">
+    <div class="install-icon">📲</div>
     <div class="install-text">
-      <strong>Instalar app</strong>
-      <span>Añadir a pantalla de inicio</span>
+      <strong>⬇️ Instalar TheMoon</strong>
+      <span>Toca aquí o usa el menú ⋮ del navegador</span>
     </div>
   </div>
 
@@ -1404,13 +1412,20 @@ function installApp() {
       deferredPrompt = null;
     });
   } else {
-    // No prompt available, show manual instructions
+    // No prompt available, show manual instructions with better UI
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isXiaomi = /Xiaomi|Redmi|POCO/i.test(navigator.userAgent);
+    
+    let instructions = '';
     if (isIOS) {
-      alert('Para instalar:\n1. Toca el botón Compartir ⬆️\n2. Selecciona "Añadir a pantalla de inicio"');
+      instructions = '📱 INSTALAR EN iOS:\n\n1. Abre esta página en SAFARI\n2. Toca el botón Compartir ⬆️ (abajo)\n3. Busca "Añadir a inicio"\n4. Toca "Añadir"';
+    } else if (isXiaomi) {
+      instructions = '📱 INSTALAR EN XIAOMI:\n\n1. Toca los 3 puntos ⋮ (arriba derecha)\n2. Busca "Añadir a inicio" o "Instalar app"\n\n💡 Si no aparece:\n• Toca ⋮ → Compartir → Añadir a inicio\n• O mantén pulsado el icono de Chrome y arrastra a inicio';
     } else {
-      alert('Para instalar:\n1. Abre el menú del navegador (⋮)\n2. Selecciona "Instalar aplicación" o "Añadir a pantalla de inicio"');
+      instructions = '📱 INSTALAR APP:\n\n1. Toca el menú ⋮ (3 puntos arriba)\n2. Busca "Instalar aplicación"\n   o "Añadir a pantalla de inicio"\n\n💡 Alternativa:\nMenú ⋮ → Compartir → Añadir a inicio';
     }
+    
+    alert(instructions);
   }
 }
 

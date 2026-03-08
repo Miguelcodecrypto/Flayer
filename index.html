@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-title" content="the Moon 🌙">
 <title>you are the Moon 🌙</title>
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="img/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="img/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Special+Elite&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1051,7 +1053,7 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.7rem; opacity: 0.2
     <div id="walletCards" class="wallet-cards"></div>
   </div>
 
-  <footer id="footerEl">🌙 hecho con amor · v10 · para siempre vuestro 🌹</footer>
+  <footer id="footerEl">🌙 hecho con amor · v11 · para siempre vuestro 🌹</footer>
 </div>
 
 <script>
@@ -1530,11 +1532,19 @@ function generateBarcode() {
 
 // ===== GENERATE AND SEND VALE =====
 async function generateAndSendVale() {
+  console.log('📝 Iniciando creación de vale...');
+  console.log('👤 Sender:', sender, '| CurrentUser:', currentUser);
+  
   const concept = document.getElementById('conceptInput').value.trim();
   if (!concept) {
     document.getElementById('conceptInput').style.borderColor = 'var(--rose)';
     setTimeout(() => document.getElementById('conceptInput').style.borderColor = '', 1500);
     return;
+  }
+  
+  // Asegurar que sender está correctamente asignado
+  if (!sender || sender === 'null') {
+    sender = currentUser || 'Florecilla';
   }
   
   const receiver = sender === 'Florecilla' ? 'Chiquitín' : 'Florecilla';
@@ -1575,13 +1585,20 @@ async function generateAndSendVale() {
   container.classList.add('visible');
 
   // === GUARDAR AUTOMÁTICAMENTE EN AMBAS WALLETS ===
+  console.log('💾 Guardando en wallets de:', receiver, 'y', sender);
   let savedOk = false;
   for (const owner of [receiver, sender]) {
+    console.log('📥 Cargando datos de', owner);
     const data = await loadWalletData(owner);
+    console.log('📦 Datos actuales de', owner, ':', data.length, 'vales');
     if (!data.find(v => v.serial === serial)) {
       data.unshift(vale);
-      await saveWalletData(owner, data);
+      console.log('📤 Guardando en', owner, '- total:', data.length, 'vales');
+      const saveResult = await saveWalletData(owner, data);
+      console.log('📊 Resultado guardado', owner, ':', saveResult);
       savedOk = true;
+    } else {
+      console.log('⚠️ Vale ya existe en', owner);
     }
   }
 
@@ -1630,8 +1647,7 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 const SUPA_HEADERS = {
   'Content-Type': 'application/json',
   'apikey': SUPA_KEY,
-  'Authorization': 'Bearer ' + SUPA_KEY,
-  'Prefer': 'resolution=merge-duplicates'
+  'Authorization': 'Bearer ' + SUPA_KEY
 };
 
 function walletKey(owner) { return 'vales-amor:' + owner; }
@@ -1651,18 +1667,26 @@ async function supaLoad(owner) {
 
 async function supaSave(owner, data) {
   try {
-    const res = await fetch(`${SUPA_URL}/rest/v1/vales_amor`, {
-      method: 'POST',
+    // Usar PATCH para actualizar el registro existente filtrado por owner
+    const url = `${SUPA_URL}/rest/v1/vales_amor?owner=eq.${encodeURIComponent(owner)}`;
+    const res = await fetch(url, {
+      method: 'PATCH',
       headers: SUPA_HEADERS,
       body: JSON.stringify({
-        owner,
         data,
         updated_at: new Date().toISOString()
       })
     });
-    if (!res.ok) throw new Error('supa save ' + res.status);
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error('supa save ' + res.status + ': ' + errorText);
+    }
+    console.log('✅ supaSave OK para', owner, '- vales:', data.length);
     return true;
-  } catch(e) { console.warn('⚠️ Supabase save failed:', e.message); return false; }
+  } catch(e) { 
+    console.error('❌ Supabase save failed:', e.message); 
+    return false; 
+  }
 }
 
 async function loadWalletData(owner) {

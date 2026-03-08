@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v10-20260308';
+const CACHE_VERSION = 'v11-fix';
 const CACHE_NAME = `vales-amor-${CACHE_VERSION}`;
 const ASSETS = [
   '/Flayer/',
